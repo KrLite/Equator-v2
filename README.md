@@ -1,9 +1,7 @@
-### <p align=right>`Fabric` `1.19.3`</p>
+### <p align=right>[`→` Modrinth](https://modrinth.com/mods/equator)</p>
 
-# Example Mod
-
-This is an example mod.
+# Equator
 
 ## License
 
-This repository is available under the **[GNU Public License.](LICENSE)**
+**Equator** is available under the **[GNU Public License.](LICENSE)**
