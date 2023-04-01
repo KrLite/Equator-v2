@@ -51,7 +51,7 @@ public class ScreenAdapter {
 	}
 
 	public static Vector scaledCursor() {
-		return Vector.fromCartesian(MinecraftClient.getInstance().mouse.getX(), MinecraftClient.getInstance().mouse.getY());
+		return fitScreenToScaled(cursor());
 	}
 
 	public static Vector cursor() {
@@ -64,23 +64,47 @@ public class ScreenAdapter {
 		return vector.multiply(size().magnitude() / scaledSize().magnitude());
 	}
 
+	public static Vector fitScreenToScaled(Vector vector) {
+		return vector.multiply(scaledSize().magnitude() / size().magnitude());
+	}
+
 	public static Vector fitScaledToOpenGL(Vector vector) {
 		return fitScreenToOpenGL(fitScaledToScreen(vector));
+	}
+
+	public static Vector fitOpenGLToScaled(Vector vector) {
+		return fitScreenToScaled(fitOpenGLToScreen(vector));
 	}
 
 	public static Vector fitScreenToOpenGL(Vector vector) {
 		return vector.y(height().magnitude() - vector.y()).multiply(2);
 	}
 
+	public static Vector fitOpenGLToScreen(Vector vector) {
+		return vector.y(height().magnitude() - vector.y()).divide(2);
+	}
+
 	public static Box fitScaledToScreen(Box box) {
 		return new Box(fitScaledToScreen(box.origin()), fitScaledToScreen(box.size()));
+	}
+
+	public static Box fitScreenToScaled(Box box) {
+		return new Box(fitScreenToScaled(box.origin()), fitScreenToScaled(box.size()));
 	}
 
 	public static Box fitScaledToOpenGL(Box box) {
 		return fitScreenToOpenGL(fitScaledToScreen(box));
 	}
 
+	public static Box fitOpenGLToScaled(Box box) {
+		return fitScreenToScaled(fitOpenGLToScreen(box));
+	}
+
 	public static Box fitScreenToOpenGL(Box box) {
 		return new Box(box.origin().y(height().magnitude() - box.origin().y() - box.height().magnitude()).multiply(2), box.size().multiply(2));
+	}
+
+	public static Box fitOpenGLToScreen(Box box) {
+		return new Box(box.origin().y(height().magnitude() - box.origin().y() - box.height().magnitude()).divide(2), box.size().divide(2));
 	}
 }
