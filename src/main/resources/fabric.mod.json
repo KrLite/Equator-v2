@@ -3,7 +3,7 @@
   "id": "equator",
   "version": "${version}",
 
-  "name": "Equator Lib",
+  "name": "Equator",
   "description": "A Powerful Rendering Library for Minecraft.",
   "authors": [
     "KrLite"
