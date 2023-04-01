@@ -6,7 +6,6 @@ import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.*;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class InputEvents {
 	public interface InputCallbacks {
@@ -131,43 +130,11 @@ public class InputEvents {
 	}
 
 	public static class Mouse {
-		public enum MouseState {
-			DOWN, UP;
-
-			public boolean isDown() {
-				return this == DOWN;
-			}
-
-			public static MouseState fromBoolean(boolean down) {
-				return down ? DOWN : UP;
-			}
-		}
-
-		private static final MouseState[] mouseStates = new MouseState[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];
-
-		static {
-			Arrays.fill(mouseStates, MouseState.UP);
-			InputCallbacks.Mouse.EVENT.register((event, button, mods) -> {
-				if (event == InputEvent.MOUSE_PRESSED)
-					mouseStates[button] = MouseState.fromBoolean(true);
-				else if (event == InputEvent.MOUSE_RELEASED)
-					mouseStates[button] = MouseState.fromBoolean(false);
-			});
-		}
-
-		public static MouseState getMouseState(int button) {
-			return mouseStates[button];
-		}
-
 		public static boolean isMouseDown(int button) {
-			return mouseStates[button].isDown();
-		}
-
-		public static boolean isMousePressed(int button) {
 			return GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), button) == GLFW.GLFW_PRESS;
 		}
 
-		public static boolean isMouseReleased(int button) {
+		public static boolean isMouseUp(int button) {
 			return GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), button) == GLFW.GLFW_RELEASE;
 		}
 
@@ -202,8 +169,8 @@ public class InputEvents {
 				@Override
 				public void invoke(long window, double x, double y) {
 					InputCallbacks.CursorPosition.EVENT.invoker().onCursorPosition(x, y);
-					for (int button = 0; button < mouseStates.length; button++)
-						if (mouseStates[button].isDown())
+					for (int button = 0; button < GLFW.GLFW_MOUSE_BUTTON_LAST; button++)
+						if (isMouseDown(button))
 							InputCallbacks.MouseDrag.EVENT.invoker().onMouseDrag(button, x, y);
 				}
 			};
@@ -234,39 +201,7 @@ public class InputEvents {
 	}
 
 	public static class Keyboard {
-		public enum KeyState {
-			DOWN, UP;
-
-			public boolean isDown() {
-				return this == DOWN;
-			}
-
-			public static KeyState fromBoolean(boolean down) {
-				return down ? DOWN : UP;
-			}
-		}
-
-		private static final KeyState[] keyStates = new KeyState[GLFW.GLFW_KEY_LAST + 1];
-
-		static {
-			Arrays.fill(keyStates, KeyState.UP);
-			InputCallbacks.Keyboard.EVENT.register((event, key) -> {
-				if (event == InputEvent.KEY_PRESSED)
-					keyStates[key] = KeyState.fromBoolean(true);
-				else if (event == InputEvent.KEY_RELEASED)
-					keyStates[key] = KeyState.fromBoolean(false);
-			});
-		}
-
-		public static KeyState getKeyState(int key) {
-			return keyStates[key];
-		}
-
 		public static boolean isKeyDown(int key) {
-			return keyStates[key].isDown();
-		}
-
-		public static boolean isKeyPressed(int key) {
 			return GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), key) == GLFW.GLFW_PRESS;
 		}
 
@@ -274,7 +209,7 @@ public class InputEvents {
 			return GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), key) == GLFW.GLFW_REPEAT;
 		}
 
-		public static boolean isKeyReleased(int key) {
+		public static boolean isKeyUp(int key) {
 			return GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), key) == GLFW.GLFW_RELEASE;
 		}
 
@@ -297,14 +232,14 @@ public class InputEvents {
 
 	public static class Window {
 		public enum WindowStateVisible {
-			VISIBLE, UNVISIBLE;
+			VISIBLE, INVISIBLE;
 
 			public boolean isOpen() {
 				return this == VISIBLE;
 			}
 
 			public static WindowStateVisible fromBoolean(boolean visible) {
-				return visible ? VISIBLE : UNVISIBLE;
+				return visible ? VISIBLE : INVISIBLE;
 			}
 		}
 
@@ -321,26 +256,26 @@ public class InputEvents {
 		}
 
 		public enum WindowStateIconify {
-			ICONIFIED, UNICONIFIED;
+			ICONIFIED, RESTORED;
 
 			public boolean isIconified() {
 				return this == ICONIFIED;
 			}
 
 			public static WindowStateIconify fromBoolean(boolean iconified) {
-				return iconified ? ICONIFIED : UNICONIFIED;
+				return iconified ? ICONIFIED : RESTORED;
 			}
 		}
 
 		public enum WindowStateMaximize {
-			MAXIMIZED, UNMAXIMIZED;
+			MAXIMIZED, RESTORED;
 
 			public boolean isMaximized() {
 				return this == MAXIMIZED;
 			}
 
 			public static WindowStateMaximize fromBoolean(boolean maximized) {
-				return maximized ? MAXIMIZED : UNMAXIMIZED;
+				return maximized ? MAXIMIZED : RESTORED;
 			}
 		}
 
