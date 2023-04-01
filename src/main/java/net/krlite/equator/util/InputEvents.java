@@ -2,34 +2,21 @@ package net.krlite.equator.util;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.krlite.equator.visual.texture.Texture;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Identifier;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 
-import javax.imageio.ImageIO;
-import java.awt.image.*;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 import java.util.Arrays;
 
 public class InputEvents {
 	public interface InputCallbacks {
 		interface Mouse {
-			Event<Mouse> EVENT = EventFactory.createArrayBacked(Mouse.class, (listeners) -> (event, button) -> {
+			Event<Mouse> EVENT = EventFactory.createArrayBacked(Mouse.class, (listeners) -> (event, button, mods) -> {
 				for (Mouse listener : listeners)
-					listener.onMouse(event, button);
+					listener.onMouse(event, button, mods);
 			});
 
-			void onMouse(InputEvent event, int button);
+			void onMouse(InputEvent event, int button, int mods);
 		}
 
 		interface MouseScroll {
@@ -160,7 +147,7 @@ public class InputEvents {
 
 		static {
 			Arrays.fill(mouseStates, MouseState.UP);
-			InputCallbacks.Mouse.EVENT.register((event, button) -> {
+			InputCallbacks.Mouse.EVENT.register((event, button, mods) -> {
 				if (event == InputEvent.MOUSE_PRESSED)
 					mouseStates[button] = MouseState.fromBoolean(false);
 				else if (event == InputEvent.MOUSE_RELEASED)
@@ -177,45 +164,63 @@ public class InputEvents {
 		}
 
 		public static boolean isMousePressed(int button) {
-			return GLFW.glfwGetMouseButton(GLFW.glfwGetCurrentContext(), button) == GLFW.GLFW_PRESS;
+			return GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), button) == GLFW.GLFW_PRESS;
 		}
 
 		public static boolean isMouseReleased(int button) {
-			return GLFW.glfwGetMouseButton(GLFW.glfwGetCurrentContext(), button) == GLFW.GLFW_RELEASE;
+			return GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), button) == GLFW.GLFW_RELEASE;
 		}
 
-		private static final GLFWMouseButtonCallback mouseCallback = GLFW.glfwSetMouseButtonCallback(
-				GLFW.glfwGetCurrentContext(),
-				(window, button, action, mods) -> {
+		public static void initMouseCallback(long window) {
+			GLFWMouseButtonCallback mouseCallback = new GLFWMouseButtonCallback() {
+				@Override
+				public void invoke(long window, int button, int action, int mods) {
 					if (action == GLFW.GLFW_PRESS)
-						InputCallbacks.Mouse.EVENT.invoker().onMouse(InputEvent.MOUSE_PRESSED, button);
+						InputCallbacks.Mouse.EVENT.invoker().onMouse(InputEvent.MOUSE_PRESSED, button, mods);
 					else if (action == GLFW.GLFW_RELEASE)
-						InputCallbacks.Mouse.EVENT.invoker().onMouse(InputEvent.MOUSE_RELEASED, button);
+						InputCallbacks.Mouse.EVENT.invoker().onMouse(InputEvent.MOUSE_RELEASED, button, mods);
 				}
-		);
+			};
 
-		private static final GLFWScrollCallback mouseScrollCallback = GLFW.glfwSetScrollCallback(
-				GLFW.glfwGetCurrentContext(),
-				(window, xOffset, yOffset) -> {
-					InputCallbacks.Mouse.EVENT.invoker().onMouse(InputEvent.MOUSE_SCROLLED, GLFW.GLFW_MOUSE_BUTTON_MIDDLE);
+			GLFW.glfwSetMouseButtonCallback(window, mouseCallback);
+		}
+
+		public static void initMouseScrollCallback(long window) {
+			GLFWScrollCallback mouseScrollCallback = new GLFWScrollCallback() {
+				@Override
+				public void invoke(long window, double xOffset, double yOffset) {
+					InputCallbacks.Mouse.EVENT.invoker().onMouse(InputEvent.MOUSE_SCROLLED, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, 0);
 					InputCallbacks.MouseScroll.EVENT.invoker().onMouseScroll(xOffset, yOffset);
 				}
-		);
+			};
 
-		private static final GLFWCursorPosCallback cursorPositionCallback = GLFW.glfwSetCursorPosCallback(
-				GLFW.glfwGetCurrentContext(),
-				(window, x, y) -> {
+			GLFW.glfwSetScrollCallback(window, mouseScrollCallback);
+		}
+
+		public static void initCursorPositonCallback(long window) {
+			GLFWCursorPosCallback cursorPositionCallback = new GLFWCursorPosCallback() {
+				@Override
+				public void invoke(long window, double x, double y) {
 					InputCallbacks.CursorPosition.EVENT.invoker().onCursorPosition(x, y);
 					for (int button = 0; button < mouseStates.length; button++)
 						if (mouseStates[button] == MouseState.DOWN)
 							InputCallbacks.MouseDrag.EVENT.invoker().onMouseDrag(button, x, y);
 				}
-		);
+			};
 
-		public static final GLFWCursorEnterCallback cursorEnterCallback = GLFW.glfwSetCursorEnterCallback(
-				GLFW.glfwGetCurrentContext(),
-				(window, entered) -> InputCallbacks.CursorEnter.EVENT.invoker().onCursorEnter(entered)
-		);
+			GLFW.glfwSetCursorPosCallback(window, cursorPositionCallback);
+		}
+
+		public static void initCursorEnterCallback(long window) {
+			GLFWCursorEnterCallback cursorEnterCallback = new GLFWCursorEnterCallback() {
+				@Override
+				public void invoke(long window, boolean entered) {
+					InputCallbacks.CursorEnter.EVENT.invoker().onCursorEnter(entered);
+				}
+			};
+
+			GLFW.glfwSetCursorEnterCallback(window, cursorEnterCallback);
+		}
 
 		public static long createCursor(int width, int height, File file, int xHot, int yHot) {
 			// TODO: Implement
@@ -228,7 +233,7 @@ public class InputEvents {
 		}
 	}
 
-	public static class KeyBoard {
+	public static class Keyboard {
 		public enum KeyState {
 			DOWN, UP;
 
@@ -262,20 +267,21 @@ public class InputEvents {
 		}
 
 		public static boolean isKeyPressed(int key) {
-			return GLFW.glfwGetKey(GLFW.glfwGetCurrentContext(), key) == GLFW.GLFW_PRESS;
+			return GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), key) == GLFW.GLFW_PRESS;
 		}
 
 		public static boolean isKeyTyped(int key) {
-			return GLFW.glfwGetKey(GLFW.glfwGetCurrentContext(), key) == GLFW.GLFW_REPEAT;
+			return GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), key) == GLFW.GLFW_REPEAT;
 		}
 
 		public static boolean isKeyReleased(int key) {
-			return GLFW.glfwGetKey(GLFW.glfwGetCurrentContext(), key) == GLFW.GLFW_RELEASE;
+			return GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), key) == GLFW.GLFW_RELEASE;
 		}
 
-		private static final GLFWKeyCallback keyBoardCallback = GLFW.glfwSetKeyCallback(
-				GLFW.glfwGetCurrentContext(),
-				(window, key, scancode, action, mods) -> {
+		public static void initKeyboardCallback(long window) {
+			GLFWKeyCallback keyboardCallback = new GLFWKeyCallback() {
+				@Override
+				public void invoke(long window, int key, int scancode, int action, int mods) {
 					if (action == GLFW.GLFW_PRESS)
 						InputCallbacks.Keyboard.EVENT.invoker().onKeyboard(InputEvent.KEY_PRESSED, key);
 					else if (action == GLFW.GLFW_RELEASE)
@@ -283,7 +289,10 @@ public class InputEvents {
 					else if (action == GLFW.GLFW_REPEAT)
 						InputCallbacks.Keyboard.EVENT.invoker().onKeyboard(InputEvent.KEY_TYPED, key);
 				}
-		);
+			};
+
+			GLFW.glfwSetKeyCallback(window, keyboardCallback);
+		}
 	}
 
 	public static class Window {
@@ -399,55 +408,81 @@ public class InputEvents {
 			return windowStateMaximize.isMaximized();
 		}
 
-		private static final GLFWWindowCloseCallback windowCloseCallback = GLFW.glfwSetWindowCloseCallback(
-			GLFW.glfwGetCurrentContext(),
-			(window) -> InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_CLOSED)
-		);
+		public static void initWindowCloseCallback(long window) {
+			GLFWWindowCloseCallback windowCloseCallback = new GLFWWindowCloseCallback() {
+				@Override
+				public void invoke(long window) {
+					InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_CLOSED);
+				}
+			};
 
-		private static final GLFWWindowFocusCallback windowFocusCallback = GLFW.glfwSetWindowFocusCallback(
-				GLFW.glfwGetCurrentContext(),
-				(window, focused) -> {
+			GLFW.glfwSetWindowCloseCallback(window, windowCloseCallback);
+		}
+
+		public static void initWindowFocusCallback(long window) {
+			GLFWWindowFocusCallback windowFocusCallback = new GLFWWindowFocusCallback() {
+				@Override
+				public void invoke(long window, boolean focused) {
 					if (focused)
 						InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_GAINED_FOCUS);
 					else
 						InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_LOST_FOCUS);
 				}
-		);
+			};
 
-		private static final GLFWWindowIconifyCallback windowIconifyCallback = GLFW.glfwSetWindowIconifyCallback(
-				GLFW.glfwGetCurrentContext(),
-				(window, iconified) -> {
+			GLFW.glfwSetWindowFocusCallback(window, windowFocusCallback);
+		}
+
+		public static void initWindowIconifyCallback(long window) {
+			GLFWWindowIconifyCallback windowIconifyCallback = new GLFWWindowIconifyCallback() {
+				@Override
+				public void invoke(long window, boolean iconified) {
 					if (iconified)
 						InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_ICONIFIED);
 					else
 						InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_DEICONIFIED);
 				}
-		);
+			};
 
-		private static final GLFWWindowMaximizeCallback windowMaximizeCallback = GLFW.glfwSetWindowMaximizeCallback(
-				GLFW.glfwGetCurrentContext(),
-				(window, maximized) -> {
+			GLFW.glfwSetWindowIconifyCallback(window, windowIconifyCallback);
+		}
+
+		public static void initWindowMaximizeCallback(long window) {
+			GLFWWindowMaximizeCallback windowMaximizeCallback = new GLFWWindowMaximizeCallback() {
+				@Override
+				public void invoke(long window, boolean maximized) {
 					if (maximized)
 						InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_MAXIMIZED);
 					else
 						InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_DEMAXIMIZED);
 				}
-		);
+			};
 
-		private static final GLFWWindowPosCallback windowPosCallback = GLFW.glfwSetWindowPosCallback(
-				GLFW.glfwGetCurrentContext(),
-				(window, x, y) -> {
+			GLFW.glfwSetWindowMaximizeCallback(window, windowMaximizeCallback);
+		}
+
+		public static void initWindowPositionCallback(long window) {
+			GLFWWindowPosCallback windowPositionCallback = new GLFWWindowPosCallback() {
+				@Override
+				public void invoke(long window, int x, int y) {
 					InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_STATE_CHANGED);
 					InputCallbacks.WindowPosition.EVENT.invoker().onWindowPosition(x, y);
 				}
-		);
+			};
 
-		private static final GLFWWindowSizeCallback windowSizeCallback = GLFW.glfwSetWindowSizeCallback(
-				GLFW.glfwGetCurrentContext(),
-				(window, width, height) -> {
+			GLFW.glfwSetWindowPosCallback(window, windowPositionCallback);
+		}
+
+		public static void initWindowSizeCallback(long window) {
+			GLFWWindowSizeCallback windowSizeCallback = new GLFWWindowSizeCallback() {
+				@Override
+				public void invoke(long window, int width, int height) {
 					InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_RESIZED);
 					InputCallbacks.WindowSize.EVENT.invoker().onWindowSize(width, height);
 				}
-		);
+			};
+
+			GLFW.glfwSetWindowSizeCallback(window, windowSizeCallback);
+		}
 	}
 }
