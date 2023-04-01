@@ -59,7 +59,7 @@ public class ScreenAdapter {
 	}
 
 	public static Vector fitScreenToOpenGL(Vector vector) {
-		return vector.y(height().magnitude() - vector.y());
+		return vector.y(height().magnitude() - vector.y()).multiply(2);
 	}
 
 	public static Box fitScaledToScreen(Box box) {
@@ -71,6 +71,6 @@ public class ScreenAdapter {
 	}
 
 	public static Box fitScreenToOpenGL(Box box) {
-		return new Box(box.origin().y(height().magnitude() - box.origin().y() - box.height().magnitude()), box.size());
+		return new Box(box.origin().y(height().magnitude() - box.origin().y() - box.height().magnitude()).multiply(2), box.size().multiply(2));
 	}
 }
