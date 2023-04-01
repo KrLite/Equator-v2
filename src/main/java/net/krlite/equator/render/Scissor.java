@@ -23,7 +23,7 @@ public record Scissor(Box box) {
 		RenderSystem.enableScissor((int) fitted.topLeft().x(), (int) fitted.topLeft().y(), (int) fitted.width().magnitude(), (int) fitted.height().magnitude());
 	}
 
-	public void uncut() {
+	public void release() {
 		RenderSystem.disableScissor();
 	}
 }

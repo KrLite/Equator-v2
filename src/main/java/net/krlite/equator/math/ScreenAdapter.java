@@ -3,6 +3,7 @@ package net.krlite.equator.math;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
 import net.minecraft.client.MinecraftClient;
+import org.lwjgl.glfw.GLFW;
 
 public class ScreenAdapter {
 	public static Vector scaledWidth() {
@@ -10,7 +11,9 @@ public class ScreenAdapter {
 	}
 
 	public static Vector width() {
-		return Vector.fromCartesian(MinecraftClient.getInstance().getWindow().getWidth() * 2, 0);
+		int[] width = new int[1];
+		GLFW.glfwGetWindowSize(MinecraftClient.getInstance().getWindow().getHandle(), width, null);
+		return Vector.fromCartesian(width[0], 0);
 	}
 
 	public static Vector scaledHeight() {
@@ -18,7 +21,9 @@ public class ScreenAdapter {
 	}
 
 	public static Vector height() {
-		return Vector.fromCartesian(0, MinecraftClient.getInstance().getWindow().getHeight() * 2);
+		int[] height = new int[1];
+		GLFW.glfwGetWindowSize(MinecraftClient.getInstance().getWindow().getHandle(), null, height);
+		return Vector.fromCartesian(0, height[0]);
 	}
 
 	public static Vector scaledSize() {
@@ -54,7 +59,7 @@ public class ScreenAdapter {
 	}
 
 	public static Vector fitScreenToOpenGL(Vector vector) {
-		return vector.theta(-vector.theta());
+		return vector.y(height().magnitude() - vector.y());
 	}
 
 	public static Box fitScaledToScreen(Box box) {
