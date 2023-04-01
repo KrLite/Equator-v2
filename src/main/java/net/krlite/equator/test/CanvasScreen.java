@@ -16,6 +16,8 @@ public class CanvasScreen extends Screen {
 			if (event == InputEvents.InputEvent.MOUSE_PRESSED && button == 0)
 				System.out.println("Left mouse button pressed");
 		});
+
+		InputEvents.InputCallbacks.CursorPosition.EVENT.register((x, y) -> System.out.println("Cursor position: " + x + ", " + y));
 	}
 
 	@Override

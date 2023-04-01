@@ -45,19 +45,27 @@ public class ScreenAdapter {
 		return size().divide(2);
 	}
 
-	public static Vector fitWithOpenGLScaled(Vector vector) {
-		return vector.multiply(size().magnitude() / scaledSize().magnitude()).theta(vector.theta());
+	public static Vector fitScaledToScreen(Vector vector) {
+		return vector.multiply(size().magnitude() / scaledSize().magnitude());
 	}
 
-	public static Vector fitWithOpenGL(Vector vector) {
+	public static Vector fitScaledToOpenGL(Vector vector) {
+		return fitScreenToOpenGL(fitScaledToScreen(vector));
+	}
+
+	public static Vector fitScreenToOpenGL(Vector vector) {
 		return vector.theta(-vector.theta());
 	}
 
-	public static Box fitWithOpenGLScaled(Box box) {
-		return new Box(fitWithOpenGLScaled(box.origin()), fitWithOpenGLScaled(box.size()));
+	public static Box fitScaledToScreen(Box box) {
+		return new Box(fitScaledToScreen(box.origin()), fitScaledToScreen(box.size()));
 	}
 
-	public static Box fitWithOpenGL(Box box) {
-		return new Box(fitWithOpenGL(box.origin()), fitWithOpenGL(box.size()));
+	public static Box fitScaledToOpenGL(Box box) {
+		return new Box(fitScaledToOpenGL(box.origin()), fitScaledToOpenGL(box.size()));
+	}
+
+	public static Box fitScreenToOpenGL(Box box) {
+		return new Box(fitScreenToOpenGL(box.origin()), fitScreenToOpenGL(box.size()));
 	}
 }
