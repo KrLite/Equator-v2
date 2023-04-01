@@ -67,10 +67,10 @@ public class ScreenAdapter {
 	}
 
 	public static Box fitScaledToOpenGL(Box box) {
-		return new Box(fitScaledToOpenGL(box.origin()), fitScaledToOpenGL(box.size()));
+		return fitScreenToOpenGL(fitScaledToScreen(box));
 	}
 
 	public static Box fitScreenToOpenGL(Box box) {
-		return new Box(fitScreenToOpenGL(box.origin()), fitScreenToOpenGL(box.size()));
+		return new Box(box.origin().y(height().magnitude() - box.origin().y() - box.height().magnitude()), box.size());
 	}
 }
