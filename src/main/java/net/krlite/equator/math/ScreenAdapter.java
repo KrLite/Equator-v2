@@ -50,6 +50,16 @@ public class ScreenAdapter {
 		return size().divide(2);
 	}
 
+	public static Vector scaledCursor() {
+		return Vector.fromCartesian(MinecraftClient.getInstance().mouse.getX(), MinecraftClient.getInstance().mouse.getY());
+	}
+
+	public static Vector cursor() {
+		double[] x = new double[1], y = new double[1];
+		GLFW.glfwGetCursorPos(MinecraftClient.getInstance().getWindow().getHandle(), x, y);
+		return Vector.fromCartesian(x[0], y[0]);
+	}
+
 	public static Vector fitScaledToScreen(Vector vector) {
 		return vector.multiply(size().magnitude() / scaledSize().magnitude());
 	}

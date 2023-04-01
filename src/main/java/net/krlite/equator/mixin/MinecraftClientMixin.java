@@ -3,7 +3,6 @@ package net.krlite.equator.mixin;
 import net.krlite.equator.util.InputEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
-import net.minecraft.client.main.Main;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,7 +14,7 @@ public class MinecraftClientMixin {
 	private void init(RunArgs args, CallbackInfo ci) {
 		InputEvents.Mouse.initMouseCallback(MinecraftClient.getInstance().getWindow().getHandle());
 		InputEvents.Mouse.initMouseScrollCallback(MinecraftClient.getInstance().getWindow().getHandle());
-		InputEvents.Mouse.initCursorPositonCallback(MinecraftClient.getInstance().getWindow().getHandle());
+		InputEvents.Mouse.initCursorPositionCallback(MinecraftClient.getInstance().getWindow().getHandle());
 		InputEvents.Mouse.initCursorEnterCallback(MinecraftClient.getInstance().getWindow().getHandle());
 
 		InputEvents.Keyboard.initKeyboardCallback(MinecraftClient.getInstance().getWindow().getHandle());

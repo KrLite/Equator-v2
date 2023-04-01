@@ -149,9 +149,9 @@ public class InputEvents {
 			Arrays.fill(mouseStates, MouseState.UP);
 			InputCallbacks.Mouse.EVENT.register((event, button, mods) -> {
 				if (event == InputEvent.MOUSE_PRESSED)
-					mouseStates[button] = MouseState.fromBoolean(false);
-				else if (event == InputEvent.MOUSE_RELEASED)
 					mouseStates[button] = MouseState.fromBoolean(true);
+				else if (event == InputEvent.MOUSE_RELEASED)
+					mouseStates[button] = MouseState.fromBoolean(false);
 			});
 		}
 
@@ -197,13 +197,13 @@ public class InputEvents {
 			GLFW.glfwSetScrollCallback(window, mouseScrollCallback);
 		}
 
-		public static void initCursorPositonCallback(long window) {
+		public static void initCursorPositionCallback(long window) {
 			GLFWCursorPosCallback cursorPositionCallback = new GLFWCursorPosCallback() {
 				@Override
 				public void invoke(long window, double x, double y) {
 					InputCallbacks.CursorPosition.EVENT.invoker().onCursorPosition(x, y);
 					for (int button = 0; button < mouseStates.length; button++)
-						if (mouseStates[button] == MouseState.DOWN)
+						if (mouseStates[button].isDown())
 							InputCallbacks.MouseDrag.EVENT.invoker().onMouseDrag(button, x, y);
 				}
 			};
