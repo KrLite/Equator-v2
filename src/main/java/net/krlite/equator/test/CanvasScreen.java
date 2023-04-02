@@ -1,9 +1,12 @@
 package net.krlite.equator.test;
 
+import net.krlite.equator.math.geometry.Box;
+import net.krlite.equator.math.geometry.Vector;
 import net.krlite.equator.util.FrameInfo;
 import net.krlite.equator.util.InputEvents;
 import net.krlite.equator.visual.animation.Interpolation;
 import net.krlite.equator.visual.color.AccurateColor;
+import net.krlite.equator.visual.texture.Texture;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;

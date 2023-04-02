@@ -240,7 +240,7 @@ public record Vector(double theta, double magnitude) {
 	}
 
 	public Vector subtract(Vector another) {
-		return add(another.x(), another.y());
+		return subtract(another.x(), another.y());
 	}
 
 	public Vector subtract(double x, double y) {
