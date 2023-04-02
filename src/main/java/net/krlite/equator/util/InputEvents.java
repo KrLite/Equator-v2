@@ -151,7 +151,6 @@ public class InputEvents {
 			GLFWMouseButtonCallback mouseCallback = new GLFWMouseButtonCallback() {
 				@Override
 				public void invoke(long window, int button, int action, int mods) {
-					System.out.println("Mouse button " + button + " " + (action == GLFW.GLFW_PRESS ? "pressed" : "released") + " at glfw time " + GLFW.glfwGetTime() + " at system time " + System.currentTimeMillis());
 					if (action == GLFW.GLFW_PRESS) {
 						Callbacks.Mouse.EVENT.invoker().onMouse(InputEvent.MOUSE_PRESSED, button, mods);
 					}

@@ -85,7 +85,7 @@ public class Palette {
 		 * <br />
 		 * Colors capable of being used in the <b>background,</b> such as on the <b>shadows</b> behind the <b>text.</b>
 		 */
-		public static final AccurateColor MINECOIN_BACKGROUND_GOLD = AccurateColor.fromInt(0x373501), BACKGROUND_BLACK = AccurateColor.fromInt(0x000000),
+		public static final AccurateColor BACKGROUND_MINECOIN_GOLD = AccurateColor.fromInt(0x373501), BACKGROUND_BLACK = AccurateColor.fromInt(0x000000),
 				BACKGROUND_DARK_BLUE = AccurateColor.fromInt(0x00002A), BACKGROUND_DARK_GREEN = AccurateColor.fromInt(0x002A00),
 				BACKGROUND_DARK_AQUA = AccurateColor.fromInt(0x002A2A), BACKGROUND_DARK_RED = AccurateColor.fromInt(0x2A0000),
 				BACKGROUND_DARK_PURPLE = AccurateColor.fromInt(0x2A002A), BACKGROUND_GOLD = AccurateColor.fromInt(0x2A2A00),
