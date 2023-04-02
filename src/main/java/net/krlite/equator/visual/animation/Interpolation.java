@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.krlite.equator.math.algebra.Theory;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
@@ -14,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Interpolation implements Runnable {
-	public interface InterpolationCallbacks {
+	public interface Callbacks {
 		interface Start {
 			Event<Start> EVENT = EventFactory.createArrayBacked(Start.class, (listeners) -> (interpolation) -> {
 				for (Start listener : listeners) {
@@ -34,13 +33,32 @@ public class Interpolation implements Runnable {
 
 			void onCompletion(Interpolation interpolation);
 		}
+
+		interface StartFrame {
+			Event<StartFrame> EVENT = EventFactory.createArrayBacked(StartFrame.class, (listeners) -> (interpolation) -> {
+				for (StartFrame listener : listeners) {
+					listener.onFrameStart(interpolation);
+				}
+			});
+
+			void onFrameStart(Interpolation interpolation);
+		}
+
+		interface EndFrame {
+			Event<EndFrame> EVENT = EventFactory.createArrayBacked(EndFrame.class, (listeners) -> (interpolation) -> {
+				for (EndFrame listener : listeners) {
+					listener.onFrameEnd(interpolation);
+				}
+			});
+
+			void onFrameEnd(Interpolation interpolation);
+		}
 	}
 
-	public Interpolation(double originValue, double targetValue, double approximatedTimeSteps, boolean pauseAtStart, @Nullable Runnable callback) {
+	public Interpolation(double originValue, double targetValue, double approximatedTimeSteps, boolean pauseAtStart) {
 		this.targetValue = new AtomicDouble(targetValue);
 		this.value = new AtomicDouble(originValue);
 		this.speed = new AtomicDouble(Theory.clamp(1 / approximatedTimeSteps, 0, 1));
-		this.callback.set(callback);
 
 		start();
 		if (pauseAtStart) {
@@ -49,33 +67,20 @@ public class Interpolation implements Runnable {
 		}
 	}
 
-	public Interpolation(double originValue, double targetValue, double approximatedTimeSteps, @Nullable Runnable callback) {
-		this(originValue, targetValue, approximatedTimeSteps, false, callback);
-	}
-
 	public Interpolation(double originValue, double targetValue, double approximatedTimeSteps) {
-		this(originValue, targetValue, approximatedTimeSteps, null);
-	}
-
-	public Interpolation(double originValue, double targetValue, boolean pauseAtStart, @Nullable Runnable callback) {
-		this(originValue, targetValue, 35, pauseAtStart, callback);
+		this(originValue, targetValue, approximatedTimeSteps, false);
 	}
 
 	public Interpolation(double originValue, double targetValue, boolean pauseAtStart) {
-		this(originValue, targetValue, 35, pauseAtStart, null);
-	}
-
-	public Interpolation(double originValue, double targetValue, @Nullable Runnable callback) {
-		this(originValue, targetValue, false, callback);
+		this(originValue, targetValue, 35, pauseAtStart);
 	}
 
 	public Interpolation(double originValue, double targetValue) {
-		this(originValue, targetValue, false, null);
+		this(originValue, targetValue, false);
 	}
 
 	private final AtomicDouble value, targetValue, speed;
 	private final AtomicBoolean started = new AtomicBoolean(false), completed = new AtomicBoolean(false);
-	private final AtomicReference<Runnable> callback = new AtomicReference<>(null);
 	private final AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>(null);
 	private final Executor executor = Executors.newSingleThreadScheduledExecutor();
 
@@ -95,10 +100,6 @@ public class Interpolation implements Runnable {
 		return 1 / speed();
 	}
 
-	public Runnable callback() {
-		return callback.get();
-	}
-
 	private ScheduledFuture<?> future() {
 		return future.get();
 	}
@@ -115,10 +116,6 @@ public class Interpolation implements Runnable {
 		speed(1 / approximatedTimeSteps);
 	}
 
-	public void callback(@Nullable Runnable callback) {
-		this.callback.set(callback);
-	}
-
 	private void future(@Nullable ScheduledFuture<?> future) {
 		this.future.set(future);
 	}
@@ -128,25 +125,25 @@ public class Interpolation implements Runnable {
 	 */
 	@Override
 	public void run() {
+		Callbacks.StartFrame.EVENT.invoker().onFrameStart(this);
+
 		if (!isCompleted() && !started.getAndSet(true)) {
-			InterpolationCallbacks.Start.EVENT.invoker().onStart(this);
+			Callbacks.Start.EVENT.invoker().onStart(this);
 			completed.set(false);
 		}
 		else if (isCompleted() && !completed.getAndSet(true)) {
-			InterpolationCallbacks.Complete.EVENT.invoker().onCompletion(this);
+			Callbacks.Complete.EVENT.invoker().onCompletion(this);
 			started.set(false);
 		}
 		else {
 			value.accumulateAndGet(targetValue(), (current, target) -> Theory.lerp(current, target, speed()));
 		}
 
-		if (callback() != null) {
-			executor.execute(callback());
-		}
+		Callbacks.EndFrame.EVENT.invoker().onFrameEnd(this);
 	}
 
 	private void start() {
-		InterpolationCallbacks.Start.EVENT.invoker().onStart(this);
+		Callbacks.Start.EVENT.invoker().onStart(this);
 		future(AnimationThreadPoolExecutor.join(this, 0));
 	}
 

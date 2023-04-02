@@ -14,10 +14,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
 public class Animation implements Runnable {
-	public interface AnimationCallbacks {
+	public interface Callbacks {
 		interface Start {
-			Event<AnimationCallbacks.Start> EVENT = EventFactory.createArrayBacked(AnimationCallbacks.Start.class, (listeners) -> (animation) -> {
-				for (AnimationCallbacks.Start listener : listeners) {
+			Event<Callbacks.Start> EVENT = EventFactory.createArrayBacked(Callbacks.Start.class, (listeners) -> (animation) -> {
+				for (Callbacks.Start listener : listeners) {
 					listener.onStart(animation);
 				}
 			});
@@ -43,6 +43,26 @@ public class Animation implements Runnable {
 			});
 
 			void onRepetition(Animation animation);
+		}
+
+		interface StartFrame {
+			Event<StartFrame> EVENT = EventFactory.createArrayBacked(StartFrame.class, (listeners) -> (animation) -> {
+				for (StartFrame listener : listeners) {
+					listener.onFrameStart(animation);
+				}
+			});
+
+			void onFrameStart(Animation animation);
+		}
+
+		interface EndFrame {
+			Event<EndFrame> EVENT = EventFactory.createArrayBacked(EndFrame.class, (listeners) -> (animation) -> {
+				for (EndFrame listener : listeners) {
+					listener.onFrameEnd(animation);
+				}
+			});
+
+			void onFrameEnd(Animation animation);
 		}
 	}
 
@@ -164,14 +184,16 @@ public class Animation implements Runnable {
 	 */
 	@Override
 	public void run() {
+		Callbacks.StartFrame.EVENT.invoker().onFrameStart(this);
+
 		if (isCompleted()) {
 			if (repeat()) {
 				reset();
-				AnimationCallbacks.Repeat.EVENT.invoker().onRepetition(this);
+				Callbacks.Repeat.EVENT.invoker().onRepetition(this);
 			}
 			else {
 				stop();
-				AnimationCallbacks.Complete.EVENT.invoker().onCompletion(this);
+				Callbacks.Complete.EVENT.invoker().onCompletion(this);
 			}
 		} else {
 			progress.addAndGet(period());
@@ -180,12 +202,14 @@ public class Animation implements Runnable {
 		if (callback() != null) {
 			executor.execute(callback());
 		}
+
+		Callbacks.EndFrame.EVENT.invoker().onFrameEnd(this);
 	}
 
 	public void start() {
 		if (isStopped()) {
 			reset();
-			AnimationCallbacks.Start.EVENT.invoker().onStart(this);
+			Callbacks.Start.EVENT.invoker().onStart(this);
 			future(AnimationThreadPoolExecutor.join(this, 0));
 		}
 	}
@@ -217,7 +241,7 @@ public class Animation implements Runnable {
 
 	public void restart() {
 		if (isRunning()) {
-			AnimationCallbacks.Start.EVENT.invoker().onStart(this);
+			Callbacks.Start.EVENT.invoker().onStart(this);
 		}
 		stop();
 		start();

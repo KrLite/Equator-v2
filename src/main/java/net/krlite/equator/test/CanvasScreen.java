@@ -16,9 +16,9 @@ public class CanvasScreen extends Screen {
 	private final Interpolation interpolation = new Interpolation(0, 1);
 
 	{
-		Interpolation.InterpolationCallbacks.Complete.EVENT.register(i -> i.targetValue(1 - i.targetValue()));
+		Interpolation.Callbacks.Complete.EVENT.register(i -> i.targetValue(1 - i.targetValue()));
 
-		InputEvents.InputCallbacks.Mouse.EVENT.register((event, button, mods) -> {
+		InputEvents.Callbacks.Mouse.EVENT.register((event, button, mods) -> {
 			if (event == InputEvents.InputEvent.MOUSE_PRESSED)
 				interpolation.switchPauseResume();
 		});
