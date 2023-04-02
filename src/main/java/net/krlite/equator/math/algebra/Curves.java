@@ -89,10 +89,12 @@ public class Curves {
 		 */
 		public static Slice on(Slice on, Slice off, double threshold) {
 			return (start, end, progress) -> {
-				if (progress < threshold)
+				if (progress < threshold) {
 					return off.apply(start, end, progress);
-				else
+				}
+				else {
 					return on.apply(start, end, progress);
+				}
 			};
 		}
 
@@ -119,10 +121,12 @@ public class Curves {
 		 */
 		public static Slice off(Slice on, Slice off, double threshold) {
 			return (start, end, progress) -> {
-				if (progress > threshold)
+				if (progress > threshold) {
 					return off.apply(start, end, progress);
-				else
+				}
+				else {
 					return on.apply(start, end, progress);
+				}
 			};
 		}
 

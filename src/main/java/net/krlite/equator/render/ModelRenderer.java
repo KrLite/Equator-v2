@@ -146,8 +146,9 @@ public class ModelRenderer {
 	}
 
 	public void render(float z) {
-		if (!isRenderable())
+		if (!isRenderable()) {
 			return;
+		}
 
 		BakedModel bakedModel = null;
 		if (hasItem()) // Item: bake model

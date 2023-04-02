@@ -31,20 +31,23 @@ public class AccurateColor {
 	}
 
 	public static AccurateColor fromArray(double[] color) {
-		if (color.length < 3 || color.length > 4)
+		if (color.length < 3 || color.length > 4) {
 			throw COLOR_ARRAY_LENGTH_EXCEPTION;
+		}
 		return new AccurateColor(color[0], color[1], color[2], color.length > 3 ? color[3] : 1);
 	}
 
 	public static AccurateColor fromArray(float[] color) {
-		if (color.length < 3 || color.length > 4)
+		if (color.length < 3 || color.length > 4) {
 			throw COLOR_ARRAY_LENGTH_EXCEPTION;
+		}
 		return new AccurateColor(color[0], color[1], color[2], color.length > 3 ? color[3] : 1);
 	}
 
 	public static AccurateColor fromArray(int[] color) {
-		if (color.length < 3 || color.length > 4)
+		if (color.length < 3 || color.length > 4) {
 			throw COLOR_ARRAY_LENGTH_EXCEPTION;
+		}
 		return new AccurateColor(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color.length > 3 ? color[3] / 255.0 : 1);
 	}
 

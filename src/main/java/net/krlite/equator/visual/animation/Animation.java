@@ -178,8 +178,12 @@ public class Animation implements Runnable {
 	}
 
 	public void resume() {
-		if (isRunning())
-			future = AnimationThreadPoolExecutor.join(this, 0);
+		if (isPaused()) future = AnimationThreadPoolExecutor.join(this, 0);
+	}
+
+	public void swichPauseResume() {
+		if (isPaused()) resume();
+		else pause();
 	}
 
 	public void stop() {
@@ -192,8 +196,9 @@ public class Animation implements Runnable {
 	}
 
 	public void restart() {
-		if (isRunning())
+		if (isRunning()) {
 			AnimationCallbacks.Start.EVENT.invoker().onStart(this);
+		}
 		stop();
 		start();
 	}

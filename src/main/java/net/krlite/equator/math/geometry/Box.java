@@ -183,8 +183,9 @@ public record Box(Vector origin, Vector size) {
 	}
 
 	public Box rotateByRightAngle(int rotationCount) {
-		if (rotationCount % 2 == 0)
+		if (rotationCount % 2 == 0) {
 			return this;
+		}
 		return size(size().theta(Math.PI * 2 - size().theta()));
 	}
 

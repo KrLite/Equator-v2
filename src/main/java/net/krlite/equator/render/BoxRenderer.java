@@ -123,16 +123,20 @@ public class BoxRenderer {
 
 	public State state() {
 		if (hasTexture()) {
-			if (hasColor())
+			if (hasColor()) {
 				return State.COLOR_TEXTURE;
-			else
+			}
+			else {
 				return State.TEXTURE;
+			}
 		}
 		else {
-			if (hasColor())
+			if (hasColor()) {
 				return State.COLOR;
-			else
+			}
+			else {
 				return State.UNABLE;
+			}
 		}
 	}
 
@@ -155,8 +159,9 @@ public class BoxRenderer {
 	}
 
 	public void render(MatrixStack matrixStack, float z) {
-		if (hasColor())
+		if (hasColor()) {
 			RenderSystem.enableBlend();
+		}
 
 		switch (state()) {
 			case COLOR -> RenderSystem.setShader(GameRenderer::getPositionColorProgram);
@@ -165,8 +170,9 @@ public class BoxRenderer {
 			default -> { return; }
 		}
 
-		if (hasTexture())
+		if (hasTexture()) {
 			RenderSystem.setShaderTexture(0, Objects.requireNonNull(texture()).identifier());
+		}
 
 		BufferBuilder builder = Tessellator.getInstance().getBuffer();
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
@@ -180,8 +186,9 @@ public class BoxRenderer {
 
 		BufferRenderer.drawWithGlobalProgram(builder.end());
 
-		if (hasColor())
+		if (hasColor()) {
 			RenderSystem.disableBlend();
+		}
 	}
 
 	public void render(MatrixStack matrixStack) {

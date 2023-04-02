@@ -31,21 +31,32 @@ public class Interpolation implements Runnable {
 		}
 	}
 
-	public Interpolation(double originValue, double targetValue, double speed) {
-		this.originValue = originValue;
+	public Interpolation(double originValue, double targetValue, double approximatedTimeSteps, boolean pauseAtStart) {
 		this.targetValue = new AtomicDouble(targetValue);
 		this.value = new AtomicDouble(originValue);
-		this.speed = Theory.clamp(speed, 0, 1);
+		this.speed = new AtomicDouble(Theory.clamp(1 / approximatedTimeSteps, 0, 1));
+		start();
+		if (pauseAtStart) {
+			pause();
+			reset(originValue);
+		}
 	}
 
-	private final double originValue, speed;
-	private final AtomicDouble value, targetValue;
+	public Interpolation(double originValue, double targetValue, double approximatedTimeSteps) {
+		this(originValue, targetValue, approximatedTimeSteps, false);
+	}
+
+	public Interpolation(double originValue, double targetValue, boolean pauseAtStart) {
+		this(originValue, targetValue, 35, pauseAtStart);
+	}
+
+	public Interpolation(double originValue, double targetValue) {
+		this(originValue, targetValue, false);
+	}
+
+	private final AtomicDouble value, targetValue, speed;
 	private final AtomicBoolean started = new AtomicBoolean(false), completed = new AtomicBoolean(false);
 	private ScheduledFuture<?> future;
-
-	public double originValue() {
-		return originValue;
-	}
 
 	public double targetValue() {
 		return targetValue.get();
@@ -56,11 +67,23 @@ public class Interpolation implements Runnable {
 	}
 
 	public double speed() {
-		return speed;
+		return speed.get();
+	}
+
+	public double approximatedTimeSteps() {
+		return 1 / speed();
 	}
 
 	public void targetValue(double targetValue) {
 		this.targetValue.set(targetValue);
+	}
+
+	public void speed(double speed) {
+		this.speed.set(Theory.clamp(speed, 0, 1));
+	}
+
+	public void approximatedTimeSteps(double approximatedTimeSteps) {
+		speed(1 / approximatedTimeSteps);
 	}
 
 	/**
@@ -76,16 +99,12 @@ public class Interpolation implements Runnable {
 			InterpolationCallbacks.Complete.EVENT.invoker().onCompletion(this);
 			started.set(false);
 		}
-		else
-			value.set(Theory.clamp(value() + speed() * (targetValue() - originValue()), originValue(), targetValue()));
+		else value.accumulateAndGet(targetValue(), (current, target) -> Theory.lerp(current, target, speed()));
 	}
 
-	public void start() {
-		if (isStopped()) {
-			reset();
-			InterpolationCallbacks.Start.EVENT.invoker().onStart(this);
-			future = AnimationThreadPoolExecutor.join(this, 0);
-		}
+	private void start() {
+		InterpolationCallbacks.Start.EVENT.invoker().onStart(this);
+		future = AnimationThreadPoolExecutor.join(this, 0);
 	}
 
 	public void pause() {
@@ -96,22 +115,22 @@ public class Interpolation implements Runnable {
 	}
 
 	public void resume() {
-		if (isRunning())
+		if (isPaused()) {
 			future = AnimationThreadPoolExecutor.join(this, 0);
+		}
 	}
 
-	public void stop() {
-		pause();
-		future = null;
+	public void switchPauseResume() {
+		if (isPaused()) {
+			resume();
+		}
+		else {
+			pause();
+		}
 	}
 
-	public void reset() {
-		value.set(originValue());
-	}
-
-	public void restart() {
-		stop();
-		start();
+	public void reset(double originValue) {
+		value.set(originValue);
 	}
 
 	public boolean isRunning() {
@@ -120,10 +139,6 @@ public class Interpolation implements Runnable {
 
 	public boolean isPaused() {
 		return future != null && future.isCancelled();
-	}
-
-	public boolean isStopped() {
-		return future == null;
 	}
 
 	public boolean isCompleted() {

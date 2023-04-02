@@ -11,8 +11,9 @@ public class InputEvents {
 	public interface InputCallbacks {
 		interface Mouse {
 			Event<Mouse> EVENT = EventFactory.createArrayBacked(Mouse.class, (listeners) -> (event, button, mods) -> {
-				for (Mouse listener : listeners)
+				for (Mouse listener : listeners) {
 					listener.onMouse(event, button, mods);
+				}
 			});
 
 			void onMouse(InputEvent event, int button, int mods);
@@ -20,8 +21,9 @@ public class InputEvents {
 
 		interface MouseScroll {
 			Event<MouseScroll> EVENT = EventFactory.createArrayBacked(MouseScroll.class, (listeners) -> (xOffset, yOffset) -> {
-				for (MouseScroll listener : listeners)
+				for (MouseScroll listener : listeners) {
 					listener.onMouseScroll(xOffset, yOffset);
+				}
 			});
 
 			void onMouseScroll(double xOffset, double yOffset);
@@ -29,8 +31,9 @@ public class InputEvents {
 
 		interface MouseDrag {
 			Event<MouseDrag> EVENT = EventFactory.createArrayBacked(MouseDrag.class, (listeners) -> (button, x, y) -> {
-				for (MouseDrag listener : listeners)
+				for (MouseDrag listener : listeners) {
 					listener.onMouseDrag(button, x, y);
+				}
 			});
 
 			void onMouseDrag(int button, double x, double y);
@@ -38,8 +41,9 @@ public class InputEvents {
 
 		interface CursorPosition {
 			Event<CursorPosition> EVENT = EventFactory.createArrayBacked(CursorPosition.class, (listeners) -> (x, y) -> {
-				for (CursorPosition listener : listeners)
+				for (CursorPosition listener : listeners) {
 					listener.onCursorPosition(x, y);
+				}
 			});
 
 			void onCursorPosition(double x, double y);
@@ -47,26 +51,29 @@ public class InputEvents {
 
 		interface CursorEnter {
 			Event<CursorEnter> EVENT = EventFactory.createArrayBacked(CursorEnter.class, (listeners) -> (entered) -> {
-				for (CursorEnter listener : listeners)
+				for (CursorEnter listener : listeners) {
 					listener.onCursorEnter(entered);
+				}
 			});
 
 			void onCursorEnter(boolean entered);
 		}
 
 		interface Keyboard {
-			Event<Keyboard> EVENT = EventFactory.createArrayBacked(Keyboard.class, (listeners) -> (event, keyCode) -> {
-				for (Keyboard listener : listeners)
-					listener.onKeyboard(event, keyCode);
+			Event<Keyboard> EVENT = EventFactory.createArrayBacked(Keyboard.class, (listeners) -> (event, keyCode, scanCode, mods) -> {
+				for (Keyboard listener : listeners) {
+					listener.onKeyboard(event, keyCode, scanCode, mods);
+				}
 			});
 
-			void onKeyboard(InputEvent event, int keyCode);
+			void onKeyboard(InputEvent event, int keyCode, int scanCode, int mods);
 		}
 
 		interface Window {
 			Event<Window> EVENT = EventFactory.createArrayBacked(Window.class, (listeners) -> (event) -> {
-				for (Window listener : listeners)
+				for (Window listener : listeners) {
 					listener.onWindow(event);
+				}
 			});
 
 			void onWindow(InputEvent event);
@@ -74,8 +81,9 @@ public class InputEvents {
 
 		interface WindowPosition {
 			Event<WindowPosition> EVENT = EventFactory.createArrayBacked(WindowPosition.class, (listeners) -> (x, y) -> {
-				for (WindowPosition listener : listeners)
+				for (WindowPosition listener : listeners) {
 					listener.onWindowPosition(x, y);
+				}
 			});
 
 			void onWindowPosition(int x, int y);
@@ -83,8 +91,9 @@ public class InputEvents {
 
 		interface WindowSize {
 			Event<WindowSize> EVENT = EventFactory.createArrayBacked(WindowSize.class, (listeners) -> (width, height) -> {
-				for (WindowSize listener : listeners)
+				for (WindowSize listener : listeners) {
 					listener.onWindowSize(width, height);
+				}
 			});
 
 			void onWindowSize(int width, int height);
@@ -142,10 +151,13 @@ public class InputEvents {
 			GLFWMouseButtonCallback mouseCallback = new GLFWMouseButtonCallback() {
 				@Override
 				public void invoke(long window, int button, int action, int mods) {
-					if (action == GLFW.GLFW_PRESS)
+					System.out.println("Mouse button " + button + " " + (action == GLFW.GLFW_PRESS ? "pressed" : "released") + " at glfw time " + GLFW.glfwGetTime() + " at system time " + System.currentTimeMillis());
+					if (action == GLFW.GLFW_PRESS) {
 						InputCallbacks.Mouse.EVENT.invoker().onMouse(InputEvent.MOUSE_PRESSED, button, mods);
-					else if (action == GLFW.GLFW_RELEASE)
+					}
+					else if (action == GLFW.GLFW_RELEASE) {
 						InputCallbacks.Mouse.EVENT.invoker().onMouse(InputEvent.MOUSE_RELEASED, button, mods);
+					}
 				}
 			};
 
@@ -169,9 +181,11 @@ public class InputEvents {
 				@Override
 				public void invoke(long window, double x, double y) {
 					InputCallbacks.CursorPosition.EVENT.invoker().onCursorPosition(x, y);
-					for (int button = 0; button < GLFW.GLFW_MOUSE_BUTTON_LAST; button++)
-						if (isMouseDown(button))
+					for (int button = 0; button < GLFW.GLFW_MOUSE_BUTTON_LAST; button++) {
+						if (isMouseDown(button)) {
 							InputCallbacks.MouseDrag.EVENT.invoker().onMouseDrag(button, x, y);
+						}
+					}
 				}
 			};
 
@@ -217,12 +231,15 @@ public class InputEvents {
 			GLFWKeyCallback keyboardCallback = new GLFWKeyCallback() {
 				@Override
 				public void invoke(long window, int key, int scancode, int action, int mods) {
-					if (action == GLFW.GLFW_PRESS)
-						InputCallbacks.Keyboard.EVENT.invoker().onKeyboard(InputEvent.KEY_PRESSED, key);
-					else if (action == GLFW.GLFW_RELEASE)
-						InputCallbacks.Keyboard.EVENT.invoker().onKeyboard(InputEvent.KEY_RELEASED, key);
-					else if (action == GLFW.GLFW_REPEAT)
-						InputCallbacks.Keyboard.EVENT.invoker().onKeyboard(InputEvent.KEY_TYPED, key);
+					if (action == GLFW.GLFW_PRESS) {
+						InputCallbacks.Keyboard.EVENT.invoker().onKeyboard(InputEvent.KEY_PRESSED, key, scancode, mods);
+					}
+					else if (action == GLFW.GLFW_RELEASE) {
+						InputCallbacks.Keyboard.EVENT.invoker().onKeyboard(InputEvent.KEY_RELEASED, key, scancode, mods);
+					}
+					else if (action == GLFW.GLFW_REPEAT) {
+						InputCallbacks.Keyboard.EVENT.invoker().onKeyboard(InputEvent.KEY_TYPED, key, scancode, mods);
+					}
 				}
 			};
 
@@ -294,20 +311,27 @@ public class InputEvents {
 			windowStateMaximize = WindowStateMaximize.fromBoolean(GLFW.glfwGetWindowAttrib(GLFW.glfwGetCurrentContext(), GLFW.GLFW_MAXIMIZED) == GLFW.GLFW_TRUE);
 
 			InputCallbacks.Window.EVENT.register((event) -> {
-				if (event == InputEvent.WINDOW_CLOSED)
+				if (event == InputEvent.WINDOW_CLOSED) {
 					windowStateVisible = WindowStateVisible.fromBoolean(false);
-				else if (event == InputEvent.WINDOW_GAINED_FOCUS)
+				}
+				else if (event == InputEvent.WINDOW_GAINED_FOCUS) {
 					windowStateFocus = WindowStateFocus.fromBoolean(true);
-				else if (event == InputEvent.WINDOW_LOST_FOCUS)
+				}
+				else if (event == InputEvent.WINDOW_LOST_FOCUS) {
 					windowStateFocus = WindowStateFocus.fromBoolean(false);
-				else if (event == InputEvent.WINDOW_ICONIFIED)
+				}
+				else if (event == InputEvent.WINDOW_ICONIFIED) {
 					windowStateIconify = WindowStateIconify.fromBoolean(true);
-				else if (event == InputEvent.WINDOW_DEICONIFIED)
+				}
+				else if (event == InputEvent.WINDOW_DEICONIFIED) {
 					windowStateIconify = WindowStateIconify.fromBoolean(false);
-				else if (event == InputEvent.WINDOW_MAXIMIZED)
+				}
+				else if (event == InputEvent.WINDOW_MAXIMIZED) {
 					windowStateMaximize = WindowStateMaximize.fromBoolean(true);
-				else if (event == InputEvent.WINDOW_DEMAXIMIZED)
+				}
+				else if (event == InputEvent.WINDOW_DEMAXIMIZED) {
 					windowStateMaximize = WindowStateMaximize.fromBoolean(false);
+				}
 			});
 		}
 
@@ -358,10 +382,12 @@ public class InputEvents {
 			GLFWWindowFocusCallback windowFocusCallback = new GLFWWindowFocusCallback() {
 				@Override
 				public void invoke(long window, boolean focused) {
-					if (focused)
+					if (focused) {
 						InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_GAINED_FOCUS);
-					else
+					}
+					else {
 						InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_LOST_FOCUS);
+					}
 				}
 			};
 
@@ -372,10 +398,12 @@ public class InputEvents {
 			GLFWWindowIconifyCallback windowIconifyCallback = new GLFWWindowIconifyCallback() {
 				@Override
 				public void invoke(long window, boolean iconified) {
-					if (iconified)
+					if (iconified) {
 						InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_ICONIFIED);
-					else
+					}
+					else {
 						InputCallbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_DEICONIFIED);
+					}
 				}
 			};
 

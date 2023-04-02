@@ -196,25 +196,31 @@ public class GradiantRenderer {
 
 	private AccurateColor assertColor(int index) {
 		AccurateColor[] colors = getColors();
-		if (index < 0 || index >= colors.length /* normally it would be 4 */ )
+		if (index < 0 || index >= colors.length /* normally it would be 4 */ ) {
 			throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for a gradiant with " + colors.length + " colors");
+		}
 		AccurateColor color = colors[index];
-		if (color.hasColor())
+		if (color.hasColor()) {
 			return color;
+		}
 
 		AccurateColor fallbackFirst = colors[(index + 1) % colors.length];
 		AccurateColor fallbackSecond = colors[(index + colors.length - 1) % colors.length];
 
 		if (fallbackFirst.hasColor() || fallbackSecond.hasColor()) {
-			if (fallbackFirst.hasColor() && fallbackSecond.hasColor())
+			if (fallbackFirst.hasColor() && fallbackSecond.hasColor()) {
 				return fallbackFirst.pigmentMix(fallbackSecond).transparent();
-			else if (fallbackFirst.hasColor())
+			}
+			else if (fallbackFirst.hasColor()) {
 				return fallbackFirst.transparent();
-			else
+			}
+			else {
 				return fallbackSecond.transparent();
+			}
 		}
-		else
+		else {
 			return color;
+		}
 	}
 
 	public GradiantRenderer assertColors() {
@@ -228,8 +234,9 @@ public class GradiantRenderer {
 	}
 
 	public void render(MatrixStack matrixStack, float z) {
-		if (!existsColor())
+		if (!existsColor()) {
 			return;
+		}
 
 		RenderSystem.enableBlend();
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);

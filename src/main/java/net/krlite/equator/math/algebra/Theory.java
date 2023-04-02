@@ -114,4 +114,15 @@ public class Theory {
 	public static double clamp(double value, double min, double max) {
 		return Math.max(min, Math.min(max, value));
 	}
+
+	/**
+	 * Linearly interpolates between two values.
+	 * @param a	The first value.
+	 * @param b	The second value.
+	 * @param t	The interpolation value.
+	 * @return	The interpolated value.
+	 */
+	public static double lerp(double a, double b, double t) {
+		return a + (b - a) * t;
+	}
 }
