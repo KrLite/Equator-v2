@@ -4,9 +4,13 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
 public class Animation implements Runnable {
@@ -42,43 +46,38 @@ public class Animation implements Runnable {
 		}
 	}
 
-	private Animation(double startValue, double endValue, long duration, AtomicLong progress, TimeUnit timeUnit, Slice slice, boolean repeat, @Nullable ScheduledFuture<?> future) {
-		this.startValue = startValue;
-		this.endValue = endValue;
-		this.duration = duration;
-		this.progress = progress;
-		this.timeUnit = timeUnit;
-		this.slice = slice;
-		this.repeat = repeat;
-		this.future = future;
-	}
-
-	public Animation(double startValue, double endValue, long duration, TimeUnit timeUnit, Slice slice, boolean repeat) {
+	public Animation(double startValue, double endValue, long duration, TimeUnit timeUnit, Slice slice, boolean repeat, @Nullable Runnable callback) {
 		this.startValue = startValue;
 		this.endValue = endValue;
 		this.duration = duration;
 		this.progress = new AtomicLong(0);
 		this.timeUnit = timeUnit;
-		this.slice = slice;
-		this.repeat = repeat;
+		this.slice = new AtomicReference<>(slice);
+		this.repeat = new AtomicBoolean(repeat);
+		this.callback.set(callback);
 	}
 
-	public Animation(double startValue, double endValue, long duration, TimeUnit timeUnit, Slice slice) {
-		this(startValue, endValue, duration, timeUnit, slice, false);
+	public Animation(double startValue, double endValue, long duration, TimeUnit timeUnit, Slice slice, @Nullable Runnable callback) {
+		this(startValue, endValue, duration, timeUnit, slice, false, callback);
+	}
+
+	public Animation(double startValue, double endValue, long duration, Slice slice, @Nullable Runnable callback) {
+		this(startValue, endValue, duration, TimeUnit.MILLISECONDS, slice, callback);
 	}
 
 	public Animation(double startValue, double endValue, long duration, Slice slice) {
-		this(startValue, endValue, duration, TimeUnit.MILLISECONDS, slice);
+		this(startValue, endValue, duration, slice, null);
 	}
 
 	private final double startValue, endValue;
 	private final long duration;
 	private final AtomicLong progress;
 	private final TimeUnit timeUnit;
-	private final Slice slice;
-	private final boolean repeat;
-	@Nullable
-	private ScheduledFuture<?> future;
+	private final AtomicReference<Slice> slice;
+	private final AtomicBoolean repeat;
+	private final AtomicReference<Runnable> callback = new AtomicReference<>(null);
+	private final AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>(null);
+	private final Executor executor = Executors.newSingleThreadScheduledExecutor();
 
 	public double startValue() {
 		return startValue;
@@ -101,47 +100,63 @@ public class Animation implements Runnable {
 	}
 
 	public double value() {
-		return slice.apply(startValue(), endValue(), percentage());
+		return slice().apply(startValue(), endValue(), percentage());
 	}
 
 	public double valueAsPercentage() {
-		return slice.apply(0, 1, percentage());
+		return slice().apply(0, 1, percentage());
 	}
 
 	public Slice slice() {
-		return slice;
+		return slice.get();
 	}
 
 	public boolean repeat() {
-		return repeat;
+		return repeat.get();
 	}
 
 	public long period() {
-		return timeUnit.toMillis(1);
+		return timeUnit().toMillis(1);
 	}
 
-	public Animation slice(Slice slice) {
-		return new Animation(startValue, endValue, duration, progress, timeUnit, slice, repeat, future);
+	public Runnable callback() {
+		return callback.get();
 	}
 
-	public Animation slice(UnaryOperator<Slice> slice) {
-		return new Animation(startValue, endValue, duration, progress, timeUnit, slice.apply(this.slice), repeat, future);
+	private ScheduledFuture<?> future() {
+		return future.get();
 	}
 
-	public Animation enableRepeat() {
-		return new Animation(startValue, endValue, duration, progress, timeUnit, slice, true, future);
+	public void slice(Slice slice) {
+		this.slice.set(slice);
 	}
 
-	public Animation disableRepeat() {
-		return new Animation(startValue, endValue, duration, progress, timeUnit, slice, false, future);
+	public void slice(UnaryOperator<Slice> slice) {
+		this.slice.set(slice.apply(slice()));
 	}
 
-	public Animation toggleRepeat() {
-		return new Animation(startValue, endValue, duration, progress, timeUnit, slice, !repeat, future);
+	public void enableRepeat() {
+		this.repeat.set(true);
 	}
 
-	public Animation reverseProgress() {
-		return new Animation(startValue, endValue, duration, new AtomicLong(duration - progress.get()), timeUnit, slice, repeat, future);
+	public void disableRepeat() {
+		this.repeat.set(false);
+	}
+
+	public void toggleRepeat() {
+		this.repeat.set(!repeat());
+	}
+
+	public void reverseProgress() {
+		progress.set(duration() - progress.get());
+	}
+
+	public void callback(@Nullable Runnable callback) {
+		this.callback.set(callback);
+	}
+
+	private void future(@Nullable ScheduledFuture<?> future) {
+		this.future.set(future);
 	}
 
 	/**
@@ -158,27 +173,32 @@ public class Animation implements Runnable {
 				stop();
 				AnimationCallbacks.Complete.EVENT.invoker().onCompletion(this);
 			}
-		} else
+		} else {
 			progress.addAndGet(period());
+		}
+
+		if (callback() != null) {
+			executor.execute(callback());
+		}
 	}
 
 	public void start() {
 		if (isStopped()) {
 			reset();
 			AnimationCallbacks.Start.EVENT.invoker().onStart(this);
-			future = AnimationThreadPoolExecutor.join(this, 0);
+			future(AnimationThreadPoolExecutor.join(this, 0));
 		}
 	}
 
 	public void pause() {
 		if (isRunning()) {
-			assert future != null;
-			future.cancel(true);
+			assert future() != null;
+			future().cancel(true);
 		}
 	}
 
 	public void resume() {
-		if (isPaused()) future = AnimationThreadPoolExecutor.join(this, 0);
+		if (isPaused()) future(AnimationThreadPoolExecutor.join(this, 0));
 	}
 
 	public void swichPauseResume() {
@@ -188,7 +208,7 @@ public class Animation implements Runnable {
 
 	public void stop() {
 		pause();
-		future = null;
+		future(null);
 	}
 
 	public void reset() {
@@ -204,15 +224,15 @@ public class Animation implements Runnable {
 	}
 
 	public boolean isRunning() {
-		return future != null && !future.isCancelled();
+		return future() != null && !future().isCancelled();
 	}
 
 	public boolean isPaused() {
-		return future != null && future.isCancelled();
+		return future() != null && future().isCancelled();
 	}
 
 	public boolean isStopped() {
-		return future == null;
+		return future() == null;
 	}
 
 	public boolean isCompleted() {

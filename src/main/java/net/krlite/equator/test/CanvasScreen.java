@@ -1,6 +1,6 @@
 package net.krlite.equator.test;
 
-import net.krlite.equator.math.ScreenAdapter;
+import net.krlite.equator.util.FrameInfo;
 import net.krlite.equator.util.InputEvents;
 import net.krlite.equator.visual.animation.Interpolation;
 import net.krlite.equator.visual.color.AccurateColor;
@@ -33,6 +33,6 @@ public class CanvasScreen extends Screen {
 		renderBackground(matrixStack);
 
 		//System.out.println("Interpolation value: " + interpolation.value() + ", " + interpolation.targetValue());
-		ScreenAdapter.scaledScreen().scale(interpolation.value()).ready(AccurateColor.CYAN).render(matrixStack);
+		FrameInfo.Scaled.fullScreen().scale(interpolation.value()).ready(AccurateColor.CYAN).render(matrixStack);
 	}
 }

@@ -1,5 +1,6 @@
 package net.krlite.equator.math.geometry;
 
+import net.krlite.equator.util.FrameInfo;
 import net.krlite.equator.render.BoxRenderer;
 import net.krlite.equator.render.GradiantRenderer;
 import net.krlite.equator.render.ModelRenderer;
@@ -43,6 +44,14 @@ public record Box(Vector origin, Vector size) {
 
 	public static Box fromVectorCentered(Vector center, Vector size) {
 		return fromCartesianCentered(center.x(), center.y(), size.x(), size.y());
+	}
+
+	public static Box fromScreen(Box box) {
+		return FrameInfo.Convertor.screenToScaled(box);
+	}
+
+	public static Box fromOpenGL(Box box) {
+		return FrameInfo.Convertor.openGLToScaled(box);
 	}
 
 	public Box(Vector origin, Vector size) {
@@ -142,6 +151,22 @@ public record Box(Vector origin, Vector size) {
 		return Box.fromVector(topRight.subtract(width()), topRight.add(height()));
 	}
 
+	public Box alignLeft(double x) {
+		return alignTopLeft(Vector.fromCartesian(x, topLeft().y()));
+	}
+
+	public Box alignRight(double x) {
+		return alignTopRight(Vector.fromCartesian(x, topRight().y()));
+	}
+
+	public Box alignTop(double y) {
+		return alignTopLeft(Vector.fromCartesian(topLeft().x(), y));
+	}
+
+	public Box alignBottom(double y) {
+		return alignBottomLeft(Vector.fromCartesian(bottomLeft().x(), y));
+	}
+
 	public boolean contains(Vector point) {
 		return height().negate().cross(point.subtract(bottomLeft())) * height().cross(point.subtract(topRight())) >= 0
 				&& width().cross(point.subtract(topLeft())) * width().negate().cross(point.subtract(bottomRight())) >= 0;
@@ -169,8 +194,8 @@ public record Box(Vector origin, Vector size) {
 		return width(min).height(min).center(center());
 	}
 
-	public Box shift(Vector shift) {
-		return center(center().add(shift));
+	public Box shift(Vector offset) {
+		return center(center().add(offset));
 	}
 
 	public Box shift(double xOffset, double yOffset) {
@@ -244,6 +269,14 @@ public record Box(Vector origin, Vector size) {
 
 	public Box interpolate(Box box, double lambda) {
 		return new Box(topLeft().interpolate(box.topLeft(), lambda), size().interpolate(box.topRight(), lambda));
+	}
+
+	public Box fitToScreen() {
+		return FrameInfo.Convertor.scaledToScreen(this);
+	}
+
+	public Box fitToOpenGL() {
+		return FrameInfo.Convertor.screenToOpenGL(this);
 	}
 
 	/**

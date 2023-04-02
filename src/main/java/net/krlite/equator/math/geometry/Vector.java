@@ -1,5 +1,6 @@
 package net.krlite.equator.math.geometry;
 
+import net.krlite.equator.util.FrameInfo;
 import net.krlite.equator.math.algebra.Theory;
 
 /**
@@ -76,6 +77,14 @@ public record Vector(double theta, double magnitude) {
 
 	public static Vector fromDegrees(double thetaDegrees, double magnitude) {
 		return new Vector(Math.toRadians(thetaDegrees), magnitude);
+	}
+
+	public static Vector fromScreen(Vector vector) {
+		return FrameInfo.Convertor.screenToScaled(vector);
+	}
+
+	public static Vector fromOpenGL(Vector vector) {
+		return FrameInfo.Convertor.openGLToScaled(vector);
 	}
 
 	public Vector(double theta, double magnitude) {
@@ -223,11 +232,19 @@ public record Vector(double theta, double magnitude) {
 	}
 
 	public Vector add(Vector another) {
-		return fromCartesian(x() + another.x(), y() + another.y());
+		return add(another.x(), another.y());
+	}
+
+	public Vector add(double x, double y) {
+		return fromCartesian(x() + x, y() + y);
 	}
 
 	public Vector subtract(Vector another) {
-		return fromCartesian(x() - another.x(), y() - another.y());
+		return add(another.x(), another.y());
+	}
+
+	public Vector subtract(double x, double y) {
+		return fromCartesian(x() - x, y() - y);
 	}
 
 	public Vector multiply(double scalar) {
@@ -268,6 +285,14 @@ public record Vector(double theta, double magnitude) {
 
 	public Vector remainder(double magnitude) {
 		return magnitude(magnitude() % magnitude);
+	}
+
+	public Vector fitToScreen() {
+		return FrameInfo.Convertor.scaledToScreen(this);
+	}
+
+	public Vector fitToOpenGL() {
+		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
 
 	public String toStringAsCartesian() {

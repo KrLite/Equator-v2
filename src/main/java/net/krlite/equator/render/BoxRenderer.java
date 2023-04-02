@@ -1,7 +1,7 @@
 package net.krlite.equator.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.krlite.equator.math.ScreenAdapter;
+import net.krlite.equator.util.FrameInfo;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
@@ -235,7 +235,7 @@ public class BoxRenderer {
 	}
 
 	public void renderAndTile(MatrixStack matrixStack, float z) {
-		preserve(ScreenAdapter.scaledScreen(), ScreenAdapter.scaledScreen().normalizeBy(box()).shift(0.5, 0.5)).render(matrixStack, z);
+		preserve(FrameInfo.Scaled.fullScreen(), FrameInfo.Scaled.fullScreen().normalizeBy(box()).shift(0.5, 0.5)).render(matrixStack, z);
 	}
 
 	public void renderAndTile(MatrixStack matrixStack) {
