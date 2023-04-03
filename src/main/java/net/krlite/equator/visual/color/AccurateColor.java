@@ -213,4 +213,30 @@ public class AccurateColor {
 	public AccurateColor opaque() {
 		return opacity(1);
 	}
+
+	public AccurateColor lighter(double lambda) {
+		return new AccurateColor(
+			red() * (1 - lambda) + 1 * lambda,
+			green() * (1 - lambda) + 1 * lambda,
+			blue() * (1 - lambda) + 1 * lambda,
+			opacity()
+		);
+	}
+
+	public AccurateColor lighter() {
+		return lighter(0.5);
+	}
+
+	public AccurateColor darker(double lambda) {
+		return new AccurateColor(
+			red() * (1 - lambda) + 0 * lambda,
+			green() * (1 - lambda) + 0 * lambda,
+			blue() * (1 - lambda) + 0 * lambda,
+			opacity()
+		);
+	}
+
+	public AccurateColor darker() {
+		return darker(0.5);
+	}
 }

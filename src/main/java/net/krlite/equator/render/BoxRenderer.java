@@ -1,7 +1,7 @@
 package net.krlite.equator.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.krlite.equator.util.FrameInfo;
+import net.krlite.equator.frame.FrameInfo;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;

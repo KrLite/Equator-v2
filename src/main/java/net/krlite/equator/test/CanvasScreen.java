@@ -1,12 +1,9 @@
 package net.krlite.equator.test;
 
-import net.krlite.equator.math.geometry.Box;
-import net.krlite.equator.math.geometry.Vector;
-import net.krlite.equator.util.FrameInfo;
-import net.krlite.equator.util.InputEvents;
+import net.krlite.equator.frame.FrameInfo;
+import net.krlite.equator.input.InputEvent;
 import net.krlite.equator.visual.animation.Interpolation;
 import net.krlite.equator.visual.color.AccurateColor;
-import net.krlite.equator.visual.texture.Texture;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -21,8 +18,8 @@ public class CanvasScreen extends Screen {
 	{
 		Interpolation.Callbacks.Complete.EVENT.register(i -> i.targetValue(1 - i.targetValue()));
 
-		InputEvents.Callbacks.Mouse.EVENT.register((event, button, mods) -> {
-			if (event == InputEvents.InputEvent.MOUSE_PRESSED)
+		InputEvent.Callbacks.Mouse.EVENT.register((event, button, mods) -> {
+			if (event == InputEvent.MOUSE_PRESSED)
 				interpolation.switchPauseResume();
 		});
 	}

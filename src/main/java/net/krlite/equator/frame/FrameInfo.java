@@ -1,4 +1,4 @@
-package net.krlite.equator.util;
+package net.krlite.equator.frame;
 
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
