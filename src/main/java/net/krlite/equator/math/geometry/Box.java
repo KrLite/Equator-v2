@@ -16,8 +16,8 @@ import org.joml.Quaterniondc;
 /**
  * A rectangle in 2D space(defined by the Screen Cartesian Coordinate) and is not rotated.
  * @see Vector
- * @param topLeft		The top left vector of the box.
- * @param bottomRight	The bottom right vector of the box.
+ * @param origin	The origin, which is the top left corner of the box.
+ * @param size		The size of the box.
  */
 public record Box(Vector origin, Vector size) {
 	/**
@@ -319,12 +319,12 @@ public record Box(Vector origin, Vector size) {
 
 	/**
 	 * Alias for {@link #readyGradiant()}, with an {@link AccurateColor} filled.
-	 * @param accurateColor	The {@link AccurateColor} to use.
+	 * @param color	The {@link AccurateColor} to use.
 	 * @return	A {@link GradiantRenderer} for this box.
 	 * @see #readyGradiant()
 	 */
-	public GradiantRenderer ready(AccurateColor accurateColor) {
-		return new GradiantRenderer(this).fill(accurateColor);
+	public GradiantRenderer ready(AccurateColor color) {
+		return new GradiantRenderer(this).fill(color);
 	}
 
 	/**
