@@ -99,13 +99,13 @@ public enum Mouse {
 
 	public static class Callbacks {
 		public interface Click {
-			Event<Click> EVENT = EventFactory.createArrayBacked(Click.class, (listeners) -> (button, event, modifiers) -> {
+			Event<Click> EVENT = EventFactory.createArrayBacked(Click.class, (listeners) -> (button, action, modifiers) -> {
 				for (Click listener : listeners) {
-					listener.onClick(button, event, modifiers);
+					listener.onClick(button, action, modifiers);
 				}
 			});
 
-			void onClick(Mouse button, Action event, Keyboard.Modifier[] modifiers);
+			void onClick(Mouse button, Action action, Keyboard.Modifier[] modifiers);
 		}
 
 		public interface Scroll {

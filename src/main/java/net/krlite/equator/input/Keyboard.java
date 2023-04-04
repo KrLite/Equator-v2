@@ -297,13 +297,13 @@ public enum Keyboard {
 
 	public static class Callbacks {
 		public interface Key {
-			Event<Key> EVENT = EventFactory.createArrayBacked(Key.class, (listeners) -> (key, scanCode, event, modifiers) -> {
+			Event<Key> EVENT = EventFactory.createArrayBacked(Key.class, (listeners) -> (key, scanCode, action, modifiers) -> {
 				for (Key listener : listeners) {
-					listener.onKey(key, scanCode, event, modifiers);
+					listener.onKey(key, scanCode, action, modifiers);
 				}
 			});
 
-			void onKey(Keyboard key, int scanCode, Action event, Modifier[] modifiers);
+			void onKey(Keyboard key, int scanCode, Action action, Modifier[] modifiers);
 		}
 
 		public interface Char {

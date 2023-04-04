@@ -31,12 +31,6 @@ tasks.withType(JavaCompile).configureEach {
 	it.options.release = Integer.parseInt(sourceCompatibility)
 }
 
-tasks.register('buildExcluding', Exec) {
-	commandLine './gradlew', 'build', '--exclude-task', ':Animation:build', '--exclude-task', ':Math:build', '--exclude-task', ':Visual:build'
-	group = 'build'
-	description = 'Builds all subprojects except for the ones listed.'
-}
-
 java {
 	withSourcesJar()
 
