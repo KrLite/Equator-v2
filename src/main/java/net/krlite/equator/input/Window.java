@@ -1,119 +1,120 @@
 package net.krlite.equator.input;
 
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.krlite.equator.Equator;
+import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.*;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Window {
-	public enum VisibleState {
-		VISIBLE, INVISIBLE;
+	public static class Callbacks {
+		public interface Close {
+			Event<Close> EVENT = EventFactory.createArrayBacked(Close.class, (listeners) -> () -> {
+				for (Close listener : listeners) {
+					listener.onClose();
+				}
+			});
 
-		public boolean isVisible() {
-			return this == VISIBLE;
+			void onClose();
 		}
 
-		public static VisibleState fromBoolean(boolean visible) {
-			return visible ? VISIBLE : INVISIBLE;
-		}
-	}
+		public interface Iconify {
+			Event<Iconify> EVENT = EventFactory.createArrayBacked(Iconify.class, (listeners) -> (iconified) -> {
+				for (Iconify listener : listeners) {
+					listener.onIconify(iconified);
+				}
+			});
 
-	public enum FocusState {
-		FOCUSED, UNFOCUSED;
-
-		public boolean isFocused() {
-			return this == FOCUSED;
+			void onIconify(boolean iconified);
 		}
 
-		public static FocusState fromBoolean(boolean focused) {
-			return focused ? FOCUSED : UNFOCUSED;
-		}
-	}
+		public interface Maximize {
+			Event<Maximize> EVENT = EventFactory.createArrayBacked(Maximize.class, (listeners) -> (maximized) -> {
+				for (Maximize listener : listeners) {
+					listener.onMaximize(maximized);
+				}
+			});
 
-	public enum IconifyState {
-		ICONIFIED, RESTORED;
-
-		public boolean isIconified() {
-			return this == ICONIFIED;
+			void onMaximize(boolean maximized);
 		}
 
-		public static IconifyState fromBoolean(boolean iconified) {
-			return iconified ? ICONIFIED : RESTORED;
-		}
-	}
+		public interface Focus {
+			Event<Focus> EVENT = EventFactory.createArrayBacked(Focus.class, (listeners) -> (focused) -> {
+				for (Focus listener : listeners) {
+					listener.onFocus(focused);
+				}
+			});
 
-	public enum MaximizeState {
-		MAXIMIZED, RESTORED;
-
-		public boolean isMaximized() {
-			return this == MAXIMIZED;
+			void onFocus(boolean focused);
 		}
 
-		public static MaximizeState fromBoolean(boolean maximized) {
-			return maximized ? MAXIMIZED : RESTORED;
+		public interface Move {
+			Event<Move> EVENT = EventFactory.createArrayBacked(Move.class, (listeners) -> (x, y) -> {
+				for (Move listener : listeners) {
+					listener.onMove(x, y);
+				}
+			});
+
+			void onMove(int x, int y);
 		}
-	}
 
-	private static VisibleState visibleState;
+		public interface Resize {
+			Event<Resize> EVENT = EventFactory.createArrayBacked(Resize.class, (listeners) -> (width, height) -> {
+				for (Resize listener : listeners) {
+					listener.onResize(width, height);
+				}
+			});
 
-	private static FocusState focusState;
+			void onResize(int width, int height);
+		}
 
-	private static IconifyState iconifyState;
+		public interface ContentScale {
+			Event<ContentScale> EVENT = EventFactory.createArrayBacked(ContentScale.class, (listeners) -> (xScaling, yScaling) -> {
+				for (ContentScale listener : listeners) {
+					listener.onContentScale(xScaling, yScaling);
+				}
+			});
 
-	private static MaximizeState maximizeState;
-
-	static {
-		visibleState = VisibleState.fromBoolean(GLFW.glfwGetWindowAttrib(GLFW.glfwGetCurrentContext(), GLFW.GLFW_VISIBLE) == GLFW.GLFW_TRUE);
-		focusState = FocusState.fromBoolean(GLFW.glfwGetWindowAttrib(GLFW.glfwGetCurrentContext(), GLFW.GLFW_FOCUSED) == GLFW.GLFW_TRUE);
-		iconifyState = IconifyState.fromBoolean(GLFW.glfwGetWindowAttrib(GLFW.glfwGetCurrentContext(), GLFW.GLFW_ICONIFIED) == GLFW.GLFW_TRUE);
-		maximizeState = MaximizeState.fromBoolean(GLFW.glfwGetWindowAttrib(GLFW.glfwGetCurrentContext(), GLFW.GLFW_MAXIMIZED) == GLFW.GLFW_TRUE);
-
-		InputEvent.Callbacks.Window.EVENT.register((event) -> {
-			if (event == InputEvent.WINDOW_CLOSED) {
-				visibleState = VisibleState.fromBoolean(false);
-			} else if (event == InputEvent.WINDOW_GAINED_FOCUS) {
-				focusState = FocusState.fromBoolean(true);
-			} else if (event == InputEvent.WINDOW_LOST_FOCUS) {
-				focusState = FocusState.fromBoolean(false);
-			} else if (event == InputEvent.WINDOW_ICONIFIED) {
-				iconifyState = IconifyState.fromBoolean(true);
-			} else if (event == InputEvent.WINDOW_DEICONIFIED) {
-				iconifyState = IconifyState.fromBoolean(false);
-			} else if (event == InputEvent.WINDOW_MAXIMIZED) {
-				maximizeState = MaximizeState.fromBoolean(true);
-			} else if (event == InputEvent.WINDOW_DEMAXIMIZED) {
-				maximizeState = MaximizeState.fromBoolean(false);
-			}
-		});
-	}
-
-	public static VisibleState visibleState() {
-		return visibleState;
-	}
-
-	public static FocusState focusState() {
-		return focusState;
-	}
-
-	public static IconifyState iconifyState() {
-		return iconifyState;
-	}
-
-	public static MaximizeState maximizeState() {
-		return maximizeState;
+			void onContentScale(float xScaling, float yScaling);
+		}
 	}
 
 	public static boolean isVisible() {
-		return visibleState.isVisible();
-	}
-
-	public static boolean isFocused() {
-		return focusState.isFocused();
+		return GLFW.glfwGetWindowAttrib(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_VISIBLE) == GLFW.GLFW_TRUE;
 	}
 
 	public static boolean isIconified() {
-		return iconifyState.isIconified();
+		return GLFW.glfwGetWindowAttrib(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_ICONIFIED) == GLFW.GLFW_TRUE;
 	}
 
 	public static boolean isMaximized() {
-		return maximizeState.isMaximized();
+		return GLFW.glfwGetWindowAttrib(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_MAXIMIZED) == GLFW.GLFW_TRUE;
+	}
+
+	public static boolean isFocused() {
+		return GLFW.glfwGetWindowAttrib(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_FOCUSED) == GLFW.GLFW_TRUE;
+	}
+
+	public static boolean isHovered() {
+		return GLFW.glfwGetWindowAttrib(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_HOVERED) == GLFW.GLFW_TRUE;
+	}
+
+	private static final AtomicBoolean initialized = new AtomicBoolean(false);
+
+	public static void initCallbacks(long window) {
+		if (!initialized.compareAndSet(false, true)) {
+			Equator.LOGGER.warn("Window callbacks have already been initialized!");
+			return;
+		}
+		initCloseCallback(window);
+		initIconifyCallback(window);
+		initMaximizeCallback(window);
+		initFocusCallback(window);
+		initMoveCallback(window);
+		initResizeCallback(window);
+		initContentScaleCallback(window);
 	}
 
 	static void initCloseCallback(long window) {
@@ -122,7 +123,7 @@ public class Window {
 
 			@Override
 			public void invoke(long window) {
-				InputEvent.Callbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_CLOSED);
+				Callbacks.Close.EVENT.invoker().onClose();
 
 				if (delegate != null) {
 					delegate.invoke(window);
@@ -133,38 +134,13 @@ public class Window {
 		GLFW.glfwSetWindowCloseCallback(window, closeCallback);
 	}
 
-	static void initFocusCallback(long window) {
-		GLFWWindowFocusCallback focusCallback = new GLFWWindowFocusCallback() {
-			private final GLFWWindowFocusCallbackI delegate = GLFW.glfwSetWindowFocusCallback(window, null);
-
-			@Override
-			public void invoke(long window, boolean focused) {
-				if (focused) {
-					InputEvent.Callbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_GAINED_FOCUS);
-				} else {
-					InputEvent.Callbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_LOST_FOCUS);
-				}
-
-				if (delegate != null) {
-					delegate.invoke(window, focused);
-				}
-			}
-		};
-
-		GLFW.glfwSetWindowFocusCallback(window, focusCallback);
-	}
-
 	static void initIconifyCallback(long window) {
 		GLFWWindowIconifyCallback iconifyCallback = new GLFWWindowIconifyCallback() {
 			private final GLFWWindowIconifyCallbackI delegate = GLFW.glfwSetWindowIconifyCallback(window, null);
 
 			@Override
 			public void invoke(long window, boolean iconified) {
-				if (iconified) {
-					InputEvent.Callbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_ICONIFIED);
-				} else {
-					InputEvent.Callbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_DEICONIFIED);
-				}
+				Callbacks.Iconify.EVENT.invoker().onIconify(iconified);
 
 				if (delegate != null) {
 					delegate.invoke(window, iconified);
@@ -181,11 +157,7 @@ public class Window {
 
 			@Override
 			public void invoke(long window, boolean maximized) {
-				if (maximized) {
-					InputEvent.Callbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_MAXIMIZED);
-				} else {
-					InputEvent.Callbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_DEMAXIMIZED);
-				}
+				Callbacks.Maximize.EVENT.invoker().onMaximize(maximized);
 
 				if (delegate != null) {
 					delegate.invoke(window, maximized);
@@ -196,14 +168,30 @@ public class Window {
 		GLFW.glfwSetWindowMaximizeCallback(window, maximizeCallback);
 	}
 
-	static void initPositionCallback(long window) {
-		GLFWWindowPosCallback positionCallback = new GLFWWindowPosCallback() {
+	static void initFocusCallback(long window) {
+		GLFWWindowFocusCallback focusCallback = new GLFWWindowFocusCallback() {
+			private final GLFWWindowFocusCallbackI delegate = GLFW.glfwSetWindowFocusCallback(window, null);
+
+			@Override
+			public void invoke(long window, boolean focused) {
+				Callbacks.Focus.EVENT.invoker().onFocus(focused);
+
+				if (delegate != null) {
+					delegate.invoke(window, focused);
+				}
+			}
+		};
+
+		GLFW.glfwSetWindowFocusCallback(window, focusCallback);
+	}
+
+	static void initMoveCallback(long window) {
+		GLFWWindowPosCallback moveCallback = new GLFWWindowPosCallback() {
 			private final GLFWWindowPosCallbackI delegate = GLFW.glfwSetWindowPosCallback(window, null);
 
 			@Override
 			public void invoke(long window, int x, int y) {
-				InputEvent.Callbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_STATE_CHANGED);
-				InputEvent.Callbacks.WindowPosition.EVENT.invoker().onWindowPosition(x, y);
+				Callbacks.Move.EVENT.invoker().onMove(x, y);
 
 				if (delegate != null) {
 					delegate.invoke(window, x, y);
@@ -211,17 +199,16 @@ public class Window {
 			}
 		};
 
-		GLFW.glfwSetWindowPosCallback(window, positionCallback);
+		GLFW.glfwSetWindowPosCallback(window, moveCallback);
 	}
 
-	static void initSizeCallback(long window) {
-		GLFWWindowSizeCallback sizeCallback = new GLFWWindowSizeCallback() {
+	static void initResizeCallback(long window) {
+		GLFWWindowSizeCallback resizeCallback = new GLFWWindowSizeCallback() {
 			private final GLFWWindowSizeCallbackI delegate = GLFW.glfwSetWindowSizeCallback(window, null);
 
 			@Override
 			public void invoke(long window, int width, int height) {
-				InputEvent.Callbacks.Window.EVENT.invoker().onWindow(InputEvent.WINDOW_RESIZED);
-				InputEvent.Callbacks.WindowSize.EVENT.invoker().onWindowSize(width, height);
+				Callbacks.Resize.EVENT.invoker().onResize(width, height);
 
 				if (delegate != null) {
 					delegate.invoke(window, width, height);
@@ -229,6 +216,23 @@ public class Window {
 			}
 		};
 
-		GLFW.glfwSetWindowSizeCallback(window, sizeCallback);
+		GLFW.glfwSetWindowSizeCallback(window, resizeCallback);
+	}
+
+	static void initContentScaleCallback(long window) {
+		GLFWWindowContentScaleCallback contentScaleCallback = new GLFWWindowContentScaleCallback() {
+			private final GLFWWindowContentScaleCallbackI delegate = GLFW.glfwSetWindowContentScaleCallback(window, null);
+
+			@Override
+			public void invoke(long window, float xScaling, float yScaling) {
+				Callbacks.ContentScale.EVENT.invoker().onContentScale(xScaling, yScaling);
+
+				if (delegate != null) {
+					delegate.invoke(window, xScaling, yScaling);
+				}
+			}
+		};
+
+		GLFW.glfwSetWindowContentScaleCallback(window, contentScaleCallback);
 	}
 }

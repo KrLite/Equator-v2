@@ -1,17 +1,8 @@
 package net.krlite.equator.math.geometry;
 
 import net.krlite.equator.frame.FrameInfo;
-import net.krlite.equator.render.BoxRenderer;
-import net.krlite.equator.render.GradiantRenderer;
-import net.krlite.equator.render.ModelRenderer;
-import net.krlite.equator.render.Scissor;
-import net.krlite.equator.visual.color.AccurateColor;
-import net.krlite.equator.visual.texture.Texture;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import org.joml.Quaterniondc;
+import net.krlite.label.For;
+import net.krlite.label.Module;
 
 /**
  * A rectangle in 2D space(defined by the Screen Cartesian Coordinate) and is not rotated.
@@ -19,6 +10,8 @@ import org.joml.Quaterniondc;
  * @param origin	The origin, which is the top left corner of the box.
  * @param size		The size of the box.
  */
+@Module("Math")
+@For("2.1.1")
 public record Box(Vector origin, Vector size) {
 	/**
 	 * A box with a width and height of 0 and a position of (0, 0).
@@ -293,102 +286,6 @@ public record Box(Vector origin, Vector size) {
 
 	public Box fitToOpenGL() {
 		return FrameInfo.Convertor.screenToOpenGL(this);
-	}
-
-	/**
-	 * Ready a {@link BoxRenderer} for this box. Will be able to render with a
-	 * {@link Texture}, an {@link AccurateColor} <b>AND</b> a {@link Quaterniondc}.
-	 * @return	A {@link BoxRenderer} for this box.
-	 */
-	public BoxRenderer ready() {
-		return new BoxRenderer(this);
-	}
-
-	/**
-	 * Ready a {@link GradiantRenderer} for this box. Will be able to render with
-	 * up to 4 {@link AccurateColor}s.
-	 * @return	A {@link GradiantRenderer} for this box.
-	 */
-	public GradiantRenderer readyGradiant() {
-		return new GradiantRenderer(this);
-	}
-
-	/**
-	 * Ready a {@link ModelRenderer} for this box. Will be able to render with a
-	 * model from an {@link ItemStack}, an {@link Item}, a {@link BlockState}
-	 * <b>OR</b> a {@link Block}.
-	 * @return	A {@link ModelRenderer} for this box.
-	 */
-	public ModelRenderer readyModel() {
-		return new ModelRenderer(this);
-	}
-
-	/**
-	 * Alias for {@link #ready()}, with a {@link Texture} set.
-	 * @param texture	The {@link Texture} to use.
-	 * @return	A {@link BoxRenderer} for this box.
-	 * @see #ready()
-	 */
-	public BoxRenderer ready(Texture texture) {
-		return new BoxRenderer(this).texture(texture);
-	}
-
-	/**
-	 * Alias for {@link #readyGradiant()}, with an {@link AccurateColor} filled.
-	 * @param color	The {@link AccurateColor} to use.
-	 * @return	A {@link GradiantRenderer} for this box.
-	 * @see #readyGradiant()
-	 */
-	public GradiantRenderer ready(AccurateColor color) {
-		return new GradiantRenderer(this).fill(color);
-	}
-
-	/**
-	 * Alias for {@link #readyModel()}, with an {@link ItemStack} set.
-	 * @param itemStack	The {@link ItemStack} to use.
-	 * @return	A {@link ModelRenderer} for this box.
-	 * @see #readyModel()
-	 */
-	public ModelRenderer ready(ItemStack itemStack) {
-		return new ModelRenderer(this).model(itemStack);
-	}
-
-	/**
-	 * Alias for {@link #readyModel()}, with an {@link Item} set.
-	 * @param item	The {@link Item} to use.
-	 * @return	A {@link ModelRenderer} for this box.
-	 * @see #readyModel()
-	 */
-	public ModelRenderer ready(Item item) {
-		return new ModelRenderer(this).model(item);
-	}
-
-	/**
-	 * Alias for {@link #readyModel()}, with a {@link BlockState} set.
-	 * @param blockState	The {@link BlockState} to use.
-	 * @return	A {@link ModelRenderer} for this box.
-	 * @see #readyModel()
-	 */
-	public ModelRenderer ready(BlockState blockState) {
-		return new ModelRenderer(this).model(blockState);
-	}
-
-	/**
-	 * Alias for {@link #readyModel()}, with a {@link Block} set.
-	 * @param block	The {@link Block} to use.
-	 * @return	A {@link ModelRenderer} for this box.
-	 * @see #readyModel()
-	 */
-	public ModelRenderer ready(Block block) {
-		return new ModelRenderer(this).model(block);
-	}
-
-	/**
-	 * Transform this {@link Box} into a {@link Scissor}.
-	 * @return	A {@link Scissor} with the same dimensions as this {@link Box}.
-	 */
-	public Scissor toScissor() {
-		return new Scissor(this);
 	}
 
 	public String toStringAsCartesian() {

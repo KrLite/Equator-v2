@@ -1,6 +1,8 @@
 package net.krlite.equator.mixin;
 
-import net.krlite.equator.input.InputEvent;
+import net.krlite.equator.input.Keyboard;
+import net.krlite.equator.input.Mouse;
+import net.krlite.equator.input.Window;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +17,8 @@ public class MinecraftClientMixin {
 	 */
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void init(RunArgs args, CallbackInfo ci) {
-		InputEvent.initCallbacks(MinecraftClient.getInstance().getWindow().getHandle());
+		Keyboard.initCallbacks(MinecraftClient.getInstance().getWindow().getHandle());
+		Mouse.initCallbacks(MinecraftClient.getInstance().getWindow().getHandle());
+		Window.initCallbacks(MinecraftClient.getInstance().getWindow().getHandle());
 	}
 }

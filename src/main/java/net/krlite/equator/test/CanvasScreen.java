@@ -1,12 +1,11 @@
 package net.krlite.equator.test;
 
-import net.krlite.equator.frame.FrameInfo;
-import net.krlite.equator.input.InputEvent;
+import net.krlite.equator.input.Mouse;
 import net.krlite.equator.visual.animation.Interpolation;
-import net.krlite.equator.visual.color.AccurateColor;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class CanvasScreen extends Screen {
 	public CanvasScreen() {
@@ -18,8 +17,8 @@ public class CanvasScreen extends Screen {
 	{
 		Interpolation.Callbacks.Complete.EVENT.register(i -> i.targetValue(1 - i.targetValue()));
 
-		InputEvent.Callbacks.Mouse.EVENT.register((event, button, mods) -> {
-			if (event == InputEvent.MOUSE_PRESSED)
+		Mouse.Callbacks.Click.EVENT.register((button, event, mods) -> {
+			if (event == Mouse.Action.PRESS)
 				interpolation.switchPauseResume();
 		});
 	}
@@ -33,6 +32,6 @@ public class CanvasScreen extends Screen {
 		renderBackground(matrixStack);
 
 		//System.out.println("Interpolation value: " + interpolation.value() + ", " + interpolation.targetValue());
-		FrameInfo.Scaled.fullScreen().scale(interpolation.value()).ready(AccurateColor.CYAN).render(matrixStack);
+		//FrameInfo.Scaled.fullScreen().scale(interpolation.value()).ready(AccurateColor.CYAN).render(matrixStack);
 	}
 }
