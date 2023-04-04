@@ -1,2 +1,5 @@
 jdk:
   - openjdk17
+java:
+  gradle:
+    tasks: buildExcluding
