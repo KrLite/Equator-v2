@@ -1,10 +1,8 @@
 package net.krlite.equator.math.algebra;
 
-import net.krlite.label.For;
-import net.krlite.label.Module;
+import jdk.jfr.Label;
 
-@Module("Math")
-@For("2.1.2")
+@Label("Math 2.1.3")
 public class Theory {
 	/**
 	 * A small margin of error for comparing doubles.

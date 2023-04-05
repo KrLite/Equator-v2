@@ -1,16 +1,14 @@
 package net.krlite.equator.math.algebra;
 
+import jdk.jfr.Label;
 import net.krlite.equator.visual.animation.Slice;
-import net.krlite.label.For;
-import net.krlite.label.Module;
 
 /**
  * <h1>Curves</h1>
  * Contains <b>curves</b> that can be used to <b>animate</b> values.
  * @see Slice
  */
-@Module("Animation")
-@For("2.1.2")
+@Label("Animation 2.1.3")
 public class Curves {
 	/**
 	 * <b>Zero</b>

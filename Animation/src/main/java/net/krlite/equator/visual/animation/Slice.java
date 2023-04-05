@@ -1,7 +1,6 @@
 package net.krlite.equator.visual.animation;
 
-import net.krlite.label.For;
-import net.krlite.label.Module;
+import jdk.jfr.Label;
 
 import java.util.function.UnaryOperator;
 
@@ -12,8 +11,7 @@ import java.util.function.UnaryOperator;
  * other words, the slice should map the progress to a new value, which is then used to
  * interpolate between the start and end values.
  */
-@Module("Animation")
-@For("2.1.2")
+@Label("Animation 2.1.3")
 @FunctionalInterface
 public interface Slice {
 	/**

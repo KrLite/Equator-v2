@@ -1,13 +1,11 @@
 package net.krlite.equator.visual.color;
 
 import com.scrtwpns.Mixbox;
-import net.krlite.label.For;
-import net.krlite.label.Module;
+import jdk.jfr.Label;
 
 import java.awt.*;
 
-@Module("Visual")
-@For("2.1.2")
+@Label("Visual 2.1.3")
 public class AccurateColor {
 	private static final IllegalArgumentException COLOR_ARRAY_LENGTH_EXCEPTION = new IllegalArgumentException("Color array must be of length 3 or 4");
 

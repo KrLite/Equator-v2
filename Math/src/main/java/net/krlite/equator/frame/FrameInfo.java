@@ -1,14 +1,12 @@
 package net.krlite.equator.frame;
 
+import jdk.jfr.Label;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
-import net.krlite.label.For;
-import net.krlite.label.Module;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 
-@Module("Math")
-@For("2.1.2")
+@Label("Math 2.1.3")
 public class FrameInfo {
 	public static class Scaled {
 		public static Vector width() {

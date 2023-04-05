@@ -1,8 +1,7 @@
 package net.krlite.equator.math.geometry;
 
+import jdk.jfr.Label;
 import net.krlite.equator.frame.FrameInfo;
-import net.krlite.label.For;
-import net.krlite.label.Module;
 
 /**
  * A rectangle in 2D space(defined by the Screen Cartesian Coordinate) and is not rotated.
@@ -10,8 +9,7 @@ import net.krlite.label.Module;
  * @param origin	The origin, which is the top left corner of the box.
  * @param size		The size of the box.
  */
-@Module("Math")
-@For("2.1.2")
+@Label("Math 2.1.3")
 public record Box(Vector origin, Vector size) {
 	/**
 	 * A box with a width and height of 0 and a position of (0, 0).

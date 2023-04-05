@@ -1,15 +1,13 @@
 package net.krlite.equator.visual.color;
 
-import net.krlite.label.For;
-import net.krlite.label.Module;
+import jdk.jfr.Label;
 
 /**
  * <h1>Palette</h1>
  * Contains a set of <b>colors</b> that can be used in a variety of contexts.
  * @see AccurateColor
  */
-@Module("Visual")
-@For("2.1.2")
+@Label("Visual 2.1.3")
 public class Palette {
 	public static final AccurateColor BROWN = new AccurateColor(0.5, 0.25, 0, 1), TEAL = new AccurateColor(0, 0.5, 0.5, 1),
 			GOLD = new AccurateColor(1, 0.75, 0, 1), SILVER = new AccurateColor(0.75, 0.75, 0.75, 1), NAVY = new AccurateColor(0, 0, 0.5, 1),
