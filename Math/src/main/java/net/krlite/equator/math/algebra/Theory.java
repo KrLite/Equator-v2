@@ -4,7 +4,7 @@ import net.krlite.label.For;
 import net.krlite.label.Module;
 
 @Module("Math")
-@For("2.1.1")
+@For("2.1.2")
 public class Theory {
 	/**
 	 * A small margin of error for comparing doubles.

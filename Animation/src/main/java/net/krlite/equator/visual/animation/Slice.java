@@ -13,7 +13,7 @@ import java.util.function.UnaryOperator;
  * interpolate between the start and end values.
  */
 @Module("Animation")
-@For("2.1.1")
+@For("2.1.2")
 @FunctionalInterface
 public interface Slice {
 	/**

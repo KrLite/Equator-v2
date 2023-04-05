@@ -7,7 +7,7 @@ import net.krlite.label.Module;
 import java.awt.*;
 
 @Module("Visual")
-@For("2.1.1")
+@For("2.1.2")
 public class AccurateColor {
 	private static final IllegalArgumentException COLOR_ARRAY_LENGTH_EXCEPTION = new IllegalArgumentException("Color array must be of length 3 or 4");
 

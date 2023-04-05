@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Module("Animation")
-@For("2.1.1")
+@For("2.1.2")
 public class Interpolation implements Runnable {
 	public interface Callbacks {
 		interface Start {

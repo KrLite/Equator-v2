@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Module("Animation")
-@For("2.1.1")
+@For("2.1.2")
 public class AnimationThreadPoolExecutor {
 	public static final ScheduledThreadPoolExecutor INSTANCE = new ScheduledThreadPoolExecutor(
 			1, new ThreadPoolExecutor.DiscardPolicy()

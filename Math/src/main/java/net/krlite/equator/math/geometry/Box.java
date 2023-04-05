@@ -11,7 +11,7 @@ import net.krlite.label.Module;
  * @param size		The size of the box.
  */
 @Module("Math")
-@For("2.1.1")
+@For("2.1.2")
 public record Box(Vector origin, Vector size) {
 	/**
 	 * A box with a width and height of 0 and a position of (0, 0).

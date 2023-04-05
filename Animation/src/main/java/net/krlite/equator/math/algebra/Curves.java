@@ -10,7 +10,7 @@ import net.krlite.label.Module;
  * @see Slice
  */
 @Module("Animation")
-@For("2.1.1")
+@For("2.1.2")
 public class Curves {
 	/**
 	 * <b>Zero</b>

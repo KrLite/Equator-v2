@@ -34,7 +34,7 @@ import net.krlite.label.Module;
  * @param magnitude	The magnitude of the vector.
  */
 @Module("Math")
-@For("2.1.1")
+@For("2.1.2")
 public record Vector(double theta, double magnitude) {
 	/**
 	 * A vector with a magnitude of <code>0</code> and an angle of <code>0</code>.

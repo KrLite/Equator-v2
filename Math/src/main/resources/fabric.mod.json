@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "equator",
+  "id": "equator-math",
   "version": "${version}",
 
-  "name": "Equator",
-  "description": "A Powerful Rendering Library for Minecraft.",
+  "name": "Equator:Math",
+  "description": "Math Module of Equator.",
   "authors": [
     "KrLite"
   ],
@@ -19,15 +19,14 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.krlite.equator.Equator"
+      "net.krlite.equator.EquatorMath"
     ]
   },
   "mixins": [
-    "equator.mixins.json"
   ],
 
   "depends": {
-    "fabricloader": ">=0.14.19",
+    "fabricloader": "*",
     "fabric-api": "*",
     "minecraft": "~1.19.4"
   },

@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
 @Module("Animation")
-@For("2.1.1")
+@For("2.1.2")
 public class Animation implements Runnable {
 	public interface Callbacks {
 		interface Start {
@@ -70,7 +70,7 @@ public class Animation implements Runnable {
 		}
 	}
 
-	public Animation(double startValue, double endValue, long duration, TimeUnit timeUnit, Slice slice, boolean repeat, @Nullable Runnable callback) {
+	public Animation(double startValue, double endValue, long duration, TimeUnit timeUnit, Slice slice, boolean repeat) {
 		this.startValue = startValue;
 		this.endValue = endValue;
 		this.duration = duration;
@@ -78,19 +78,14 @@ public class Animation implements Runnable {
 		this.timeUnit = timeUnit;
 		this.slice = new AtomicReference<>(slice);
 		this.repeat = new AtomicBoolean(repeat);
-		this.callback.set(callback);
 	}
 
-	public Animation(double startValue, double endValue, long duration, TimeUnit timeUnit, Slice slice, @Nullable Runnable callback) {
-		this(startValue, endValue, duration, timeUnit, slice, false, callback);
-	}
-
-	public Animation(double startValue, double endValue, long duration, Slice slice, @Nullable Runnable callback) {
-		this(startValue, endValue, duration, TimeUnit.MILLISECONDS, slice, callback);
+	public Animation(double startValue, double endValue, long duration, TimeUnit timeUnit, Slice slice) {
+		this(startValue, endValue, duration, timeUnit, slice, false);
 	}
 
 	public Animation(double startValue, double endValue, long duration, Slice slice) {
-		this(startValue, endValue, duration, slice, null);
+		this(startValue, endValue, duration, TimeUnit.MILLISECONDS, slice);
 	}
 
 	private final double startValue, endValue;
@@ -99,7 +94,6 @@ public class Animation implements Runnable {
 	private final TimeUnit timeUnit;
 	private final AtomicReference<Slice> slice;
 	private final AtomicBoolean repeat;
-	private final AtomicReference<Runnable> callback = new AtomicReference<>(null);
 	private final AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>(null);
 	private final Executor executor = Executors.newSingleThreadScheduledExecutor();
 
@@ -143,10 +137,6 @@ public class Animation implements Runnable {
 		return timeUnit().toMillis(1);
 	}
 
-	public Runnable callback() {
-		return callback.get();
-	}
-
 	private ScheduledFuture<?> future() {
 		return future.get();
 	}
@@ -175,10 +165,6 @@ public class Animation implements Runnable {
 		progress.set(duration() - progress.get());
 	}
 
-	public void callback(@Nullable Runnable callback) {
-		this.callback.set(callback);
-	}
-
 	private void future(@Nullable ScheduledFuture<?> future) {
 		this.future.set(future);
 	}
@@ -201,10 +187,6 @@ public class Animation implements Runnable {
 			}
 		} else {
 			progress.addAndGet(period());
-		}
-
-		if (callback() != null) {
-			executor.execute(callback());
 		}
 
 		Callbacks.EndFrame.EVENT.invoker().onFrameEnd(this);

@@ -8,7 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 
 @Module("Math")
-@For("2.1.1")
+@For("2.1.2")
 public class FrameInfo {
 	public static class Scaled {
 		public static Vector width() {
