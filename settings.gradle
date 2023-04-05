@@ -11,5 +11,3 @@ pluginManagement {
 include 'Animation'
 include 'Math'
 include 'Visual'
-include 'Label'
-
