@@ -17,6 +17,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	implementation include("com.scrtwpns:mixbox:${project.mixbox_version}")
+	implementation include("com.github.davidmoten:word-wrap:${project.word_wrap_version}")
 }
 
 processResources {

@@ -55,10 +55,10 @@ public class Interpolation implements Runnable {
 		}
 	}
 
-	public Interpolation(double originValue, double targetValue, double approximatedTimeSteps, boolean pauseAtStart) {
+	public Interpolation(double originValue, double targetValue, double approximatedDuration, boolean pauseAtStart) {
 		this.targetValue = new AtomicDouble(targetValue);
 		this.value = new AtomicDouble(originValue);
-		this.speed = new AtomicDouble(Theory.clamp(1 / approximatedTimeSteps, 0, 1));
+		this.speed = new AtomicDouble(Theory.clamp(1 / approximatedDuration, 0, 1));
 
 		start();
 		if (pauseAtStart) {
@@ -67,8 +67,8 @@ public class Interpolation implements Runnable {
 		}
 	}
 
-	public Interpolation(double originValue, double targetValue, double approximatedTimeSteps) {
-		this(originValue, targetValue, approximatedTimeSteps, false);
+	public Interpolation(double originValue, double targetValue, double approximatedDuration) {
+		this(originValue, targetValue, approximatedDuration, false);
 	}
 
 	public Interpolation(double originValue, double targetValue, boolean pauseAtStart) {

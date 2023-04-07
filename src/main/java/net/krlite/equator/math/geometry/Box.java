@@ -87,6 +87,22 @@ public record Box(Vector origin, Vector size) {
 		return Vector.fromCartesian(bottomRight().x(), topLeft().y());
 	}
 
+	public double top() {
+		return topLeft().y();
+	}
+
+	public double bottom() {
+		return bottomLeft().y();
+	}
+
+	public double left() {
+		return topLeft().x();
+	}
+
+	public double right() {
+		return topRight().x();
+	}
+
 	public Vector width() {
 		return topRight().subtract(topLeft());
 	}
@@ -124,19 +140,19 @@ public record Box(Vector origin, Vector size) {
 	}
 
 	public Box top(double y) {
-		return new Box(topLeft().y(y), size());
+		return topLeft(topLeft().y(y));
 	}
 
 	public Box bottom(double y) {
-		return new Box(bottomLeft().y(y), size());
+		return bottomLeft(bottomLeft().y(y));
 	}
 
 	public Box left(double x) {
-		return new Box(topLeft().x(x), size());
+		return topLeft(topLeft().x(x));
 	}
 
 	public Box right(double x) {
-		return new Box(topRight().x(x), size());
+		return topRight(topRight().x(x));
 	}
 
 	public Box width(double width) {
@@ -149,6 +165,50 @@ public record Box(Vector origin, Vector size) {
 
 	public Box center(Vector center) {
 		return new Box(center.subtract(size().divide(2)), size());
+	}
+
+	public Box translateTopLeft(double xTranslation, double yTranslation) {
+		return topLeft(topLeft().add(width().multiply(xTranslation)).add(height().multiply(yTranslation)));
+	}
+
+	public Box translateBottomLeft(double xTranslation, double yTranslation) {
+		return bottomLeft(bottomLeft().add(width().multiply(xTranslation)).add(height().multiply(yTranslation)));
+	}
+
+	public Box translateBottomRight(double xTranslation, double yTranslation) {
+		return bottomRight(bottomRight().add(width().multiply(xTranslation)).add(height().multiply(yTranslation)));
+	}
+
+	public Box translateTopRight(double xTranslation, double yTranslation) {
+		return topRight(topRight().add(width().multiply(xTranslation)).add(height().multiply(yTranslation)));
+	}
+
+	public Box translateTop(double yTranslation) {
+		return top(top() + height().magnitude() * yTranslation);
+	}
+
+	public Box translateBottom(double yTranslation) {
+		return bottom(bottom() + height().magnitude() * yTranslation);
+	}
+
+	public Box translateLeft(double xTranslation) {
+		return left(left() + width().magnitude() * xTranslation);
+	}
+
+	public Box translateRight(double xTranslation) {
+		return right(right() + width().magnitude() * xTranslation);
+	}
+
+	public Box translateWidth(double widthTranslation) {
+		return width(width().magnitude() + width().multiply(widthTranslation).magnitude());
+	}
+
+	public Box translateHeight(double heightTranslation) {
+		return height(height().magnitude() + height().multiply(heightTranslation).magnitude());
+	}
+
+	public Box translateCenter(double xTranslation, double yTranslation) {
+		return center(center().add(width().multiply(xTranslation)).add(height().multiply(yTranslation)));
 	}
 
 	public Box alignTopLeft(Vector topLeft) {

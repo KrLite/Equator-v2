@@ -1,11 +1,17 @@
 package net.krlite.equator.visual.color;
 
+import net.krlite.equator.math.algebra.Theory;
+
 /**
  * <h1>Palette</h1>
- * Contains a set of <b>colors</b> that can be used in a variety of contexts.
+ * Contains <b>coloring utilities</b> along with <b>sets of colors</b> that can be used in a variety of contexts.
  * @see AccurateColor
  */
 public class Palette {
+	public static AccurateColor rainbow(double t) {
+		return AccurateColor.fromHSL(Theory.mod(t, 1) * 360, 1, 0.72, 1);
+	}
+
 	public static final AccurateColor BROWN = new AccurateColor(0.5, 0.25, 0, 1), TEAL = new AccurateColor(0, 0.5, 0.5, 1),
 			GOLD = new AccurateColor(1, 0.75, 0, 1), SILVER = new AccurateColor(0.75, 0.75, 0.75, 1), NAVY = new AccurateColor(0, 0, 0.5, 1),
 			MAROON = new AccurateColor(0.5, 0, 0, 1), OLIVE = new AccurateColor(0.5, 0.5, 0, 1), LIME = new AccurateColor(0, 1, 0, 1),

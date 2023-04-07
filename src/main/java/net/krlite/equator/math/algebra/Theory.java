@@ -116,6 +116,16 @@ public class Theory {
 	}
 
 	/**
+	 * Modulos a value.
+	 * @param value	The value to mod.
+	 * @param mod	The modulus.
+	 * @return	The modulated value.
+	 */
+	public static double mod(double value, double mod) {
+		return value - Math.floor(value / mod) * mod;
+	}
+
+	/**
 	 * Linearly interpolates between two values.
 	 * @param a	The first value.
 	 * @param b	The second value.
