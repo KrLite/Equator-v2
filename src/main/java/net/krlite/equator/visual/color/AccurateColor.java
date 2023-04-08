@@ -2,7 +2,6 @@ package net.krlite.equator.visual.color;
 
 import com.scrtwpns.Mixbox;
 import net.krlite.equator.math.algebra.Theory;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 

@@ -2,7 +2,9 @@ package net.krlite.equator.render;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.Box;
+import net.krlite.equator.render.base.Renderable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -22,60 +24,28 @@ import org.joml.Quaternionf;
 
 import java.util.function.UnaryOperator;
 
-public class ModelRenderer {
+public record ModelRenderer(Box box, Quaterniondc modifier, @Nullable ItemStack itemStack, @Nullable BlockState blockState, boolean leftHanded) implements Renderable {
 	public ModelRenderer(Box box, Quaterniondc modifier, @Nullable ItemStack itemStack, boolean leftHanded) {
-		this.box = box;
-		this.modifier = modifier;
-		this.itemStack = itemStack;
-		this.blockState = null;
-		this.leftHanded = leftHanded;
+		this(box, modifier, itemStack, null, leftHanded);
 	}
 
 	public ModelRenderer(Box box, Quaterniondc modifier, @Nullable BlockState blockState, boolean leftHanded) {
-		this.box = box;
-		this.modifier = modifier;
-		this.itemStack = null;
-		this.blockState = blockState;
-		this.leftHanded = leftHanded;
+		this(box, modifier, null, blockState, leftHanded);
 	}
 
 	public ModelRenderer(Box box) {
-		this.box = box;
-		this.modifier = new Quaterniond();
-		this.itemStack = null;
-		this.blockState = null;
-		this.leftHanded = false;
+		this(box, new Quaterniond(), null, null, false);
 	}
 
-	private final Box box;
-	private final Quaterniondc modifier;
-	@Nullable
-	private final ItemStack itemStack;
-	@Nullable
-	private final BlockState blockState;
-	private final boolean leftHanded;
+	// box() is a record method
 
-	public Box box() {
-		return box;
-	}
+	// modifier() is a record method
 
-	public Quaterniondc modifier() {
-		return modifier;
-	}
+	// itemStack() is a record method
 
-	@Nullable
-	public ItemStack itemStack() {
-		return itemStack;
-	}
+	// blockState() is a record method
 
-	@Nullable
-	public BlockState blockState() {
-		return blockState;
-	}
-
-	public boolean leftHanded() {
-		return leftHanded;
-	}
+	// leftHanded() is a record method
 
 	public ModelRenderer modifier(Quaterniondc modifier) {
 		return hasItem()
@@ -123,8 +93,9 @@ public class ModelRenderer {
 		return blockState != null;
 	}
 
+	@Override
 	public boolean isRenderable() {
-		return hasItem() || hasBlock();
+		return Renderable.isBoxLegal(box()) && (hasItem() || hasBlock()) && !(hasItem() && hasBlock());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -139,7 +110,7 @@ public class ModelRenderer {
 
 	private void applyModelView(MatrixStack matrixStack) {
 		matrixStack.scale(1, -1, 1);
-		matrixStack.scale((float) box().width().magnitude(), (float) box().height().magnitude(), 1);
+		matrixStack.scale((float) box().w(), (float) box().h(), 1);
 		matrixStack.multiply(new Quaternionf(modifier()));
 
 		RenderSystem.applyModelViewMatrix();

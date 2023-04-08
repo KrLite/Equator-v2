@@ -1,6 +1,6 @@
 package net.krlite.equator.math.geometry;
 
-import net.krlite.equator.frame.FrameInfo;
+import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.math.algebra.Theory;
 
 /**

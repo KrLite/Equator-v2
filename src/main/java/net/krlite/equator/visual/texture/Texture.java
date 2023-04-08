@@ -121,11 +121,11 @@ public class Texture {
 	}
 
 	public Texture zoomIn(double scalar) {
-		return uvBox(uvBox().scaleCentered(1 / scalar));
+		return uvBox(uvBox().scaleCenter(1 / scalar));
 	}
 
 	public Texture zoomOut(double scalar) {
-		return uvBox(uvBox().scaleCentered(scalar));
+		return uvBox(uvBox().scaleCenter(scalar));
 	}
 
 	public Texture shift(Vector shift) {

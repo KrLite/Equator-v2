@@ -1,10 +1,10 @@
 package net.krlite.equator.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.krlite.equator.frame.FrameInfo;
-import net.krlite.equator.math.algebra.Theory;
+import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.texture.Texture;
 import net.minecraft.client.render.*;
@@ -13,11 +13,12 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaterniond;
 import org.joml.Quaterniondc;
+import org.joml.Quaternionf;
 
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
-public class BoxRenderer {
+public record BoxRenderer(Box box, Quaterniondc modifier, @Nullable AccurateColor color, @Nullable Texture texture) implements Renderable {
 	protected enum State {
 		UNABLE(null),
 		COLOR(VertexFormats.POSITION_COLOR),
@@ -37,41 +38,17 @@ public class BoxRenderer {
 		}
 	}
 
-	public BoxRenderer(Box box, Quaterniondc modifier, @Nullable AccurateColor color, @Nullable Texture texture) {
-		this.box = box;
-		this.modifier = modifier;
-		this.color = color;
-		this.texture = texture;
-	}
-
 	public BoxRenderer(Box box) {
 		this(box, new Quaterniond(), null, null);
 	}
 
-	private final Box box;
-	private final Quaterniondc modifier;
-	@Nullable
-	private final AccurateColor color;
-	@Nullable
-	private final Texture texture;
+	// box() is a record method
 
-	public Box box() {
-		return box;
-	}
+	// modifier() is a record method
 
-	public Quaterniondc modifier() {
-		return modifier;
-	}
+	// color() is a record method
 
-	@Nullable
-	public AccurateColor color() {
-		return color;
-	}
-
-	@Nullable
-	public Texture texture() {
-		return texture;
-	}
+	// texture() is a record method
 
 	private BoxRenderer preserve(Box box, Box uvBox) {
 		return new BoxRenderer(box, modifier(), color(), hasTexture() ? Objects.requireNonNull(texture()).uvBox(uvBox) : texture());
@@ -98,7 +75,7 @@ public class BoxRenderer {
 	}
 
 	public BoxRenderer removeColor() {
-		return new BoxRenderer(box(), modifier(), null, texture());
+		return color(color -> null);
 	}
 
 	public BoxRenderer texture(Texture texture) {
@@ -106,11 +83,12 @@ public class BoxRenderer {
 	}
 
 	public BoxRenderer removeTexture() {
-		return new BoxRenderer(box(), modifier(), color(), null);
+		return texture(null);
 	}
 
+	@Override
 	public boolean isRenderable() {
-		return Theory.looseGreater(box().area(), 0) ||  hasTexture() || hasColor();
+		return Renderable.isBoxLegal(box()) && (hasTexture() || hasColor());
 	}
 
 	public boolean hasColor() {
@@ -159,6 +137,10 @@ public class BoxRenderer {
 	}
 
 	public void render(MatrixStack matrixStack, float z) {
+		if (!isRenderable()) {
+			return;
+		}
+
 		if (hasColor()) {
 			RenderSystem.enableBlend();
 		}
@@ -174,6 +156,9 @@ public class BoxRenderer {
 			RenderSystem.setShaderTexture(0, Objects.requireNonNull(texture()).identifier());
 		}
 
+		matrixStack.push();
+		matrixStack.multiply(new Quaternionf(modifier()));
+
 		BufferBuilder builder = Tessellator.getInstance().getBuffer();
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 
@@ -185,6 +170,7 @@ public class BoxRenderer {
 		renderVertex(builder, matrix, box().topRight(), hasTexture() ? Objects.requireNonNull(texture()).uvTopRight() : Vector.UNIT_X, color(), z);
 
 		BufferRenderer.drawWithGlobalProgram(builder.end());
+		matrixStack.pop();
 
 		if (hasColor()) {
 			RenderSystem.disableBlend();
@@ -196,7 +182,7 @@ public class BoxRenderer {
 	}
 
 	public void renderFixedCorners(MatrixStack matrixStack, float z) {
-		Box corner = box().squareInner().scaleCentered(0.5);
+		Box corner = box().squareInner().scaleCenter(0.5);
 
 		// Top left
 		preserve(corner.alignTopLeft(box().topLeft()), new Box(0, 0, 0.5, 0.5)).render(matrixStack, z);
@@ -210,7 +196,7 @@ public class BoxRenderer {
 		// Top right
 		preserve(corner.alignTopRight(box().topRight()), new Box(0.5, 0, 1, 0.5)).render(matrixStack, z);
 
-		if (box().width().magnitude() > box().height().magnitude()) {
+		if (box().w() > box().height().magnitude()) {
 			Box gap = Box.fromVector(corner.alignTopLeft(box().topLeft()).topRight(), corner.alignTopRight(box().topRight()).bottomLeft());
 
 			// Top
@@ -219,7 +205,7 @@ public class BoxRenderer {
 			// Bottom
 			preserve(gap.translate(0, 1), new Box(0.5, 0.5, 0.5, 1)).render(matrixStack, z);
 		}
-		else if (box().width().magnitude() < box().height().magnitude()) {
+		else if (box().w() < box().height().magnitude()) {
 			Box gap = Box.fromVector(corner.alignTopLeft(box().topLeft()).bottomLeft(), corner.alignBottomLeft(box().bottomLeft()).topRight());
 
 			// Left
@@ -235,7 +221,7 @@ public class BoxRenderer {
 	}
 
 	public void renderAndTile(MatrixStack matrixStack, float z) {
-		preserve(FrameInfo.Scaled.fullScreen(), FrameInfo.Scaled.fullScreen().normalizeBy(box()).shift(0.5, 0.5)).render(matrixStack, z);
+		preserve(FrameInfo.scaled(), FrameInfo.scaled().normalizeBy(box()).shift(0.5, 0.5)).render(matrixStack, z);
 	}
 
 	public void renderAndTile(MatrixStack matrixStack) {

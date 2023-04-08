@@ -1,7 +1,6 @@
-package net.krlite.equator.render;
+package net.krlite.equator.render.base;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.krlite.equator.frame.FrameInfo;
 import net.krlite.equator.math.geometry.Box;
 
 import java.util.function.UnaryOperator;
@@ -17,13 +16,13 @@ public record Scissor(Box box) {
 		return new Scissor(box.apply(box()));
 	}
 
-	public void cut() {
+	public void snipOn() {
 		// Need to fit the box into the OpenGL Coordinate System
-		Box fitted = FrameInfo.Convertor.scaledToOpenGL(box());
-		RenderSystem.enableScissor((int) fitted.topLeft().x(), (int) fitted.topLeft().y(), (int) fitted.width().magnitude(), (int) fitted.height().magnitude());
+		Box fitted = box().fitToOpenGL();
+		RenderSystem.enableScissor((int) fitted.x(), (int) fitted.y(), (int) fitted.w(), (int) fitted.height().magnitude());
 	}
 
-	public void release() {
+	public void snipOff() {
 		RenderSystem.disableScissor();
 	}
 }

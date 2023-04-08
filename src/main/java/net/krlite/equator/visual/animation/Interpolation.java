@@ -6,8 +6,6 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.krlite.equator.math.algebra.Theory;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -55,16 +53,21 @@ public class Interpolation implements Runnable {
 		}
 	}
 
-	public Interpolation(double originValue, double targetValue, double approximatedDuration, boolean pauseAtStart) {
+	public Interpolation(double value, double originValue, double targetValue, double approximatedDuration, boolean pauseAtStart) {
+		this.value = new AtomicDouble(value);
+		this.originValue = new AtomicDouble(originValue);
 		this.targetValue = new AtomicDouble(targetValue);
-		this.value = new AtomicDouble(originValue);
 		this.speed = new AtomicDouble(Theory.clamp(1 / approximatedDuration, 0, 1));
 
-		start();
-		if (pauseAtStart) {
-			pause();
-			reset(originValue);
-		}
+		start(pauseAtStart);
+	}
+
+	public Interpolation(double value, double originValue, double targetValue, double approximatedDuration) {
+		this(value, originValue, targetValue, approximatedDuration, false);
+	}
+
+	public Interpolation(double originValue, double targetValue, double approximatedDuration, boolean pauseAtStart) {
+		this(originValue, originValue, targetValue, approximatedDuration, pauseAtStart);
 	}
 
 	public Interpolation(double originValue, double targetValue, double approximatedDuration) {
@@ -78,18 +81,39 @@ public class Interpolation implements Runnable {
 	public Interpolation(double originValue, double targetValue) {
 		this(originValue, targetValue, false);
 	}
+	
+	protected Interpolation(Interpolation parent) {
+		this.value = new AtomicDouble(parent.value.get());
+		this.originValue = new AtomicDouble(parent.originValue.get());
+		this.targetValue = new AtomicDouble(parent.targetValue.get());
+		this.speed = new AtomicDouble(parent.speed.get());
+		this.started.set(parent.started.get());
+		this.completed.set(parent.completed.get());
+		this.future.set(parent.future.get());
+	}
 
-	private final AtomicDouble value, targetValue, speed;
+	private final AtomicDouble value, originValue, targetValue, speed;
 	private final AtomicBoolean started = new AtomicBoolean(false), completed = new AtomicBoolean(false);
 	private final AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>(null);
-	private final Executor executor = Executors.newSingleThreadScheduledExecutor();
 
-	public double targetValue() {
-		return targetValue.get();
+	public Interpolation copy() {
+		return new Interpolation(this);
 	}
 
 	public double value() {
 		return value.get();
+	}
+
+	public double percentage() {
+		return Theory.clamp((value() - originValue()) / (targetValue() - originValue()), 0, 1);
+	}
+
+	public double originValue() {
+		return originValue.get();
+	}
+
+	public double targetValue() {
+		return targetValue.get();
 	}
 
 	public double speed() {
@@ -102,6 +126,10 @@ public class Interpolation implements Runnable {
 
 	private ScheduledFuture<?> future() {
 		return future.get();
+	}
+
+	public void originValue(double originValue) {
+		this.originValue.set(originValue);
 	}
 
 	public void targetValue(double targetValue) {
@@ -142,9 +170,12 @@ public class Interpolation implements Runnable {
 		Callbacks.EndFrame.EVENT.invoker().onFrameEnd(this);
 	}
 
-	private void start() {
+	private void start(boolean pauseAtStart) {
 		Callbacks.Start.EVENT.invoker().onStart(this);
 		future(AnimationThreadPoolExecutor.join(this, 0));
+		if (pauseAtStart) {
+			future().cancel(true);
+		}
 	}
 
 	public void pause() {
@@ -169,8 +200,8 @@ public class Interpolation implements Runnable {
 		}
 	}
 
-	public void reset(double originValue) {
-		value.set(originValue);
+	public void reset() {
+		value.set(originValue());
 	}
 
 	public boolean isRunning() {

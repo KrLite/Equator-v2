@@ -1,8 +1,10 @@
 package net.krlite.equator.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -10,21 +12,13 @@ import org.joml.Matrix4f;
 
 import java.util.function.UnaryOperator;
 
-public class GradiantRenderer {
-	public static GradiantRenderer startHorizontal(Box box, AccurateColor left, AccurateColor right) {
+public record GradiantRenderer(Box box, AccurateColor topLeft, AccurateColor bottomLeft, AccurateColor bottomRight, AccurateColor topRight) implements Renderable {
+	public static GradiantRenderer readyHorizontal(Box box, AccurateColor left, AccurateColor right) {
 		return new GradiantRenderer(box, left, left, right, right);
 	}
 
-	public static GradiantRenderer startVertical(Box box, AccurateColor top, AccurateColor bottom) {
+	public static GradiantRenderer readyVertical(Box box, AccurateColor top, AccurateColor bottom) {
 		return new GradiantRenderer(box, top, bottom, bottom, top);
-	}
-
-	public GradiantRenderer(Box box, AccurateColor topLeft, AccurateColor bottomLeft, AccurateColor bottomRight, AccurateColor topRight) {
-		this.box = box;
-		this.topLeft = topLeft;
-		this.bottomLeft = bottomLeft;
-		this.bottomRight = bottomRight;
-		this.topRight = topRight;
 	}
 
 	public GradiantRenderer(Box box, AccurateColor color) {
@@ -35,28 +29,15 @@ public class GradiantRenderer {
 		this(box, AccurateColor.TRANSPARENT);
 	}
 
-	private final Box box;
-	private final AccurateColor topLeft, bottomLeft, bottomRight, topRight;
+	// box() is a record method
 
-	public Box box() {
-		return box;
-	}
+	// topLeft() is a record method
 
-	public AccurateColor topLeft() {
-		return topLeft;
-	}
+	// bottomLeft() is a record method
 
-	public AccurateColor bottomLeft() {
-		return bottomLeft;
-	}
+	// bottomRight() is a record method
 
-	public AccurateColor bottomRight() {
-		return bottomRight;
-	}
-
-	public AccurateColor topRight() {
-		return topRight;
-	}
+	// topRight() is a record method
 
 	private GradiantRenderer preserve(Box box) {
 		return new GradiantRenderer(box, topLeft(), bottomLeft(), bottomRight(), topRight());
@@ -183,8 +164,13 @@ public class GradiantRenderer {
 		return get(0.5, 0.5);
 	}
 
-	private boolean existsColor() {
+	public boolean existsColor() {
 		return topLeft().hasColor() || topRight().hasColor() || bottomRight().hasColor() || bottomLeft().hasColor();
+	}
+
+	@Override
+	public boolean isRenderable() {
+		return Renderable.isBoxLegal(box()) && existsColor();
 	}
 
 	private AccurateColor[] getColors() {
@@ -234,7 +220,7 @@ public class GradiantRenderer {
 	}
 
 	public void render(MatrixStack matrixStack, float z) {
-		if (!existsColor()) {
+		if (!isRenderable()) {
 			return;
 		}
 
@@ -265,10 +251,10 @@ public class GradiantRenderer {
 
 	public void renderOutline(MatrixStack matrixStack, Vector expansion, OutlineMode outlineMode, float z) {
 		Box corner = Box.fromVectorCentered(box().center(), expansion);
-		Box gapHorizontal = Box.fromVectorCentered(box().center(), Vector.fromCartesian(box().width().magnitude(), expansion.y()));
+		Box gapHorizontal = Box.fromVectorCentered(box().center(), Vector.fromCartesian(box().w(), expansion.y()));
 		Box gapVertical = Box.fromVectorCentered(box().center(), Vector.fromCartesian(expansion.x(), box().height().magnitude()));
 
-		double width = box().width().magnitude() + expansion.x() * 2, height = box().height().magnitude() + expansion.y() * 2;
+		double width = box().w() + expansion.x() * 2, height = box().h() + expansion.y() * 2;
 		double xCornerScalar = expansion.x() / width, yCornerScalar = expansion.y() / height;
 
 		AccurateColor topLeft = topLeft(), topLeftBottom = AccurateColor.TRANSPARENT, topLeftTop = AccurateColor.TRANSPARENT, topLeftDiagonal = AccurateColor.TRANSPARENT;

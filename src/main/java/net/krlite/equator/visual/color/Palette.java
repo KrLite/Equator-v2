@@ -110,5 +110,13 @@ public class Palette {
 				BACKGROUND_GREEN = AccurateColor.fromInt(0x153F15), BACKGROUND_AQUA = AccurateColor.fromInt(0x153F3F),
 				BACKGROUND_RED = AccurateColor.fromInt(0x3F1515), BACKGROUND_LIGHT_PURPLE = AccurateColor.fromInt(0x3F153F),
 				BACKGROUND_YELLOW = AccurateColor.fromInt(0x3F3F15), BACKGROUND_WHITE = AccurateColor.fromInt(0x3F3F3F);
+
+		/**
+		 * <b>Tooltip</b>
+		 * <br />
+		 * Colors used in the <b>tooltip.</b>
+		 */
+		public static final AccurateColor TOOLTIP_BORDER_LIGHT = AccurateColor.fromInt(0x505000FF), TOOLTIP_BORDER_DARK = AccurateColor.fromInt(0x5028007F),
+				TOOLTIP_BACKGROUND = AccurateColor.fromInt(0xF0100010);
 	}
 }

@@ -1,11 +1,13 @@
 package net.krlite.equator.math.geometry;
 
-import net.krlite.equator.frame.FrameInfo;
+import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.render.BoxRenderer;
 import net.krlite.equator.render.GradiantRenderer;
 import net.krlite.equator.render.ModelRenderer;
-import net.krlite.equator.render.Scissor;
+import net.krlite.equator.render.SectionRenderer;
+import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.visual.color.AccurateColor;
+import net.krlite.equator.visual.text.Section;
 import net.krlite.equator.visual.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -87,6 +89,22 @@ public record Box(Vector origin, Vector size) {
 		return Vector.fromCartesian(bottomRight().x(), topLeft().y());
 	}
 
+	public Vector topCenter() {
+		return Vector.fromCartesian(center().x(), top());
+	}
+
+	public Vector bottomCenter() {
+		return Vector.fromCartesian(center().x(), bottom());
+	}
+
+	public Vector leftCenter() {
+		return Vector.fromCartesian(left(), center().y());
+	}
+
+	public Vector rightCenter() {
+		return Vector.fromCartesian(right(), center().y());
+	}
+
 	public double top() {
 		return topLeft().y();
 	}
@@ -124,7 +142,7 @@ public record Box(Vector origin, Vector size) {
 	}
 
 	public Box topLeft(Vector topLeft) {
-		return origin(topLeft);
+		return Box.fromVector(topLeft, bottomRight());
 	}
 
 	public Box bottomLeft(Vector bottomLeft) {
@@ -137,6 +155,22 @@ public record Box(Vector origin, Vector size) {
 
 	public Box topRight(Vector topRight) {
 		return Box.fromVector(bottomLeft(), topRight);
+	}
+
+	public Box topCenter(Vector topCenter) {
+		return Box.fromVector(topCenter.subtract(width().divide(2)), topCenter.add(width().divide(2)));
+	}
+
+	public Box bottomCenter(Vector bottomCenter) {
+		return Box.fromVector(bottomCenter.subtract(width().divide(2)), bottomCenter.add(width().divide(2)));
+	}
+
+	public Box leftCenter(Vector leftCenter) {
+		return Box.fromVector(leftCenter.subtract(height().divide(2)), leftCenter.add(height().divide(2)));
+	}
+
+	public Box rightCenter(Vector rightCenter) {
+		return Box.fromVector(rightCenter.subtract(height().divide(2)), rightCenter.add(height().divide(2)));
 	}
 
 	public Box top(double y) {
@@ -184,31 +218,71 @@ public record Box(Vector origin, Vector size) {
 	}
 
 	public Box translateTop(double yTranslation) {
-		return top(top() + height().magnitude() * yTranslation);
+		return top(top() + h() * yTranslation);
 	}
 
 	public Box translateBottom(double yTranslation) {
-		return bottom(bottom() + height().magnitude() * yTranslation);
+		return bottom(bottom() + h() * yTranslation);
 	}
 
 	public Box translateLeft(double xTranslation) {
-		return left(left() + width().magnitude() * xTranslation);
+		return left(left() + w() * xTranslation);
 	}
 
 	public Box translateRight(double xTranslation) {
-		return right(right() + width().magnitude() * xTranslation);
+		return right(right() + w() * xTranslation);
 	}
 
 	public Box translateWidth(double widthTranslation) {
-		return width(width().magnitude() + width().multiply(widthTranslation).magnitude());
+		return width(w() + width().multiply(widthTranslation).magnitude());
 	}
 
 	public Box translateHeight(double heightTranslation) {
-		return height(height().magnitude() + height().multiply(heightTranslation).magnitude());
+		return height(h() + height().multiply(heightTranslation).magnitude());
 	}
 
-	public Box translateCenter(double xTranslation, double yTranslation) {
+	public Box translate(double xTranslation, double yTranslation) {
 		return center(center().add(width().multiply(xTranslation)).add(height().multiply(yTranslation)));
+	}
+
+	public Box shiftTopLeft(Vector offset) {
+		return topLeft(topLeft().add(offset));
+	}
+
+	public Box shiftBottomLeft(Vector offset) {
+		return bottomLeft(bottomLeft().add(offset));
+	}
+
+	public Box shiftBottomRight(Vector offset) {
+		return bottomRight(bottomRight().add(offset));
+	}
+
+	public Box shiftTopRight(Vector offset) {
+		return topRight(topRight().add(offset));
+	}
+
+	public Box shiftTop(double y) {
+		return shiftTopLeft(Vector.fromCartesian(topLeft().x(), y));
+	}
+
+	public Box shiftBottom(double y) {
+		return shiftBottomLeft(Vector.fromCartesian(bottomLeft().x(), y));
+	}
+
+	public Box shiftLeft(double x) {
+		return shiftTopLeft(Vector.fromCartesian(x, topLeft().y()));
+	}
+
+	public Box shiftRight(double x) {
+		return shiftTopRight(Vector.fromCartesian(x, topRight().y()));
+	}
+
+	public Box shift(Vector offset) {
+		return center(center().add(offset));
+	}
+
+	public Box shift(double xOffset, double yOffset) {
+		return shift(Vector.fromCartesian(xOffset, yOffset));
 	}
 
 	public Box alignTopLeft(Vector topLeft) {
@@ -260,6 +334,30 @@ public record Box(Vector origin, Vector size) {
 		return Math.abs(width().cross(height()));
 	}
 
+	public double x() {
+		return topLeft().x();
+	}
+
+	public double y() {
+		return topLeft().y();
+	}
+
+	public double w() {
+		return width().magnitude();
+	}
+
+	public double h() {
+		return height().magnitude();
+	}
+
+	public double xCenter() {
+		return center().x();
+	}
+
+	public double yCenter() {
+		return center().y();
+	}
+
 	public Box squareOuter() {
 		double max = width().magnitudeMax(height());
 		return width(max).height(max).center(center());
@@ -268,19 +366,6 @@ public record Box(Vector origin, Vector size) {
 	public Box squareInner() {
 		double min = width().magnitudeMin(height());
 		return width(min).height(min).center(center());
-	}
-
-	public Box shift(Vector offset) {
-		return center(center().add(offset));
-	}
-
-	public Box shift(double xOffset, double yOffset) {
-		return shift(Vector.fromCartesian(xOffset, yOffset));
-	}
-
-	public Box translate(double xTranslation, double yTranslation) {
-		Vector translatedSize = Vector.fromCartesian(size().x() * xTranslation, size().y() * yTranslation);
-		return topLeft(topLeft().add(translatedSize));
 	}
 
 	public Box rotateByRightAngle(int rotationCount) {
@@ -295,19 +380,19 @@ public record Box(Vector origin, Vector size) {
 	}
 
 	public Box scale(double xScalar, double yScalar) {
-		return width(width().magnitude() * xScalar).height(height().magnitude() * yScalar);
+		return width(w() * xScalar).height(h() * yScalar);
 	}
 
 	public Box scale(double scalar) {
 		return scale(scalar, scalar);
 	}
 
-	public Box scaleCentered(double xScalar, double yScalar) {
+	public Box scaleCenter(double xScalar, double yScalar) {
 		return scale(xScalar, yScalar).center(center());
 	}
 
-	public Box scaleCentered(double scalar) {
-		return scaleCentered(scalar, scalar);
+	public Box scaleCenter(double scalar) {
+		return scaleCenter(scalar, scalar);
 	}
 
 	public Box expand(Vector expansion) {
@@ -335,7 +420,7 @@ public record Box(Vector origin, Vector size) {
 	}
 
 	public Box normalizeBy(Box another) {
-		return scaleCentered(1 / another.width().magnitude(), 1 / another.height().magnitude())
+		return scaleCenter(1 / another.w(), 1 / another.height().magnitude())
 					   .center(center().subtract(another.center()).scaleX(1 / another.width().magnitude()).scaleY(1 / another.height().magnitude()));
 	}
 
@@ -343,8 +428,8 @@ public record Box(Vector origin, Vector size) {
 		return new Box(topLeft().interpolate(vector, lambda), size().interpolate(vector, lambda));
 	}
 
-	public Box interpolate(Box box, double lambda) {
-		return new Box(topLeft().interpolate(box.topLeft(), lambda), size().interpolate(box.topRight(), lambda));
+	public Box interpolate(Box another, double lambda) {
+		return new Box(topLeft().interpolate(another.topLeft(), lambda), size().interpolate(another.size(), lambda));
 	}
 
 	public Box fitToScreen() {
@@ -352,7 +437,7 @@ public record Box(Vector origin, Vector size) {
 	}
 
 	public Box fitToOpenGL() {
-		return FrameInfo.Convertor.screenToOpenGL(this);
+		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
 
 	/**
@@ -443,11 +528,15 @@ public record Box(Vector origin, Vector size) {
 		return new ModelRenderer(this).model(block);
 	}
 
+	public SectionRenderer ready(Section section) {
+		return new SectionRenderer(this, section);
+	}
+
 	/**
 	 * Transform this {@link Box} into a {@link Scissor}.
 	 * @return	A {@link Scissor} with the same dimensions as this {@link Box}.
 	 */
-	public Scissor toScissor() {
+	public Scissor scissor() {
 		return new Scissor(this);
 	}
 
