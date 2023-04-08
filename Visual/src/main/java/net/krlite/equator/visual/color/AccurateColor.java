@@ -2,12 +2,13 @@ package net.krlite.equator.visual.color;
 
 import com.scrtwpns.Mixbox;
 import jdk.jfr.Label;
+import net.krlite.equator.math.algebra.Theory;
 
 import java.awt.*;
 
-@Label("Visual 2.1.3")
+@Label("Visual 2.2.0")
 public class AccurateColor {
-	private static final IllegalArgumentException COLOR_ARRAY_LENGTH_EXCEPTION = new IllegalArgumentException("Color array must be of length 3 or 4");
+	private static final IllegalArgumentException COLOR_ARRAY_LENGTH_EXCEPTION = new IllegalArgumentException("Color array must be of length 3 to 4");
 
 	public static final AccurateColor BLACK = fromColor(Color.BLACK), WHITE = fromColor(Color.WHITE),
 			GRAY = fromColor(Color.GRAY), LIGHT_GRAY = fromColor(Color.LIGHT_GRAY), DARK_GRAY = fromColor(Color.DARK_GRAY),
@@ -53,6 +54,145 @@ public class AccurateColor {
 		return new AccurateColor(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color.length > 3 ? color[3] / 255.0 : 1);
 	}
 
+	public static AccurateColor fromHSV(double hue, double saturation, double value, double opacity) {
+		hue = Theory.clamp(hue, 0, 360);
+		value = Theory.clamp(value, 0, 1);
+		saturation = Theory.clamp(saturation, 0, 1);
+
+		double chroma = value * saturation;
+		double secondary = chroma * (1 - Math.abs((hue / 60.0) % 2 - 1));
+		double offset = value - chroma;
+		double red, green, blue;
+
+		if (hue >= 0 && hue < 60) {
+			red = chroma;
+			green = secondary;
+			blue = 0;
+		} else if (hue >= 60 && hue < 120) {
+			red = secondary;
+			green = chroma;
+			blue = 0;
+		} else if (hue >= 120 && hue < 180) {
+			red = 0;
+			green = chroma;
+			blue = secondary;
+		} else if (hue >= 180 && hue < 240) {
+			red = 0;
+			green = secondary;
+			blue = chroma;
+		} else if (hue >= 240 && hue < 300) {
+			red = secondary;
+			green = 0;
+			blue = chroma;
+		} else {
+			red = chroma;
+			green = 0;
+			blue = secondary;
+		}
+
+		return new AccurateColor(red + offset, green + offset, blue + offset, opacity);
+	}
+
+	public static AccurateColor fromHSB(double hue, double saturation, double brightness, double opacity) {
+		return fromHSV(hue, saturation, brightness, opacity);
+	}
+
+	public static AccurateColor fromHSL(double hue, double saturation, double lightness, double opacity) {
+		hue = Theory.clamp(hue, 0, 360);
+		saturation = Theory.clamp(saturation, 0, 1);
+		lightness = Theory.clamp(lightness, 0, 1);
+
+		double chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
+		double huePrime = hue / 60.0;
+		double secondary = chroma * (1.0 - Math.abs(huePrime % 2.0 - 1.0));
+		double offset = lightness - chroma / 2.0;
+
+		double red, green, blue;
+
+		if (huePrime < 1.0) {
+			red = chroma;
+			green = secondary;
+			blue = 0.0;
+		} else if (huePrime < 2.0) {
+			red = secondary;
+			green = chroma;
+			blue = 0.0;
+		} else if (huePrime < 3.0) {
+			red = 0.0;
+			green = chroma;
+			blue = secondary;
+		} else if (huePrime < 4.0) {
+			red = 0.0;
+			green = secondary;
+			blue = chroma;
+		} else if (huePrime < 5.0) {
+			red = secondary;
+			green = 0.0;
+			blue = chroma;
+		} else {
+			red = chroma;
+			green = 0.0;
+			blue = secondary;
+		}
+
+		return new AccurateColor(red + offset, green + offset, blue + offset, opacity);
+	}
+
+	public static AccurateColor fromCMYK(double cyan, double magenta, double yellow, double black, double opacity) {
+		cyan = Theory.clamp(cyan, 0, 1);
+		magenta = Theory.clamp(magenta, 0, 1);
+		yellow = Theory.clamp(yellow, 0, 1);
+		black = Theory.clamp(black, 0, 1);
+
+		double red = 1 - Math.min(1, cyan * (1 - black) + black);
+		double green = 1 - Math.min(1, magenta * (1 - black) + black);
+		double blue = 1 - Math.min(1, yellow * (1 - black) + black);
+
+		return new AccurateColor(red, green, blue, opacity);
+	}
+
+	public static AccurateColor fromLab(double lightness, double a, double b, double opacity) {
+		lightness = Theory.clamp(lightness, 0, 100);
+		a = Theory.clamp(a, 0, 255);
+		b = Theory.clamp(b, 0, 255);
+
+		double y = (lightness + 16) / 116;
+		double x = a / 500 + y;
+		double z = y - b / 200;
+
+		double red = x * x * x > 0.008856 ? x * x * x : (x - (double) 16 / 116) / 7.787;
+		double green = y * y * y > 0.008856 ? y * y * y : (y - (double) 16 / 116) / 7.787;
+		double blue = z * z * z > 0.008856 ? z * z * z : (z - (double) 16 / 116) / 7.787;
+
+		red = red * 0.95047 > 0.0031308 ? 1.055 * Math.pow(red * 0.95047, 1 / 2.4) - 0.055 : 12.92 * red * 0.95047;
+		green = green > 0.0031308 ? 1.055 * Math.pow(green, 1 / 2.4) - 0.055 : 12.92 * green;
+		blue = blue * 1.08883 > 0.0031308 ? 1.055 * Math.pow(blue * 1.08883, 1 / 2.4) - 0.055 : 12.92 * blue * 1.08883;
+
+		return new AccurateColor(red, green, blue, opacity);
+	}
+
+	public static AccurateColor fromXYZ(double x, double y, double z, double opacity) {
+		x = Theory.clamp(x, 0, 95.047);
+		y = Theory.clamp(y, 0, 100);
+		z = Theory.clamp(z, 0, 108.883);
+
+		double red = x / 100 * 3.2406 + y / 100 * -1.5372 + z / 100 * -0.4986;
+		double green = x / 100 * -0.9689 + y / 100 * 1.8758 + z / 100 * 0.0415;
+		double blue = x / 100 * 0.0557 + y / 100 * -0.2040 + z / 100 * 1.0570;
+
+		red = red > 0.0031308 ? 1.055 * Math.pow(red, 1 / 2.4) - 0.055 : 12.92 * red;
+		green = green > 0.0031308 ? 1.055 * Math.pow(green, 1 / 2.4) - 0.055 : 12.92 * green;
+		blue = blue > 0.0031308 ? 1.055 * Math.pow(blue, 1 / 2.4) - 0.055 : 12.92 * blue;
+
+		return new AccurateColor(red, green, blue, opacity);
+	}
+
+	public static AccurateColor fromLCH(double lightness, double chroma, double hue, double opacity) {
+		double a = chroma * Math.cos(Math.toRadians(hue));
+		double b = chroma * Math.sin(Math.toRadians(hue));
+		return fromLab(lightness, a, b, opacity);
+	}
+
 	public static AccurateColor fromGrayscale(double gray) {
 		return new AccurateColor(gray, gray, gray, 1.0, false);
 	}
@@ -62,10 +202,10 @@ public class AccurateColor {
 	}
 
 	protected AccurateColor(double red, double green, double blue, double opacity, boolean transparent) {
-		this.red = red;
-		this.green = green;
-		this.blue = blue;
-		this.opacity = opacity;
+		this.red = Theory.clamp(red, 0, 1);
+		this.green = Theory.clamp(green, 0, 1);
+		this.blue = Theory.clamp(blue, 0, 1);
+		this.opacity = Theory.clamp(opacity, 0, 1);
 		this.transparent = transparent;
 	}
 

@@ -8,7 +8,7 @@ import net.krlite.equator.visual.animation.Slice;
  * Contains <b>curves</b> that can be used to <b>animate</b> values.
  * @see Slice
  */
-@Label("Animation 2.1.3")
+@Label("Animation 2.2.0")
 public class Curves {
 	/**
 	 * <b>Zero</b>

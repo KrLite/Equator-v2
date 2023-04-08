@@ -1,8 +1,8 @@
 package net.krlite.equator.math.geometry;
 
 import jdk.jfr.Label;
-import net.krlite.equator.frame.FrameInfo;
 import net.krlite.equator.math.algebra.Theory;
+import net.krlite.equator.render.frame.FrameInfo;
 
 /**
  * A vector in 2D space(defined by the Screen Cartesian Coordinate) with a magnitude and an angle <code>theta</code>.
@@ -32,7 +32,7 @@ import net.krlite.equator.math.algebra.Theory;
  *              	</p>
  * @param magnitude	The magnitude of the vector.
  */
-@Label("Math 2.1.3")
+@Label("Math 2.2.0")
 public record Vector(double theta, double magnitude) {
 	/**
 	 * A vector with a magnitude of <code>0</code> and an angle of <code>0</code>.

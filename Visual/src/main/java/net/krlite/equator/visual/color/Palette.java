@@ -1,14 +1,19 @@
 package net.krlite.equator.visual.color;
 
 import jdk.jfr.Label;
+import net.krlite.equator.math.algebra.Theory;
 
 /**
  * <h1>Palette</h1>
- * Contains a set of <b>colors</b> that can be used in a variety of contexts.
+ * Contains <b>coloring utilities</b> along with <b>sets of colors</b> that can be used in a variety of contexts.
  * @see AccurateColor
  */
-@Label("Visual 2.1.3")
+@Label("Visual 2.2.0")
 public class Palette {
+	public static AccurateColor rainbow(double t) {
+		return AccurateColor.fromHSL(Theory.mod(t, 1) * 360, 1, 0.72, 1);
+	}
+
 	public static final AccurateColor BROWN = new AccurateColor(0.5, 0.25, 0, 1), TEAL = new AccurateColor(0, 0.5, 0.5, 1),
 			GOLD = new AccurateColor(1, 0.75, 0, 1), SILVER = new AccurateColor(0.75, 0.75, 0.75, 1), NAVY = new AccurateColor(0, 0, 0.5, 1),
 			MAROON = new AccurateColor(0.5, 0, 0, 1), OLIVE = new AccurateColor(0.5, 0.5, 0, 1), LIME = new AccurateColor(0, 1, 0, 1),
@@ -107,5 +112,13 @@ public class Palette {
 				BACKGROUND_GREEN = AccurateColor.fromInt(0x153F15), BACKGROUND_AQUA = AccurateColor.fromInt(0x153F3F),
 				BACKGROUND_RED = AccurateColor.fromInt(0x3F1515), BACKGROUND_LIGHT_PURPLE = AccurateColor.fromInt(0x3F153F),
 				BACKGROUND_YELLOW = AccurateColor.fromInt(0x3F3F15), BACKGROUND_WHITE = AccurateColor.fromInt(0x3F3F3F);
+
+		/**
+		 * <b>Tooltip</b>
+		 * <br />
+		 * Colors used in the <b>tooltip.</b>
+		 */
+		public static final AccurateColor TOOLTIP_BORDER_LIGHT = AccurateColor.fromInt(0x505000FF), TOOLTIP_BORDER_DARK = AccurateColor.fromInt(0x5028007F),
+				TOOLTIP_BACKGROUND = AccurateColor.fromInt(0xF0100010);
 	}
 }

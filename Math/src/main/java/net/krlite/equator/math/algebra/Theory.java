@@ -2,7 +2,7 @@ package net.krlite.equator.math.algebra;
 
 import jdk.jfr.Label;
 
-@Label("Math 2.1.3")
+@Label("Math 2.2.0")
 public class Theory {
 	/**
 	 * A small margin of error for comparing doubles.
@@ -116,6 +116,16 @@ public class Theory {
 	 */
 	public static double clamp(double value, double min, double max) {
 		return Math.max(min, Math.min(max, value));
+	}
+
+	/**
+	 * Modulos a value.
+	 * @param value	The value to mod.
+	 * @param mod	The modulus.
+	 * @return	The modulated value.
+	 */
+	public static double mod(double value, double mod) {
+		return value - Math.floor(value / mod) * mod;
 	}
 
 	/**

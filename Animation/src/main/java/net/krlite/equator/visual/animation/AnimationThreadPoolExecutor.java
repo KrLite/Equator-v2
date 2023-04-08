@@ -7,7 +7,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-@Label("Animation 2.1.3")
+@Label("Animation 2.2.0")
 public class AnimationThreadPoolExecutor {
 	public static final ScheduledThreadPoolExecutor INSTANCE = new ScheduledThreadPoolExecutor(
 			1, new ThreadPoolExecutor.DiscardPolicy()

@@ -5,8 +5,6 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -14,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
-@Label("Animation 2.1.3")
+@Label("Animation 2.2.0")
 public class Animation implements Runnable {
 	public interface Callbacks {
 		interface Start {
@@ -86,6 +84,17 @@ public class Animation implements Runnable {
 		this(startValue, endValue, duration, TimeUnit.MILLISECONDS, slice);
 	}
 
+	protected Animation(Animation parent) {
+		this.startValue = parent.startValue();
+		this.endValue = parent.endValue();
+		this.duration = parent.duration();
+		this.progress = new AtomicLong(parent.progress.get());
+		this.timeUnit = parent.timeUnit();
+		this.slice = new AtomicReference<>(parent.slice.get());
+		this.repeat = new AtomicBoolean(parent.repeat.get());
+		this.future.set(parent.future.get());
+	}
+
 	private final double startValue, endValue;
 	private final long duration;
 	private final AtomicLong progress;
@@ -93,7 +102,10 @@ public class Animation implements Runnable {
 	private final AtomicReference<Slice> slice;
 	private final AtomicBoolean repeat;
 	private final AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>(null);
-	private final Executor executor = Executors.newSingleThreadScheduledExecutor();
+
+	public Animation copy() {
+		return new Animation(this);
+	}
 
 	public double startValue() {
 		return startValue;
@@ -111,16 +123,16 @@ public class Animation implements Runnable {
 		return timeUnit;
 	}
 
-	public double percentage() {
+	public double progress() {
 		return progress.get() / (double) duration;
 	}
 
 	public double value() {
-		return slice().apply(startValue(), endValue(), percentage());
+		return slice().apply(startValue(), endValue(), progress());
 	}
 
-	public double valueAsPercentage() {
-		return slice().apply(0, 1, percentage());
+	public double percentage() {
+		return slice().apply(0, 1, progress());
 	}
 
 	public Slice slice() {
