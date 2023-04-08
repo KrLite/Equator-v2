@@ -224,7 +224,7 @@ public enum Mouse {
 		setCursor(createCursor(cursor));
 	}
 
-	public static void reseCursor() {
+	public static void resetCursor() {
 		setCursor(Cursor.ARROW);
 	}
 
