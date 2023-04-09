@@ -96,6 +96,38 @@ public class Texture {
 		return flippedY() ? flippedX() ? uvBox().bottomLeft() : uvBox().topLeft() : flippedX() ? uvBox().bottomRight() : uvBox().topRight();
 	}
 
+	public Vector uvTopCenter() {
+		return flippedY() ? uvBox().bottomCenter() : uvBox().topCenter();
+	}
+
+	public Vector uvBottomCenter() {
+		return flippedY() ? uvBox().topCenter() : uvBox().bottomCenter();
+	}
+
+	public Vector uvLeftCenter() {
+		return flippedX() ? uvBox().rightCenter() : uvBox().leftCenter();
+	}
+
+	public Vector uvRightCenter() {
+		return flippedX() ? uvBox().leftCenter() : uvBox().rightCenter();
+	}
+
+	public double uvTop() {
+		return flippedY() ? uvBox().bottom() : uvBox().top();
+	}
+
+	public double uvBottom() {
+		return flippedY() ? uvBox().top() : uvBox().bottom();
+	}
+
+	public double uvLeft() {
+		return flippedX() ? uvBox().right() : uvBox().left();
+	}
+
+	public double uvRight() {
+		return flippedX() ? uvBox().left() : uvBox().right();
+	}
+
 	public boolean flippedX() {
 		return flippedX;
 	}

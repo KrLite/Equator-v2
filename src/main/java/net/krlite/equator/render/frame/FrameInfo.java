@@ -6,6 +6,10 @@ import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 
 public class FrameInfo {
+	public static float tickDelta() {
+		return MinecraftClient.getInstance().getTickDelta();
+	}
+
 	public static Box scaled() {
 		return new Box(Vector.fromCartesian(MinecraftClient.getInstance().getWindow().getScaledWidth(), MinecraftClient.getInstance().getWindow().getScaledHeight()));
 	}
@@ -18,7 +22,7 @@ public class FrameInfo {
 	}
 
 	public static Box openGL() {
-		return scaled().fitToOpenGL();
+		return Convertor.screenToOpenGL(screen());
 	}
 
 	public static class Convertor {

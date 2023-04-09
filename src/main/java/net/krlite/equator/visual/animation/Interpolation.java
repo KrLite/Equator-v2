@@ -148,6 +148,12 @@ public class Interpolation implements Runnable {
 		this.future.set(future);
 	}
 
+	public void reverse() {
+		double originValue = originValue();
+		originValue(targetValue());
+		targetValue(originValue);
+	}
+
 	/**
 	 * Runs this operation.
 	 */

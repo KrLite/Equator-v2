@@ -1,11 +1,15 @@
 package net.krlite.equator.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import it.unimi.dsi.fastutil.doubles.DoubleIterator;
+import net.krlite.equator.math.algebra.Theory;
+import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
 import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.visual.color.AccurateColor;
+import net.krlite.equator.visual.color.Palette;
 import net.krlite.equator.visual.texture.Texture;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -18,7 +22,10 @@ import org.joml.Quaternionf;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
-public record BoxRenderer(Box box, Quaterniondc modifier, @Nullable AccurateColor color, @Nullable Texture texture) implements Renderable {
+public record BoxRenderer(
+		Box box, Quaterniondc modifier,
+		@Nullable AccurateColor color, @Nullable Texture texture
+) implements Renderable {
 	protected enum State {
 		UNABLE(null),
 		COLOR(VertexFormats.POSITION_COLOR),
@@ -52,6 +59,10 @@ public record BoxRenderer(Box box, Quaterniondc modifier, @Nullable AccurateColo
 
 	private BoxRenderer preserve(Box box, Box uvBox) {
 		return new BoxRenderer(box, modifier(), color(), hasTexture() ? Objects.requireNonNull(texture()).uvBox(uvBox) : texture());
+	}
+	
+	private BoxRenderer preserve(Box box) {
+		return new BoxRenderer(box, modifier(), color(), texture());
 	}
 
 	public BoxRenderer modifier(Quaterniondc modifier) {
@@ -185,19 +196,19 @@ public record BoxRenderer(Box box, Quaterniondc modifier, @Nullable AccurateColo
 		Box corner = box().squareInner().scaleCenter(0.5);
 
 		// Top left
-		preserve(corner.alignTopLeft(box().topLeft()), new Box(0, 0, 0.5, 0.5)).render(matrixStack, z);
+		preserve(corner.alignTopLeft(box()), new Box(0, 0, 0.5, 0.5)).render(matrixStack, z);
 
 		// Bottom left
-		preserve(corner.alignBottomLeft(box().bottomLeft()), new Box(0, 0.5, 0.5, 1)).render(matrixStack, z);
+		preserve(corner.alignBottomLeft(box()), new Box(0, 0.5, 0.5, 1)).render(matrixStack, z);
 
 		// Bottom right
-		preserve(corner.alignBottomRight(box().bottomRight()), new Box(0.5, 0.5, 1, 1)).render(matrixStack, z);
+		preserve(corner.alignBottomRight(box()), new Box(0.5, 0.5, 1, 1)).render(matrixStack, z);
 
 		// Top right
-		preserve(corner.alignTopRight(box().topRight()), new Box(0.5, 0, 1, 0.5)).render(matrixStack, z);
+		preserve(corner.alignTopRight(box()), new Box(0.5, 0, 1, 0.5)).render(matrixStack, z);
 
 		if (box().w() > box().height().magnitude()) {
-			Box gap = Box.fromVector(corner.alignTopLeft(box().topLeft()).topRight(), corner.alignTopRight(box().topRight()).bottomLeft());
+			Box gap = Box.fromVector(corner.alignTopLeft(box()).topRight(), corner.alignTopRight(box()).bottomLeft());
 
 			// Top
 			preserve(gap, new Box(0.5, 0, 0.5, 0.5)).render(matrixStack, z);
@@ -206,7 +217,7 @@ public record BoxRenderer(Box box, Quaterniondc modifier, @Nullable AccurateColo
 			preserve(gap.translate(0, 1), new Box(0.5, 0.5, 0.5, 1)).render(matrixStack, z);
 		}
 		else if (box().w() < box().height().magnitude()) {
-			Box gap = Box.fromVector(corner.alignTopLeft(box().topLeft()).bottomLeft(), corner.alignBottomLeft(box().bottomLeft()).topRight());
+			Box gap = Box.fromVector(corner.alignTopLeft(box()).bottomLeft(), corner.alignBottomLeft(box()).topRight());
 
 			// Left
 			preserve(gap, new Box(0, 0.5, 0.5, 0.5)).render(matrixStack, z);
@@ -226,5 +237,130 @@ public record BoxRenderer(Box box, Quaterniondc modifier, @Nullable AccurateColo
 
 	public void renderAndTile(MatrixStack matrixStack) {
 		renderAndTile(matrixStack, 0);
+	}
+	
+	public void renderNineSliced(MatrixStack matrixStack, double leftWidth, double rightWidth, double topHeight, double bottomHeight, double width, double height) {
+		leftWidth = Math.min(leftWidth, box().w() / 2);
+		rightWidth = Math.min(rightWidth, box().w() / 2);
+		topHeight = Math.min(topHeight, box().h() / 2);
+		bottomHeight = Math.min(bottomHeight, box().h() / 2);
+
+		if (!hasTexture() || (Theory.looseEquals(box().w(), width) && Theory.looseEquals(box().h(), height))) {
+			render(matrixStack);
+			return;
+		}
+
+		assert texture() != null;
+
+		Box uvBox = texture().uvBox();
+
+		if (Theory.looseEquals(box().w(), width)) {
+			// Left
+			preserve(
+					box().width(leftWidth),
+					uvBox.scale(leftWidth / width, 1)
+			).render(matrixStack);
+
+			// Center
+			preserve(
+					box().width(box().w() - leftWidth - rightWidth).center(box()),
+					uvBox.scale((width - leftWidth - rightWidth) / width, 1).center(uvBox)
+			).renderRepeating(matrixStack, width - leftWidth - rightWidth, height);
+
+			// Right
+			preserve(
+					box().width(rightWidth).alignRight(box()),
+					uvBox.scale(rightWidth / width, 1).alignRight(uvBox)
+			).render(matrixStack);
+		} else if (Theory.looseEquals(box().h(), height)) {
+			// Top
+			preserve(
+					box().height(topHeight),
+					uvBox.scale(1, topHeight / height)
+			).render(matrixStack);
+
+			// Center
+			preserve(
+					box().height(box().h() - topHeight - bottomHeight).center(box()),
+					uvBox.scale(1, (height - topHeight - bottomHeight) / height).center(uvBox)
+			).renderRepeating(matrixStack, width, height - topHeight - bottomHeight);
+
+			// Bottom
+			preserve(
+					box().height(bottomHeight).alignBottom(box()),
+					uvBox.scale(1, bottomHeight / height).alignBottom(uvBox)
+			).render(matrixStack);
+		} else {
+			// Top left
+			preserve(
+					box().width(leftWidth).height(topHeight),
+					uvBox.scale(leftWidth / width, topHeight / height)
+			).render(matrixStack);
+
+			// Top center
+			preserve(
+					box().width(box().w() - leftWidth - rightWidth).height(topHeight).center(box()).alignTop(box()),
+					uvBox.scale((width - leftWidth - rightWidth) / width, topHeight / height).center(uvBox).alignTop(uvBox)
+			).renderRepeating(matrixStack, width - leftWidth - rightWidth, topHeight);
+
+			// Top right
+			preserve(
+					box().width(rightWidth).height(topHeight).alignTopRight(box()),
+					uvBox.scale(rightWidth / width, topHeight / height).alignTopRight(uvBox)
+			).render(matrixStack);
+
+			// Center left
+			preserve(
+					box().width(leftWidth).height(box().h() - topHeight - bottomHeight).center(box()).alignLeft(box()),
+					uvBox.scale(leftWidth / width, (height - topHeight - bottomHeight) / height).center(uvBox).alignLeft(uvBox)
+			).renderRepeating(matrixStack, leftWidth, height - topHeight - bottomHeight);
+
+			// Center
+			preserve(
+					box().width(box().w() - leftWidth - rightWidth).height(box().h() - topHeight - bottomHeight).center(box()),
+					uvBox.scale((width - leftWidth - rightWidth) / width, (height - topHeight - bottomHeight) / height).center(uvBox)
+			).renderRepeating(matrixStack, width - leftWidth - rightWidth, height - topHeight - bottomHeight);
+
+			// Center right
+			preserve(
+					box().width(rightWidth).height(box().h() - topHeight - bottomHeight).center(box()).alignRight(box()),
+					uvBox.scale(rightWidth / width, (height - topHeight - bottomHeight) / height).center(uvBox).alignRight(uvBox)
+			).renderRepeating(matrixStack, rightWidth, height - topHeight - bottomHeight);
+
+			// Bottom left
+			preserve(
+					box().width(leftWidth).height(bottomHeight).alignBottomLeft(box()),
+					uvBox.scale(leftWidth / width, bottomHeight / height).alignBottomLeft(uvBox)
+			).render(matrixStack);
+
+			// Bottom center
+			preserve(
+					box().width(box().w() - leftWidth - rightWidth).height(bottomHeight).center(box()).alignBottom(box()),
+					uvBox.scale((width - leftWidth - rightWidth) / width, bottomHeight / height).center(uvBox).alignBottom(uvBox)
+			).renderRepeating(matrixStack, width - leftWidth - rightWidth, bottomHeight);
+
+			// Bottom right
+			preserve(
+					box().width(rightWidth).height(bottomHeight).alignBottomRight(box()),
+					uvBox.scale(rightWidth / width, bottomHeight / height).alignBottomRight(uvBox)
+			).render(matrixStack);
+		}
+	}
+
+	private void renderRepeating(MatrixStack matrixStack, double width, double height) {
+		if (!hasTexture()) render(matrixStack);
+
+		assert texture() != null;
+
+		for (double x = 0; x < box().w(); x += width) {
+			for (double y = 0; y < box().h(); y += height) {
+				preserve(
+						box().width(Math.min(width, box().w() - x)).height(Math.min(height, box().h() - y)).shift(x, y),
+						texture().uvBox()
+								.scale(Math.min(width, box().w() - x) / width, Math.min(height, box().h() - y) / height)
+								.shift(x / width, y / height)
+				).render(matrixStack);
+			}
+		}
 	}
 }

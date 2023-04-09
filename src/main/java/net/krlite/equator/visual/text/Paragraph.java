@@ -40,31 +40,24 @@ public record Paragraph(Text text, double scalar) {
 	public static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n"), FORMATTING_PATTERN = Pattern.compile("§(?<code>[0-9a-fk-or])");
 	public static final String NEWLINE = "\n";
 
-	public static Paragraph of(Text text, double scalar) {
-		return new Paragraph(text, scalar);
-	}
-
-	public static Paragraph of(Text text) {
-		return new Paragraph(text, 1);
-	}
-
-	public static Paragraph title(Text text) {
-		return of(text, Section.DEFAULT_TITLE_SCALAR);
-	}
-	public static Paragraph subtitle(Text text) {
-		return of(text, Section.DEFAULT_SUBTITLE_SCALAR);
-	}
-
 	public static Paragraph spacing(double scalar) {
-		return new Paragraph(Text.of(""), scalar);
+		return new Paragraph("", scalar);
 	}
 
 	public static Paragraph spacing() {
 		return spacing(1);
 	}
 
+	public Paragraph(String text, double scalar) {
+		this(Text.of(text), scalar);
+	}
+
 	public Paragraph(Text text) {
 		this(text, 1);
+	}
+
+	public Paragraph(String text) {
+		this(Text.of(text));
 	}
 
 	// text() is a record method
@@ -154,5 +147,29 @@ public record Paragraph(Text text, double scalar) {
 		}
 
 		matrixStack.pop();
+	}
+
+	private void print(String text, boolean withFormattingPattern) {
+		if (withFormattingPattern) {
+			System.out.println(text);
+		} else {
+			System.out.println(FORMATTING_PATTERN.matcher(text).replaceAll(""));
+		}
+	}
+
+	public void print(boolean withFormattingPattern) {
+		print(text().getString(), withFormattingPattern);
+	}
+
+	public void print() {
+		print(true);
+	}
+
+	public void print(double fontSize, double width, boolean withFormattingPattern) {
+		Arrays.stream(wrap(fontSize, width)).forEach(text -> print(text.getString(), withFormattingPattern));
+	}
+
+	public void print(double fontSize, double width) {
+		print(fontSize, width, true);
 	}
 }

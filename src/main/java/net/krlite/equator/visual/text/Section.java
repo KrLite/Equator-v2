@@ -11,7 +11,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
-public record Section(double fontSize, double titleScalar, double subtitleScalar, double lineSpacing, double paragraphSpacing, Paragraph... paragraphs) {
+public record Section(
+		double fontSize, double titleScalar, double subtitleScalar,
+		double lineSpacing, double paragraphSpacing, Paragraph... paragraphs
+) {
 	interface AlignmentFunction {
 		Box apply(Box box, double height);
 	}
@@ -128,43 +131,83 @@ public record Section(double fontSize, double titleScalar, double subtitleScalar
 	}
 
 	public Section append(Text text, double scalar, boolean hasSpacing) {
-		return append(Paragraph.of(text, scalar), hasSpacing);
+		return append(new Paragraph(text, scalar), hasSpacing);
+	}
+
+	public Section append(String text, double scalar, boolean hasSpacing) {
+		return append(Text.of(text), scalar, hasSpacing);
 	}
 
 	public Section append(Text text, boolean hasSpacing) {
 		return append(text, 1, hasSpacing);
 	}
 
+	public Section append(String text, boolean hasSpacing) {
+		return append(Text.of(text), hasSpacing);
+	}
+
 	public Section append(Text text, double scalar) {
 		return append(text, scalar, true);
+	}
+
+	public Section append(String text, double scalar) {
+		return append(Text.of(text), scalar);
 	}
 
 	public Section append(Text text) {
 		return append(text, 1);
 	}
 
+	public Section append(String text) {
+		return append(Text.of(text));
+	}
+
 	public Section appendTitle(Text text, boolean bold, boolean hasSpacing) {
-		return append(Paragraph.of(text.copy().styled(style -> style.withBold(bold)), titleScalar()), hasSpacing);
+		return append(new Paragraph(text.copy().styled(style -> style.withBold(bold)), titleScalar()), hasSpacing);
+	}
+
+	public Section appendTitle(String text, boolean bold, boolean hasSpacing) {
+		return appendTitle(Text.of(text), bold, hasSpacing);
 	}
 
 	public Section appendTitle(Text text, boolean bold) {
 		return appendTitle(text, bold, true);
 	}
 
+	public Section appendTitle(String text, boolean bold) {
+		return appendTitle(Text.of(text), bold);
+	}
+
 	public Section appendTitle(Text text) {
 		return appendTitle(text, false);
 	}
 
+	public Section appendTitle(String text) {
+		return appendTitle(Text.of(text));
+	}
+
 	public Section appendSubtitle(Text text, boolean bold, boolean hasSpacing) {
-		return append(Paragraph.of(text.copy().styled(style -> style.withBold(bold)), subtitleScalar()), hasSpacing);
+		return append(new Paragraph(text.copy().styled(style -> style.withBold(bold)), subtitleScalar()), hasSpacing);
+	}
+
+	public Section appendSubtitle(String text, boolean bold, boolean hasSpacing) {
+		return appendSubtitle(Text.of(text), bold, hasSpacing);
 	}
 
 	public Section appendSubtitle(Text text, boolean bold) {
 		return appendSubtitle(text, bold, true);
 	}
 
+	public Section appendSubtitle(String text, boolean bold) {
+		return appendSubtitle(Text.of(text), bold);
+	}
+
 	public Section appendSubtitle(Text text) {
 		return appendTitle(text, false);
+	}
+
+	public Section appendSubtitle(String text) {
+		return appendTitle(Text.of(text));
 	}
 
 	public void render(Box box, MatrixStack matrixStack, TextRenderer textRenderer, AccurateColor color, Alignment vertical, Paragraph.Alignment horizontal, boolean shadow) {
@@ -182,5 +225,21 @@ public record Section(double fontSize, double titleScalar, double subtitleScalar
 		}
 
 		paragraph.render(fontSize(), lineSpacing(), box, matrixStack, textRenderer, color, horizontal, shadow);
+	}
+
+	public void print(boolean withFormattingPattern) {
+		Arrays.stream(paragraphs()).forEach(paragraph -> paragraph.print(withFormattingPattern));
+	}
+
+	public void print() {
+		print(true);
+	}
+
+	public void print(double width, boolean withFormattingPattern) {
+		Arrays.stream(paragraphs()).forEach(paragraph -> paragraph.print(fontSize(), width, withFormattingPattern));
+	}
+
+	public void print(double width) {
+		print(width, true);
 	}
 }

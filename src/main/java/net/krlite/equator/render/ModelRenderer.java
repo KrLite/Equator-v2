@@ -24,7 +24,10 @@ import org.joml.Quaternionf;
 
 import java.util.function.UnaryOperator;
 
-public record ModelRenderer(Box box, Quaterniondc modifier, @Nullable ItemStack itemStack, @Nullable BlockState blockState, boolean leftHanded) implements Renderable {
+public record ModelRenderer(
+		Box box, Quaterniondc modifier,
+		@Nullable ItemStack itemStack, @Nullable BlockState blockState, boolean leftHanded
+) implements Renderable {
 	public ModelRenderer(Box box, Quaterniondc modifier, @Nullable ItemStack itemStack, boolean leftHanded) {
 		this(box, modifier, itemStack, null, leftHanded);
 	}

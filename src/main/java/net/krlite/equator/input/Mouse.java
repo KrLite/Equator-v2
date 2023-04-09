@@ -3,6 +3,8 @@ package net.krlite.equator.input;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.krlite.equator.Equator;
+import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.render.frame.FrameInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
@@ -165,6 +167,20 @@ public enum Mouse {
 
 	public static boolean isUp(Mouse button) {
 		return GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), button.value()) == GLFW.GLFW_RELEASE;
+	}
+
+	public static Vector cursorScaled() {
+		return FrameInfo.Convertor.screenToScaled(cursorScreen());
+	}
+
+	public static Vector cursorScreen() {
+		double[] x = new double[1], y = new double[1];
+		GLFW.glfwGetCursorPos(MinecraftClient.getInstance().getWindow().getHandle(), x, y);
+		return Vector.fromCartesian(x[0], y[0]);
+	}
+
+	public static Vector cursorOpenGL() {
+		return FrameInfo.Convertor.screenToOpenGL(cursorScreen());
 	}
 
 	public static long createCursor(Identifier identifier, int xHot, int yHot) {

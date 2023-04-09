@@ -4,6 +4,7 @@ import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
 import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.render.base.Scissor;
+import net.krlite.equator.render.vanilla.TooltipRenderImplementation;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.color.Palette;
 import net.krlite.equator.visual.text.Paragraph;
@@ -18,7 +19,10 @@ import org.joml.Quaternionf;
 
 import java.util.function.UnaryOperator;
 
-public record SectionRenderer(Box box, Quaterniondc modifier, Section section, @Nullable AccurateColor color, Section.Alignment vertical, Paragraph.Alignment horizontal, boolean shadow) implements Renderable {
+public record SectionRenderer(
+		Box box, Quaterniondc modifier, Section section, @Nullable AccurateColor color,
+		Section.Alignment vertical, Paragraph.Alignment horizontal, boolean shadow
+) implements Renderable {
 	public SectionRenderer(Box box, Section section) {
 		this(box, new Quaterniond(), section, null, Section.Alignment.TOP, Paragraph.Alignment.LEFT, false);
 	}
@@ -148,9 +152,10 @@ public record SectionRenderer(Box box, Quaterniondc modifier, Section section, @
 
 	public void renderTooltip(MatrixStack matrixStack, TextRenderer textRenderer, double bleeding, boolean ignoreVerticalAlignment) {
 		Box preserved = box().expand(-bleeding);
+
 		double actualHeight = preserve(preserved).actualHeight();
 
-		renderTooltipBackground(matrixStack, !ignoreVerticalAlignment ? box() : box().height(actualHeight + 2 * bleeding));
+		TooltipRenderImplementation.renderTooltip(matrixStack, !ignoreVerticalAlignment ? box() : box().height(actualHeight + 2 * bleeding));
 		preserve(!ignoreVerticalAlignment ? preserved : preserved.height(actualHeight)).render(matrixStack, textRenderer, true);
 	}
 
@@ -166,40 +171,11 @@ public record SectionRenderer(Box box, Quaterniondc modifier, Section section, @
 		renderTooltip(matrixStack, MinecraftClient.getInstance().textRenderer);
 	}
 
-	private void renderTooltipBackground(MatrixStack matrixStack, Box box) {
-		Box bleed = box.expand(-1);
+	public void print(boolean withFormattingPattern) {
+		section().print(withFormattingPattern);
+	}
 
-		// Rectangle
-		bleed.ready(Palette.Minecraft.TOOLTIP_BACKGROUND).render(matrixStack);
-
-		// Background border
-		bleed.height(1).alignTop(box.top()).ready(Palette.Minecraft.TOOLTIP_BACKGROUND)
-				.render(matrixStack);
-
-		bleed.height(1).alignBottom(box.bottom()).ready(Palette.Minecraft.TOOLTIP_BACKGROUND)
-				.render(matrixStack);
-
-		bleed.width(1).alignLeft(box.left()).ready(Palette.Minecraft.TOOLTIP_BACKGROUND)
-				.render(matrixStack);
-
-		bleed.width(1).alignRight(box.right()).ready(Palette.Minecraft.TOOLTIP_BACKGROUND)
-				.render(matrixStack);
-
-		// Border
-		bleed.height(1).alignTop(box.top() + 1).ready(Palette.Minecraft.TOOLTIP_BORDER_LIGHT)
-				.render(matrixStack);
-
-		bleed.height(1).alignBottom(box.bottom() - 1).ready(Palette.Minecraft.TOOLTIP_BORDER_DARK)
-				.render(matrixStack);
-
-		bleed.expand(-1).width(1).alignLeft(box.left() + 1).readyGradiant()
-				.top(Palette.Minecraft.TOOLTIP_BORDER_LIGHT)
-				.bottom(Palette.Minecraft.TOOLTIP_BORDER_DARK)
-				.render(matrixStack);
-
-		bleed.expand(-1).width(1).alignRight(box.right() - 1).readyGradiant()
-				.top(Palette.Minecraft.TOOLTIP_BORDER_DARK)
-				.bottom(Palette.Minecraft.TOOLTIP_BORDER_LIGHT)
-				.render(matrixStack);
+	public void print() {
+		print(true);
 	}
 }

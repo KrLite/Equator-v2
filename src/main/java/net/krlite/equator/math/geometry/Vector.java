@@ -291,8 +291,16 @@ public record Vector(double theta, double magnitude) {
 		return FrameInfo.Convertor.scaledToScreen(this);
 	}
 
+	public Vector fitFromScreen() {
+		return FrameInfo.Convertor.screenToScaled(this);
+	}
+
 	public Vector fitToOpenGL() {
 		return FrameInfo.Convertor.scaledToOpenGL(this);
+	}
+
+	public Vector fitFromOpenGL() {
+		return FrameInfo.Convertor.openGLToScaled(this);
 	}
 
 	public String toStringAsCartesian() {

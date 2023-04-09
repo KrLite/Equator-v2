@@ -12,7 +12,9 @@ import org.joml.Matrix4f;
 
 import java.util.function.UnaryOperator;
 
-public record GradiantRenderer(Box box, AccurateColor topLeft, AccurateColor bottomLeft, AccurateColor bottomRight, AccurateColor topRight) implements Renderable {
+public record GradiantRenderer(
+		Box box, AccurateColor topLeft, AccurateColor bottomLeft, AccurateColor bottomRight, AccurateColor topRight
+) implements Renderable {
 	public static GradiantRenderer readyHorizontal(Box box, AccurateColor left, AccurateColor right) {
 		return new GradiantRenderer(box, left, left, right, right);
 	}
