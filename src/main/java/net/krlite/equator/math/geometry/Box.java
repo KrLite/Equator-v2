@@ -1,6 +1,7 @@
 package net.krlite.equator.math.geometry;
 
 import net.krlite.equator.math.algebra.Theory;
+import net.krlite.equator.render.frame.Convertible;
 import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.render.BoxRenderer;
 import net.krlite.equator.render.GradiantRenderer;
@@ -21,12 +22,15 @@ import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 /**
- * A rectangle in 2D space(defined by the Screen Cartesian Coordinate) and is not rotated.
+ * <h1>Box</h1>
+ * Represents a rectangle in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}
+ * and is not rotatable.
  * @see Vector
- * @param origin	The origin, which is the top left corner of the box.
+ * @see net.krlite.equator.render.frame.FrameInfo.Convertor
+ * @param origin	The top left corner of the box.
  * @param size		The size of the box.
  */
-public record Box(Vector origin, Vector size) {
+public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box> {
 	/**
 	 * A box with a width and height of 0 and a position of (0, 0).
 	 */
@@ -37,12 +41,22 @@ public record Box(Vector origin, Vector size) {
 	 */
 	public static final Box UNIT_CENTERED = UNIT.center(Vector.ZERO);
 
+
+
 	public static Box fromCartesian(double x, double y, double width, double height) {
 		return new Box(Vector.fromCartesian(x, y), Vector.fromCartesian(width, height));
 	}
 
+	public static Box fromCartesian(double width, double height) {
+		return fromCartesian(0, 0, width, height);
+	}
+
 	public static Box fromCartesianCentered(double xCenter, double yCenter, double width, double height) {
 		return fromCartesian(xCenter - width / 2, yCenter - height / 2, width, height);
+	}
+
+	public static Box fromCartesianCentered(double width, double height) {
+		return fromCartesianCentered(0, 0, width, height);
 	}
 
 	public static Box fromVector(Vector topLeft, Vector bottomRight) {
@@ -53,13 +67,7 @@ public record Box(Vector origin, Vector size) {
 		return fromCartesianCentered(center.x(), center.y(), size.x(), size.y());
 	}
 
-	public static Box fromScreen(Box box) {
-		return FrameInfo.Convertor.screenToScaled(box);
-	}
 
-	public static Box fromOpenGL(Box box) {
-		return FrameInfo.Convertor.openGLToScaled(box);
-	}
 
 	public Box(Vector origin, Vector size) {
 		this.origin = origin.min(origin.add(size));
@@ -74,9 +82,13 @@ public record Box(Vector origin, Vector size) {
 		this(Vector.fromCartesian(xMin, yMin), Vector.fromCartesian(xMax - xMin, yMax - yMin));
 	}
 
+
+
 	// origin() is a record method
 
 	// size() is a record method
+
+
 
 	public Vector topLeft() {
 		return origin();
@@ -94,6 +106,8 @@ public record Box(Vector origin, Vector size) {
 		return Vector.fromCartesian(bottomRight().x(), topLeft().y());
 	}
 
+
+
 	public Vector topCenter() {
 		return Vector.fromCartesian(center().x(), top());
 	}
@@ -109,6 +123,8 @@ public record Box(Vector origin, Vector size) {
 	public Vector rightCenter() {
 		return Vector.fromCartesian(right(), center().y());
 	}
+
+
 
 	public double top() {
 		return topLeft().y();
@@ -126,6 +142,8 @@ public record Box(Vector origin, Vector size) {
 		return topRight().x();
 	}
 
+
+
 	public Vector width() {
 		return topRight().subtract(topLeft());
 	}
@@ -138,6 +156,8 @@ public record Box(Vector origin, Vector size) {
 		return topLeft().add(size().divide(2));
 	}
 
+
+
 	public Box origin(Vector origin) {
 		return new Box(origin, size());
 	}
@@ -145,6 +165,8 @@ public record Box(Vector origin, Vector size) {
 	public Box size(Vector size) {
 		return new Box(topLeft(), size);
 	}
+
+
 
 	public Box topLeft(Vector topLeft) {
 		return Box.fromVector(topLeft, bottomRight());
@@ -162,6 +184,8 @@ public record Box(Vector origin, Vector size) {
 		return Box.fromVector(bottomLeft(), topRight);
 	}
 
+
+
 	public Box topCenter(Vector topCenter) {
 		return Box.fromVector(topCenter.subtract(width().divide(2)), topCenter.add(width().divide(2)));
 	}
@@ -177,6 +201,8 @@ public record Box(Vector origin, Vector size) {
 	public Box rightCenter(Vector rightCenter) {
 		return Box.fromVector(rightCenter.subtract(height().divide(2)), rightCenter.add(height().divide(2)));
 	}
+
+
 
 	public Box top(double y) {
 		return topLeft(topLeft().y(y));
@@ -194,6 +220,8 @@ public record Box(Vector origin, Vector size) {
 		return topRight(topRight().x(x));
 	}
 
+
+
 	public Box width(double width) {
 		return new Box(topLeft(), width().magnitude(width).add(height()));
 	}
@@ -209,6 +237,8 @@ public record Box(Vector origin, Vector size) {
 	public Box center(Box another) {
 		return center(another.center());
 	}
+
+
 
 	public Box translateTopLeft(double xTranslation, double yTranslation) {
 		return topLeft(topLeft().add(width().multiply(xTranslation)).add(height().multiply(yTranslation)));
@@ -226,6 +256,8 @@ public record Box(Vector origin, Vector size) {
 		return topRight(topRight().add(width().multiply(xTranslation)).add(height().multiply(yTranslation)));
 	}
 
+
+
 	public Box translateTop(double yTranslation) {
 		return top(top() + h() * yTranslation);
 	}
@@ -242,6 +274,8 @@ public record Box(Vector origin, Vector size) {
 		return right(right() + w() * xTranslation);
 	}
 
+
+
 	public Box translateWidth(double widthTranslation) {
 		return width(w() + width().multiply(widthTranslation).magnitude());
 	}
@@ -253,6 +287,8 @@ public record Box(Vector origin, Vector size) {
 	public Box translate(double xTranslation, double yTranslation) {
 		return center(center().add(width().multiply(xTranslation)).add(height().multiply(yTranslation)));
 	}
+
+
 
 	public Box shiftTopLeft(Vector offset) {
 		return topLeft(topLeft().add(offset));
@@ -270,6 +306,8 @@ public record Box(Vector origin, Vector size) {
 		return topRight(topRight().add(offset));
 	}
 
+
+
 	public Box shiftTop(double y) {
 		return shiftTopLeft(Vector.fromCartesian(topLeft().x(), y));
 	}
@@ -286,6 +324,8 @@ public record Box(Vector origin, Vector size) {
 		return shiftTopRight(Vector.fromCartesian(x, topRight().y()));
 	}
 
+
+
 	public Box shift(Vector offset) {
 		return center(center().add(offset));
 	}
@@ -293,6 +333,8 @@ public record Box(Vector origin, Vector size) {
 	public Box shift(double xOffset, double yOffset) {
 		return shift(Vector.fromCartesian(xOffset, yOffset));
 	}
+
+
 
 	public Box alignTopLeft(Vector topLeft) {
 		return new Box(topLeft, size());
@@ -310,6 +352,8 @@ public record Box(Vector origin, Vector size) {
 		return Box.fromVector(topRight.subtract(width()), topRight.add(height()));
 	}
 
+
+
 	public Box alignTop(double y) {
 		return alignTopLeft(Vector.fromCartesian(topLeft().x(), y));
 	}
@@ -325,6 +369,8 @@ public record Box(Vector origin, Vector size) {
 	public Box alignRight(double x) {
 		return alignTopRight(Vector.fromCartesian(x, topRight().y()));
 	}
+
+
 
 	public Box alignTopLeft(Box another) {
 		return alignTopLeft(another.topLeft());
@@ -342,6 +388,8 @@ public record Box(Vector origin, Vector size) {
 		return alignTopRight(another.topRight());
 	}
 
+
+
 	public Box alignTop(Box another) {
 		return alignTop(another.top());
 	}
@@ -358,24 +406,7 @@ public record Box(Vector origin, Vector size) {
 		return alignRight(another.right());
 	}
 
-	public boolean contains(Vector point) {
-		return height().negate().cross(point.subtract(bottomLeft())) * height().cross(point.subtract(topRight())) >= 0
-				&& width().cross(point.subtract(topLeft())) * width().negate().cross(point.subtract(bottomRight())) >= 0;
-	}
 
-	public boolean contains(double x, double y) {
-		return contains(Vector.fromCartesian(x, y));
-	}
-
-	public boolean contains(Box another) {
-		return contains(another.topLeft()) && contains(another.bottomRight());
-	}
-
-	public boolean intersects(Box another) {
-		return !(Theory.isZero(area()) || Theory.isZero(another.area()) ||
-						 (Theory.looseGreater(left(), another.right()) && Theory.looseGreater(another.left(), right())) ||
-						 (Theory.looseGreater(bottom(), another.top()) && Theory.looseGreater(another.bottom(), top())));
-	}
 
 	public double area() {
 		return Math.abs(width().cross(height()));
@@ -396,6 +427,10 @@ public record Box(Vector origin, Vector size) {
 	public double h() {
 		return height().magnitude();
 	}
+	
+	public double s() {
+		return size().magnitude();
+	}
 
 	public double xCenter() {
 		return center().x();
@@ -414,6 +449,29 @@ public record Box(Vector origin, Vector size) {
 		double min = width().magnitudeMin(height());
 		return width(min).height(min).center(center());
 	}
+
+
+
+	public boolean contains(Vector point) {
+		return height().negate().cross(point.subtract(bottomLeft())) * height().cross(point.subtract(topRight())) >= 0
+					   && width().cross(point.subtract(topLeft())) * width().negate().cross(point.subtract(bottomRight())) >= 0;
+	}
+
+	public boolean contains(double x, double y) {
+		return contains(Vector.fromCartesian(x, y));
+	}
+
+	public boolean contains(Box another) {
+		return contains(another.topLeft()) && contains(another.bottomRight());
+	}
+
+	public boolean intersects(Box another) {
+		return !(Theory.isZero(area()) || Theory.isZero(another.area()) ||
+						 (Theory.looseGreater(left(), another.right()) && Theory.looseGreater(another.left(), right())) ||
+						 (Theory.looseGreater(bottom(), another.top()) && Theory.looseGreater(another.bottom(), top())));
+	}
+
+
 
 	public Box rotateByRightAngle(int rotationCount) {
 		if (rotationCount % 2 == 0) {
@@ -467,8 +525,8 @@ public record Box(Vector origin, Vector size) {
 	}
 
 	public Box normalizeBy(Box another) {
-		return scaleCenter(1 / another.w(), 1 / another.height().magnitude())
-					   .center(center().subtract(another.center()).scaleX(1 / another.width().magnitude()).scaleY(1 / another.height().magnitude()));
+		return scaleCenter(1 / another.w(), 1 / another.h())
+					   .center(center().subtract(another.center()).scale(1 / another.w(), 1 / another.h()));
 	}
 
 	public Box interpolate(Vector vector, double lambda) {
@@ -489,6 +547,8 @@ public record Box(Vector origin, Vector size) {
 	public Box max(Box another) {
 		return Box.fromVector(topLeft().min(another.topLeft()), bottomRight().max(another.bottomRight()));
 	}
+
+
 
 	public Box[][] grid(int xStep, int yStep) {
 		if (xStep <= 0 || yStep <= 0) {
@@ -511,11 +571,8 @@ public record Box(Vector origin, Vector size) {
 		return grid(step, step);
 	}
 
-	/**
-	 * Fits to the <b>Screen Coordinate System.</b>
-	 * @return	{@link Box} in the <b>Screen Coordinate System</b>
-	 * @see net.krlite.equator.render.frame.FrameInfo.Convertor#scaledToScreen(Box)
-	 */
+
+
 	public Box fitToScreen() {
 		return FrameInfo.Convertor.scaledToScreen(this);
 	}
@@ -524,11 +581,6 @@ public record Box(Vector origin, Vector size) {
 		return FrameInfo.Convertor.screenToScaled(this);
 	}
 
-	/**
-	 * Fits to the <b>OpenGL Coordinate System.</b>
-	 * @return	{@link Box} in the <b>OpenGL Coordinate System</b>
-	 * @see net.krlite.equator.render.frame.FrameInfo.Convertor#scaledToOpenGL(Box)
-	 */
 	public Box fitToOpenGL() {
 		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
@@ -536,6 +588,8 @@ public record Box(Vector origin, Vector size) {
 	public Box fitFromOpenGL() {
 		return FrameInfo.Convertor.openGLToScaled(this);
 	}
+
+
 
 	/**
 	 * Readies a {@link BoxRenderer} for rendering, which can hold a {@link Texture} <b>and</b>
@@ -650,10 +704,13 @@ public record Box(Vector origin, Vector size) {
 	/**
 	 * Create a {@link Scissor} from this {@link Box}.
 	 * @return	A {@link Scissor} with the same dimensions as this {@link Box}.
+	 * @see Scissor
 	 */
 	public Scissor scissor() {
 		return new Scissor(this);
 	}
+
+
 
 	public String toStringAsCartesian() {
 		return String.format("[%s, %s]", topLeft().toStringAsCartesian(), bottomRight().toStringAsCartesian());

@@ -1,6 +1,5 @@
 package net.krlite.equator.visual.animation;
 
-import jdk.jfr.Label;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
-@Label("Animation 2.2.0")
+@net.krlite.equator.base.Animation("2.2.1")
 public class Animation implements Runnable {
 	public interface Callbacks {
 		interface Start {

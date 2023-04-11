@@ -1,6 +1,5 @@
 package net.krlite.equator.visual.color;
 
-import jdk.jfr.Label;
 import net.krlite.equator.math.algebra.Theory;
 
 /**
@@ -8,7 +7,7 @@ import net.krlite.equator.math.algebra.Theory;
  * Contains <b>coloring utilities</b> along with <b>sets of colors</b> that can be used in a variety of contexts.
  * @see AccurateColor
  */
-@Label("Visual 2.2.0")
+@net.krlite.equator.base.Visual("2.2.1")
 public class Palette {
 	public static AccurateColor rainbow(double t) {
 		return AccurateColor.fromHSL(Theory.mod(t, 1) * 360, 1, 0.72, 1);

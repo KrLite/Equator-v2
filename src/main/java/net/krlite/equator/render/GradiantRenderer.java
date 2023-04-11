@@ -254,7 +254,7 @@ public record GradiantRenderer(
 	public void renderOutline(MatrixStack matrixStack, Vector expansion, OutlineMode outlineMode, float z) {
 		Box corner = Box.fromVectorCentered(box().center(), expansion);
 		Box gapHorizontal = Box.fromVectorCentered(box().center(), Vector.fromCartesian(box().w(), expansion.y()));
-		Box gapVertical = Box.fromVectorCentered(box().center(), Vector.fromCartesian(expansion.x(), box().height().magnitude()));
+		Box gapVertical = Box.fromVectorCentered(box().center(), Vector.fromCartesian(expansion.x(), box().h()));
 
 		double width = box().w() + expansion.x() * 2, height = box().h() + expansion.y() * 2;
 		double xCornerScalar = expansion.x() / width, yCornerScalar = expansion.y() / height;
@@ -412,7 +412,7 @@ public record GradiantRenderer(
 	}
 
 	public void renderOutlineShadow(MatrixStack matrixStack, float z) {
-		renderOutline(matrixStack, box.size().magnitude() * 0.55, OutlineMode.EDGE_FADING, z);
+		renderOutline(matrixStack, box.s() * 0.55, OutlineMode.EDGE_FADING, z);
 	}
 
 	public void renderOutlineShadow(MatrixStack matrixStack) {

@@ -1,39 +1,17 @@
 package net.krlite.equator.math.geometry;
 
-import jdk.jfr.Label;
 import net.krlite.equator.math.algebra.Theory;
+import net.krlite.equator.render.frame.Convertible;
 import net.krlite.equator.render.frame.FrameInfo;
 
 /**
- * A vector in 2D space(defined by the Screen Cartesian Coordinate) with a magnitude and an angle <code>theta</code>.
+ * Represents a vector in the {@link FrameInfo.Convertor Scaled Coordinate}.
+ * @see FrameInfo.Convertor
  * @param theta		The angle of the vector, in radians.
- * 					The angle is stored in the Screen Cartesian Coordinate, where 0 is to the right
- *              	and positive angles are clockwise. Below is the difference between the Screen
- *              	Cartesian Coordinate and the Math Cartesian Coordinate.
- *              	<h2><code>Screen Cartesian Coordinate</code></h2>
- *              	<p>
- *              		<code>
- *              			&emsp;x<0 | x>0<br />
- *              			&emsp;y<0 | y<0<br />
- *              			-----+----→ θ+↓<br />
- *              			&emsp;x<0 | x>0<br />
- *              			&emsp;y>0 ↓ y>0
- *              		</code>
- *              	</p>
- *              	<h2><code>Math Cartesian Coordinate</code></h2>
- *              	<p>
- *              		<code>
- *              			&emsp;x<0 ↑ x>0<br />
- *              			&emsp;y>0 | y>0<br />
- *              			-----+----→ θ+↑<br />
- *              			&emsp;x<0 | x>0<br />
- *              			&emsp;y<0 | y<0
- *              		</code>
- *              	</p>
  * @param magnitude	The magnitude of the vector.
  */
-@Label("Math 2.2.0")
-public record Vector(double theta, double magnitude) {
+@net.krlite.equator.base.Math("2.2.1")
+public record Vector(double theta, double magnitude) implements Convertible.Scaled<Vector> {
 	/**
 	 * A vector with a magnitude of <code>0</code> and an angle of <code>0</code>.
 	 */
@@ -73,6 +51,8 @@ public record Vector(double theta, double magnitude) {
 	 */
 	public static final Vector NEGATIVE_UNIT_Y = new Vector(-Math.PI / 2, 1);
 
+
+
 	public static Vector fromCartesian(double x, double y) {
 		return new Vector(Math.atan2(y, x), Math.sqrt(x * x + y * y));
 	}
@@ -81,18 +61,14 @@ public record Vector(double theta, double magnitude) {
 		return new Vector(Math.toRadians(thetaDegrees), magnitude);
 	}
 
-	public static Vector fromScreen(Vector vector) {
-		return FrameInfo.Convertor.screenToScaled(vector);
-	}
 
-	public static Vector fromOpenGL(Vector vector) {
-		return FrameInfo.Convertor.openGLToScaled(vector);
-	}
 
 	public Vector(double theta, double magnitude) {
 		this.theta = theta % (Math.PI * 2) + (magnitude < 0 ? Math.PI : 0);
 		this.magnitude = Math.abs(magnitude);
 	}
+
+
 
 	@Override
 	public double theta() {
@@ -112,6 +88,8 @@ public record Vector(double theta, double magnitude) {
 	public double y() {
 		return Math.sin(theta()) * magnitude();
 	}
+
+
 
 	public Vector theta(double theta) {
 		return new Vector(theta, magnitude());
@@ -133,13 +111,11 @@ public record Vector(double theta, double magnitude) {
 		return fromCartesian(x(), y);
 	}
 
-	public Vector scaleX(double scalar) {
-		return x(x() * scalar);
+	public Vector scale(double xScalar, double yScalar) {
+		return x(x() * xScalar).y(y() * yScalar);
 	}
 
-	public Vector scaleY(double scalar) {
-		return y(y() * scalar);
-	}
+
 
 	public boolean isNormalized() {
 		return Theory.looseEquals(magnitude(), 1);
@@ -149,6 +125,8 @@ public record Vector(double theta, double magnitude) {
 		return Theory.looseEquals(magnitude(), 0);
 	}
 
+
+
 	public boolean parallelTo(Vector another) {
 		return Theory.looseEquals(theta(), another.theta()) || isZero();
 	}
@@ -156,6 +134,8 @@ public record Vector(double theta, double magnitude) {
 	public boolean perpendicularTo(Vector another) {
 		return Theory.looseEquals(theta(), another.theta() + Math.PI / 2) || isZero();
 	}
+
+
 
 	public double radiansBetween(Vector another) {
 		return Math.acos(normalize().dot(another.normalize()));
@@ -185,6 +165,8 @@ public record Vector(double theta, double magnitude) {
 		return Math.max(magnitude(), another.magnitude());
 	}
 
+
+
 	public Vector normalize() {
 		return magnitude(1);
 	}
@@ -195,10 +177,6 @@ public record Vector(double theta, double magnitude) {
 
 	public Vector projectOntoY() {
 		return x(0);
-	}
-
-	public Vector projectOnto(Vector another) {
-		return another.multiply(dot(another) / another.dot(another));
 	}
 
 	public Vector normal() {
@@ -233,6 +211,20 @@ public record Vector(double theta, double magnitude) {
 		return center.add(subtract(center).rotateDegrees(thetaDegrees));
 	}
 
+	public Vector ceil(double magnitude) {
+		return magnitude(Math.min(magnitude(), magnitude));
+	}
+
+	public Vector floor(double magnitude) {
+		return magnitude(Math.max(magnitude(), magnitude));
+	}
+
+	public Vector round() {
+		return magnitude(Math.round(magnitude()));
+	}
+
+
+
 	public Vector add(Vector another) {
 		return add(another.x(), another.y());
 	}
@@ -257,10 +249,6 @@ public record Vector(double theta, double magnitude) {
 		return magnitude(magnitude() / scalar);
 	}
 
-	public Vector interpolate(Vector another, double lambda) {
-		return add(another.subtract(this).multiply(lambda));
-	}
-
 	public Vector min(Vector another) {
 		return fromCartesian(Math.min(x(), another.x()), Math.min(y(), another.y()));
 	}
@@ -269,16 +257,14 @@ public record Vector(double theta, double magnitude) {
 		return fromCartesian(Math.max(x(), another.x()), Math.max(y(), another.y()));
 	}
 
-	public Vector ceil(double magnitude) {
-		return magnitude(Math.min(magnitude(), magnitude));
+
+
+	public Vector projectOnto(Vector another) {
+		return another.multiply(dot(another) / another.dot(another));
 	}
 
-	public Vector floor(double magnitude) {
-		return magnitude(Math.max(magnitude(), magnitude));
-	}
-
-	public Vector round() {
-		return magnitude(Math.round(magnitude()));
+	public Vector interpolate(Vector another, double lambda) {
+		return add(another.subtract(this).multiply(lambda));
 	}
 
 	public Vector reflect(Vector normal) {
@@ -289,20 +275,40 @@ public record Vector(double theta, double magnitude) {
 		return magnitude(magnitude() % magnitude);
 	}
 
+
+
 	public Vector fitToScreen() {
 		return FrameInfo.Convertor.scaledToScreen(this);
+	}
+
+	public Vector fitFromScreen() {
+		return FrameInfo.Convertor.screenToScaled(this);
 	}
 
 	public Vector fitToOpenGL() {
 		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
 
+	public Vector fitFromOpenGL() {
+		return FrameInfo.Convertor.openGLToScaled(this);
+	}
+
+
+
 	public String toStringAsCartesian() {
 		return String.format("(%.5f, %.5f)", x(), y());
+	}
+
+	public String toStringAsCartesian(boolean precisely) {
+		return !precisely ? toStringAsCartesian() : String.format("(%f, %f)", x(), y());
 	}
 
 	@Override
 	public String toString() {
 		return String.format("(θ=%.5f°, mag=%.5f)", thetaDegrees(), magnitude());
+	}
+
+	public String toString(boolean precisely) {
+		return !precisely ? toString() : String.format("(θ=%f°, mag=%f)", thetaDegrees(), magnitude());
 	}
 }

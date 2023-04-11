@@ -1,13 +1,11 @@
 package net.krlite.equator.visual.animation;
 
-import jdk.jfr.Label;
-
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-@Label("Animation 2.2.0")
+@net.krlite.equator.base.Animation("2.2.1")
 public class AnimationThreadPoolExecutor {
 	public static final ScheduledThreadPoolExecutor INSTANCE = new ScheduledThreadPoolExecutor(
 			1, new ThreadPoolExecutor.DiscardPolicy()

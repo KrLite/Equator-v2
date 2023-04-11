@@ -207,7 +207,7 @@ public record BoxRenderer(
 		// Top right
 		preserve(corner.alignTopRight(box()), new Box(0.5, 0, 1, 0.5)).render(matrixStack, z);
 
-		if (box().w() > box().height().magnitude()) {
+		if (box().w() > box().h()) {
 			Box gap = Box.fromVector(corner.alignTopLeft(box()).topRight(), corner.alignTopRight(box()).bottomLeft());
 
 			// Top
@@ -216,7 +216,7 @@ public record BoxRenderer(
 			// Bottom
 			preserve(gap.translate(0, 1), new Box(0.5, 0.5, 0.5, 1)).render(matrixStack, z);
 		}
-		else if (box().w() < box().height().magnitude()) {
+		else if (box().w() < box().h()) {
 			Box gap = Box.fromVector(corner.alignTopLeft(box()).bottomLeft(), corner.alignBottomLeft(box()).topRight());
 
 			// Left

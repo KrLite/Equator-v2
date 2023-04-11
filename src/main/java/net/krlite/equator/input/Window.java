@@ -3,13 +3,28 @@ package net.krlite.equator.input;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.krlite.equator.Equator;
+import net.krlite.equator.math.geometry.Box;
+import net.krlite.equator.math.geometry.Vector;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * <h1>Window</h1>
+ * Provides access to the window's properties and callbacks.
+ * @see Callbacks
+ * @see GLFW
+ */
 public class Window {
+	/**
+	 * Callbacks for window events.
+	 * @see Window
+	 */
 	public static class Callbacks {
+		/**
+		 * Callback for the {@link Window} close event.
+		 */
 		public interface Close {
 			Event<Close> EVENT = EventFactory.createArrayBacked(Close.class, (listeners) -> () -> {
 				for (Close listener : listeners) {
@@ -17,9 +32,15 @@ public class Window {
 				}
 			});
 
+			/**
+			 * Called when the window is closed.
+			 */
 			void onClose();
 		}
 
+		/**
+		 * Callback for the {@link Window} iconify event.
+		 */
 		public interface Iconify {
 			Event<Iconify> EVENT = EventFactory.createArrayBacked(Iconify.class, (listeners) -> (iconified) -> {
 				for (Iconify listener : listeners) {
@@ -27,9 +48,16 @@ public class Window {
 				}
 			});
 
+			/**
+			 * Called when the window is iconified.
+			 * @param iconified	<code>true</code> if the window is iconified, <code>false</code> otherwise.
+			 */
 			void onIconify(boolean iconified);
 		}
 
+		/**
+		 * Callback for the {@link Window} maximize event.
+		 */
 		public interface Maximize {
 			Event<Maximize> EVENT = EventFactory.createArrayBacked(Maximize.class, (listeners) -> (maximized) -> {
 				for (Maximize listener : listeners) {
@@ -37,9 +65,16 @@ public class Window {
 				}
 			});
 
+			/**
+			 * Called when the window is maximized.
+			 * @param maximized	<code>true</code> if the window is maximized, <code>false</code> otherwise.
+			 */
 			void onMaximize(boolean maximized);
 		}
 
+		/**
+		 * Callback for the {@link Window} focus event.
+		 */
 		public interface Focus {
 			Event<Focus> EVENT = EventFactory.createArrayBacked(Focus.class, (listeners) -> (focused) -> {
 				for (Focus listener : listeners) {
@@ -47,29 +82,57 @@ public class Window {
 				}
 			});
 
+			/**
+			 * Called when the window is focused.
+			 * @param focused	<code>true</code> if the window is focused, <code>false</code> otherwise.
+			 */
 			void onFocus(boolean focused);
 		}
 
+		/**
+		 * Callback for the {@link Window} move event, while the <code>position</code> is in the
+		 * {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
+		 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
+		 */
 		public interface Move {
-			Event<Move> EVENT = EventFactory.createArrayBacked(Move.class, (listeners) -> (x, y) -> {
+			Event<Move> EVENT = EventFactory.createArrayBacked(Move.class, (listeners) -> (position) -> {
 				for (Move listener : listeners) {
-					listener.onMove(x, y);
+					listener.onMove(position);
 				}
 			});
 
-			void onMove(int x, int y);
+			/**
+			 * Called when the window is moved.
+			 * @param position	The new position of the window, in the
+			 * 					{@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
+			 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
+			 */
+			void onMove(Vector position);
 		}
 
+		/**
+		 * Callback for the {@link Window} resize event, while the <code>window</code> is in the
+		 * {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
+		 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
+		 */
 		public interface Resize {
-			Event<Resize> EVENT = EventFactory.createArrayBacked(Resize.class, (listeners) -> (width, height) -> {
+			Event<Resize> EVENT = EventFactory.createArrayBacked(Resize.class, (listeners) -> (window) -> {
 				for (Resize listener : listeners) {
-					listener.onResize(width, height);
+					listener.onResize(window);
 				}
 			});
 
-			void onResize(int width, int height);
+			/**
+			 * Called when the window is resized.
+			 * @param width		The new width of the window.
+			 * @param height	The new height of the window.
+			 */
+			void onResize(Box window);
 		}
 
+		/**
+		 * Callback for the {@link Window} content scale event.
+		 */
 		public interface ContentScale {
 			Event<ContentScale> EVENT = EventFactory.createArrayBacked(ContentScale.class, (listeners) -> (xScaling, yScaling) -> {
 				for (ContentScale listener : listeners) {
@@ -77,6 +140,11 @@ public class Window {
 				}
 			});
 
+			/**
+			 * Called when the window's content scale is changed.
+			 * @param xScaling	The new <code>x-scaling</code> of the window.
+			 * @param yScaling	The new <code>y-scaling</code> of the window.
+			 */
 			void onContentScale(float xScaling, float yScaling);
 		}
 	}
@@ -191,7 +259,7 @@ public class Window {
 
 			@Override
 			public void invoke(long window, int x, int y) {
-				Callbacks.Move.EVENT.invoker().onMove(x, y);
+				Callbacks.Move.EVENT.invoker().onMove(Vector.fromCartesian(x, y).fitFromScreen());
 
 				if (delegate != null) {
 					delegate.invoke(window, x, y);
@@ -208,7 +276,7 @@ public class Window {
 
 			@Override
 			public void invoke(long window, int width, int height) {
-				Callbacks.Resize.EVENT.invoker().onResize(width, height);
+				Callbacks.Resize.EVENT.invoker().onResize(Box.fromCartesian(width, height).fitFromScreen());
 
 				if (delegate != null) {
 					delegate.invoke(window, width, height);

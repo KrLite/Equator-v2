@@ -1,7 +1,6 @@
 package net.krlite.equator.visual.animation;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import jdk.jfr.Label;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.krlite.equator.math.algebra.Theory;
@@ -11,7 +10,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Label("Animation 2.2.0")
+@net.krlite.equator.base.Animation("2.2.1")
 public class Interpolation implements Runnable {
 	public interface Callbacks {
 		interface Start {
@@ -148,6 +147,12 @@ public class Interpolation implements Runnable {
 
 	private void future(@Nullable ScheduledFuture<?> future) {
 		this.future.set(future);
+	}
+
+	public void reverse() {
+		double originValue = originValue();
+		originValue(targetValue());
+		targetValue(originValue);
 	}
 
 	/**

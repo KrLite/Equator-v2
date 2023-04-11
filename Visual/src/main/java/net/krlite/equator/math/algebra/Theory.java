@@ -1,8 +1,6 @@
 package net.krlite.equator.math.algebra;
 
-import jdk.jfr.Label;
-
-@Label("Visual 2.2.0")
+@net.krlite.equator.base.Visual("2.2.1")
 public class Theory {
 	/**
 	 * A small margin of error for comparing doubles.
@@ -10,6 +8,7 @@ public class Theory {
 	public static final double EPSILON = 1e-6;
 
 	/**
+	 * <h1><code>a ≈ b</code></h1>
 	 * Returns <code>true</code> if the two doubles are equal within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
@@ -22,6 +21,7 @@ public class Theory {
 	}
 
 	/**
+	 * <h1><code>a ≠ b</code></h1>
 	 * Returns <code>true</code> if the two doubles are not equal within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
@@ -34,6 +34,7 @@ public class Theory {
 	}
 
 	/**
+	 * <h1><code>a > b</code></h1>
 	 * Returns <code>true</code> if the first double is greater than the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
@@ -46,6 +47,7 @@ public class Theory {
 	}
 
 	/**
+	 * <h1><code>a ≥ b</code></h1>
 	 * Returns <code>true</code> if the first double is greater than or equal to the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
@@ -58,6 +60,7 @@ public class Theory {
 	}
 
 	/**
+	 * <h1><code>a < b</code></h1>
 	 * Returns <code>true</code> if the first double is less than the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
@@ -70,6 +73,7 @@ public class Theory {
 	}
 
 	/**
+	 * <h1><code>a ≤ b</code></h1>
 	 * Returns <code>true</code> if the first double is less than or equal to the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
@@ -82,47 +86,61 @@ public class Theory {
 	}
 
 	/**
-	 * Returns <code>true</code> if the first double is between the second and third double within a small margin of error.
-	 * @param a	The first double.
-	 * @param b	The second double.
-	 * @param c	The third double.
-	 * @return	<code>true</code> if the first double is between the second and third double within a small margin of error,
+	 * <h1><code>(a, b)</code></h1>
+	 * Returns <code>true</code> if the value is between the left and right bound within a small margin of error.
+	 * @param x	The value to check.
+	 * @param a	The left bound.
+	 * @param b	The right bound.
+	 * @return	<code>true</code> if the value is between the left and right bound within a small margin of error,
 	 * 			<code>false</code> otherwise.
 	 * @see #EPSILON
 	 */
-	public static boolean looseBetween(double a, double b, double c) {
-		return looseLessEquals(a, b) && looseLessEquals(b, c);
+	public static boolean looseBetween(double x, double a, double b) {
+		return looseLessEquals(x, a) && looseLessEquals(a, b);
 	}
 
 	/**
-	 * Returns <code>true</code> if the first double is between or equal to the second and third double within a small margin of error.
-	 * @param a	The first double.
-	 * @param b	The second double.
-	 * @param c	The third double.
-	 * @return	<code>true</code> if the first double is between or equal to the second and third double within a small margin of error,
+	 * <h1><code>[a, b]</code></h1>
+	 * Returns <code>true</code> if the double is between or equal to the left and right bound within a small margin of error.
+	 * @param x	The double to check.
+	 * @param a	The left bound.
+	 * @param b	The right bound.
+	 * @return	<code>true</code> if the double is between or equal to the left and right bound within a small margin of error,
 	 * 			<code>false</code> otherwise.
 	 * @see #EPSILON
 	 */
-	public static boolean looseBetweenEquals(double a, double b, double c) {
-		return looseLessEquals(a, b) && looseLessEquals(b, c) || looseEquals(a, b) || looseEquals(b, c);
+	public static boolean looseBetweenEquals(double x, double a, double b) {
+		return looseLessEquals(x, a) && looseLessEquals(a, b) || looseEquals(x, a) || looseEquals(a, b);
 	}
 
 	/**
-	 * Clamps a value between a minimum and maximum value.
-	 * @param value	The value to clamp.
+	 * <h1><code>≈ 0</code></h1>
+	 * Returns <code>true</code> if the double is zero within a small margin of error.
+	 * @param value	The double to check.
+	 * @return	<code>true</code> if the double is zero within a small margin of error,
+	 * 			<code>false</code> otherwise.
+	 * @see #EPSILON
+	 */
+	public static boolean isZero(double value) {
+		return looseEquals(value, 0);
+	}
+
+	/**
+	 * Clamps a double between a minimum and maximum value.
+	 * @param value	The double to clamp.
 	 * @param min	The minimum value.
 	 * @param max	The maximum value.
-	 * @return	The clamped value.
+	 * @return	The clamped double.
 	 */
 	public static double clamp(double value, double min, double max) {
 		return Math.max(min, Math.min(max, value));
 	}
 
 	/**
-	 * Modulos a value.
-	 * @param value	The value to mod.
+	 * Modulos a double.
+	 * @param value	The double to mod.
 	 * @param mod	The modulus.
-	 * @return	The modulated value.
+	 * @return	The modulated double.
 	 */
 	public static double mod(double value, double mod) {
 		return value - Math.floor(value / mod) * mod;
@@ -130,10 +148,10 @@ public class Theory {
 
 	/**
 	 * Linearly interpolates between two values.
-	 * @param a	The first value.
-	 * @param b	The second value.
+	 * @param a	The first double.
+	 * @param b	The second double.
 	 * @param t	The interpolation value.
-	 * @return	The interpolated value.
+	 * @return	The interpolated double.
 	 */
 	public static double lerp(double a, double b, double t) {
 		return a + (b - a) * t;

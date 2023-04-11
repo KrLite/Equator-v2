@@ -29,10 +29,10 @@ public class CanvasScreen extends Screen {
 			}
 		});
 
-		Mouse.Callbacks.Move.EVENT.register((x, y) -> {
+		Mouse.Callbacks.Move.EVENT.register((position) -> {
 			if (MinecraftClient.getInstance().currentScreen != this) return;
 
-			box = new Box(Vector.fromCartesian(x, y).fitFromScreen());
+			box = new Box(position);
 		});
 
 		Keyboard.Callbacks.Key.EVENT.register((key, scanCode, action, mods) -> {

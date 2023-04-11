@@ -11,6 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * <h1>Keyboard</h1>
+ * Provides access to the keyboard properties and callbacks.
+ * @see Callbacks
+ * @see GLFW
+ */
 public enum Keyboard {
 	// Symbols
 	/**
@@ -295,7 +301,14 @@ public enum Keyboard {
 		}
 	}
 
+	/**
+	 * Callbacks for keyboard events.
+	 * @see Keyboard
+	 */
 	public static class Callbacks {
+		/**
+		 * Callback for the {@link Keyboard} key event.
+		 */
 		public interface Key {
 			Event<Key> EVENT = EventFactory.createArrayBacked(Key.class, (listeners) -> (key, scanCode, action, modifiers) -> {
 				for (Key listener : listeners) {
@@ -303,9 +316,19 @@ public enum Keyboard {
 				}
 			});
 
+			/**
+			 * Called when a key is pressed, released or repeated.
+			 * @param key		The key that was pressed, released or repeated.
+			 * @param scanCode	The system-specific scancode of the key.
+			 * @param action	The action that was performed.
+			 * @param modifiers	The modifiers that were pressed.
+			 */
 			void onKey(Keyboard key, int scanCode, Action action, Modifier[] modifiers);
 		}
 
+		/**
+		 * Callback for the {@link Keyboard} char event, can be used for text input.
+		 */
 		public interface Char {
 			Event<Char> EVENT = EventFactory.createArrayBacked(Char.class, (listeners) -> (chars, modifiers) -> {
 				for (Char listener : listeners) {
@@ -313,6 +336,11 @@ public enum Keyboard {
 				}
 			});
 
+			/**
+			 * Called when a character is input.
+			 * @param chars		The characters that were input.
+			 * @param modifiers	The modifiers that were pressed.
+			 */
 			void onChar(char[] chars, Modifier[] modifiers);
 		}
 	}

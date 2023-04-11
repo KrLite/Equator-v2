@@ -19,7 +19,7 @@ public record Scissor(Box box) {
 	public void snipOn() {
 		// Need to fit the box into the OpenGL Coordinate System
 		Box fitted = box().fitToOpenGL();
-		RenderSystem.enableScissor((int) fitted.x(), (int) fitted.y(), (int) fitted.w(), (int) fitted.height().magnitude());
+		RenderSystem.enableScissor((int) fitted.x(), (int) fitted.y(), (int) fitted.w(), (int) fitted.h());
 	}
 
 	public void snipOff() {

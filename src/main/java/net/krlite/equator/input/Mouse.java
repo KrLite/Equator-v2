@@ -21,6 +21,13 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * <h1>Mouse</h1>
+ * Provides access to the mouse properties and callbacks.
+ * @see Callbacks
+ * @see Cursor
+ * @see GLFW
+ */
 public enum Mouse {
 	LEFT(GLFW.GLFW_MOUSE_BUTTON_LEFT),
 	RIGHT(GLFW.GLFW_MOUSE_BUTTON_RIGHT),
@@ -99,7 +106,14 @@ public enum Mouse {
 		}
 	}
 
+	/**
+	 * Callbacks for mouse events.
+	 * @see Mouse
+	 */
 	public static class Callbacks {
+		/**
+		 * Callback for the {@link Mouse} click event.
+		 */
 		public interface Click {
 			Event<Click> EVENT = EventFactory.createArrayBacked(Click.class, (listeners) -> (button, action, modifiers) -> {
 				for (Click listener : listeners) {
@@ -107,29 +121,61 @@ public enum Mouse {
 				}
 			});
 
+			/**
+			 * Called when a mouse button is pressed or released.
+			 * @param button	The mouse button that was pressed or released.
+			 * @param action	The action that was performed.
+			 * @param modifiers	The modifiers that were pressed.
+			 */
 			void onClick(Mouse button, Action action, Keyboard.Modifier[] modifiers);
 		}
 
+		/**
+		 * Callback for the {@link Mouse} scroll event, while the <code>scroll</code> is in the
+		 * {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
+		 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
+		 */
 		public interface Scroll {
-			Event<Scroll> EVENT = EventFactory.createArrayBacked(Scroll.class, (listeners) -> (horizontal, vertical) -> {
+			Event<Scroll> EVENT = EventFactory.createArrayBacked(Scroll.class, (listeners) -> (scroll) -> {
 				for (Scroll listener : listeners) {
-					listener.onScroll(horizontal, vertical);
+					listener.onScroll(scroll);
 				}
 			});
 
-			void onScroll(double horizontal, double vertical);
+			/**
+			 * Called when the mouse wheel is scrolled.
+			 * @param scroll	The scroll amount, in the
+			 *                  {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
+			 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
+			 */
+			void onScroll(Vector scroll);
 		}
 
+		/**
+		 * Callback for the {@link Mouse} drag event, while the <code>position</code> is in the
+		 * {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
+		 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
+		 */
 		public interface Drag {
-			Event<Drag> EVENT = EventFactory.createArrayBacked(Drag.class, (listeners) -> (button, x, y) -> {
+			Event<Drag> EVENT = EventFactory.createArrayBacked(Drag.class, (listeners) -> (button, position) -> {
 				for (Drag listener : listeners) {
-					listener.onDrag(button, x, y);
+					listener.onDrag(button, position);
 				}
 			});
 
-			void onDrag(Mouse button, double x, double y);
+			/**
+			 * Called when the mouse is dragged.
+			 * @param button	The mouse button that is being dragged.
+			 * @param position	The position of the mouse, in the
+			 * 					{@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
+			 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
+			 */
+			void onDrag(Mouse button, Vector position);
 		}
 
+		/**
+		 * Callback for the {@link Mouse} drop event.
+		 */
 		public interface Drop {
 			Event<Drop> EVENT = EventFactory.createArrayBacked(Drop.class, (listeners) -> (count, paths) -> {
 				for (Drop listener : listeners) {
@@ -137,19 +183,38 @@ public enum Mouse {
 				}
 			});
 
+			/**
+			 * Called when files are dropped onto the window.
+			 * @param count	The number of files dropped.
+			 * @param paths	The paths of the files dropped.
+			 */
 			void onDrop(int count, Path[] paths);
 		}
 
+		/**
+		 * Callback for the {@link Mouse} move event, while the <code>position</code> is in the
+		 * {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
+		 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
+		 */
 		public interface Move {
-			Event<Move> EVENT = EventFactory.createArrayBacked(Move.class, (listeners) -> (x, y) -> {
+			Event<Move> EVENT = EventFactory.createArrayBacked(Move.class, (listeners) -> (position) -> {
 				for (Move listener : listeners) {
-					listener.onMove(x, y);
+					listener.onMove(position);
 				}
 			});
 
-			void onMove(double x, double y);
+			/**
+			 * Called when the mouse is moved.
+			 * @param position	The position of the mouse, in the
+			 * 					{@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
+			 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
+			 */
+			void onMove(Vector position);
 		}
 
+		/**
+		 * Callback for the {@link Mouse} enter event.
+		 */
 		public interface Enter {
 			Event<Enter> EVENT = EventFactory.createArrayBacked(Enter.class, (listeners) -> (entered) -> {
 				for (Enter listener : listeners) {
@@ -157,6 +222,10 @@ public enum Mouse {
 				}
 			});
 
+			/**
+			 * Called when the mouse enters or leaves the window.
+			 * @param entered	Whether the mouse entered the window.
+			 */
 			void onEnter(boolean entered);
 		}
 	}
@@ -169,18 +238,14 @@ public enum Mouse {
 		return GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), button.value()) == GLFW.GLFW_RELEASE;
 	}
 
-	public static Vector cursorScaled() {
-		return FrameInfo.Convertor.screenToScaled(cursorScreen());
-	}
-
-	public static Vector cursorScreen() {
+	/**
+	 * @return	The position of the mouse, in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
+	 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
+	 */
+	public static Vector position() {
 		double[] x = new double[1], y = new double[1];
 		GLFW.glfwGetCursorPos(MinecraftClient.getInstance().getWindow().getHandle(), x, y);
-		return Vector.fromCartesian(x[0], y[0]);
-	}
-
-	public static Vector cursorOpenGL() {
-		return FrameInfo.Convertor.screenToOpenGL(cursorScreen());
+		return Vector.fromCartesian(x[0], y[0]).fitFromScreen();
 	}
 
 	public static long createCursor(Identifier identifier, int xHot, int yHot) {
@@ -285,7 +350,7 @@ public enum Mouse {
 
 			@Override
 			public void invoke(long window, double horizontal, double vertical) {
-				Callbacks.Scroll.EVENT.invoker().onScroll(horizontal, vertical);
+				Callbacks.Scroll.EVENT.invoker().onScroll(Vector.fromCartesian(horizontal, vertical).fitFromScreen());
 
 				if (delegate != null) {
 					delegate.invoke(window, horizontal, vertical);
@@ -324,8 +389,8 @@ public enum Mouse {
 
 			@Override
 			public void invoke(long window, double x, double y) {
-				Callbacks.Move.EVENT.invoker().onMove(x, y);
-				Arrays.stream(values()).filter(Mouse::isDown).forEach(button -> Callbacks.Drag.EVENT.invoker().onDrag(button, x, y));
+				Callbacks.Move.EVENT.invoker().onMove(Vector.fromCartesian(x, y).fitFromScreen());
+				Arrays.stream(values()).filter(Mouse::isDown).forEach(button -> Callbacks.Drag.EVENT.invoker().onDrag(button, Vector.fromCartesian(x, y).fitFromScreen()));
 
 				if (delegate != null) {
 					delegate.invoke(window, x, y);
