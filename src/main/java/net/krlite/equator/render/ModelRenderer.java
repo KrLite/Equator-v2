@@ -24,6 +24,21 @@ import org.joml.Quaternionf;
 
 import java.util.function.UnaryOperator;
 
+/**
+ * <h1>ModelRenderer</h1>
+ * Based on {@link Box} and contains an {@link ItemStack} <b>or</b> {@link BlockState} to hold the model of an {@link Item}
+ * <b>or</b> a {@link Block}. That is, it is not possible to render both an item and a block at the same time in the same
+ * model renderer. A {@link Quaterniondc Quaternion} modifier can be applied during rendering.
+ * @see Box
+ * @see Quaterniondc
+ * @see ItemStack
+ * @see BlockState
+ * @param box			The {@link Box} to render the model in.
+ * @param modifier		The {@link Quaterniondc Quaternion} modifier to apply during rendering.
+ * @param itemStack		The {@link ItemStack} to hold the model of an item. Cannot coexist with {@link #blockState}.
+ * @param blockState	The {@link BlockState} to hold the model of a block. Cannot coexist with {@link #itemStack}.
+ * @param leftHanded	Whether the model should be rendered left-handed. This only affects the model's lighting.
+ */
 public record ModelRenderer(
 		Box box, Quaterniondc modifier,
 		@Nullable ItemStack itemStack, @Nullable BlockState blockState, boolean leftHanded
@@ -40,15 +55,30 @@ public record ModelRenderer(
 		this(box, new Quaterniond(), null, null, false);
 	}
 
-	// box() is a record method
+	@Override
+	public Box box() {
+		return box;
+	}
 
-	// modifier() is a record method
+	@Override
+	public Quaterniondc modifier() {
+		return modifier;
+	}
 
-	// itemStack() is a record method
+	@Override
+	public ItemStack itemStack() {
+		return itemStack;
+	}
 
-	// blockState() is a record method
+	@Override
+	public BlockState blockState() {
+		return blockState;
+	}
 
-	// leftHanded() is a record method
+	@Override
+	public boolean leftHanded() {
+		return leftHanded;
+	}
 
 	public ModelRenderer modifier(Quaterniondc modifier) {
 		return hasItem()
@@ -120,9 +150,7 @@ public record ModelRenderer(
 	}
 
 	public void render(float z) {
-		if (!isRenderable()) {
-			return;
-		}
+		if (!isRenderable()) return;
 
 		BakedModel bakedModel = null;
 		if (hasItem()) // Item: bake model

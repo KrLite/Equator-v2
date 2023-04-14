@@ -96,9 +96,9 @@ public interface Slice {
 	/**
 	 * Appends the given slice to this one, with the given threshold.
 	 * @param combination	The slice to append.
-	 * @param threshold		The threshold at which the combination slice is applied. For example, if the threshold is <code>0.5</code>,
-	 *                      the combination slice is applied from beginning to end when the progress is <code>50%</code> or more, and this
-	 *                      slice is applied from beginning to end when the progress is less than <code>50%</code>.
+	 * @param threshold		The threshold at which the combination slice is applied. For example, if the threshold is {@code 0.5},
+	 *                      the combination slice is applied from beginning to end when the progress is {@code 50%} or more, and this
+	 *                      slice is applied from beginning to end when the progress is less than {@code 50%}.
 	 * @return	A slice which appends the given slice to this one.
 	 */
 	default Slice append(Slice combination, double threshold) {
@@ -109,7 +109,7 @@ public interface Slice {
 	}
 
 	/**
-	 * Appends the given slice to this one, with the default threshold of <code>0.5</code>.
+	 * Appends the given slice to this one, with the default threshold of {@code 0.5}.
 	 * @param combination	The slice to append.
 	 * @return	A slice which appends the given slice to this one.
 	 * @see #append(Slice, double)
@@ -121,9 +121,9 @@ public interface Slice {
 	/**
 	 * Prepends the given slice to this one, with the given threshold.
 	 * @param combination	The slice to prepend.
-	 * @param threshold		The threshold at which the combination slice is applied. For example, if the threshold is <code>0.5</code>,
-	 *                      this slice is applied from beginning to end when the progress is <code>50%</code> or more, and the combination
-	 *                      slice is applied from beginning to end when the progress is less than <code>50%</code>
+	 * @param threshold		The threshold at which the combination slice is applied. For example, if the threshold is {@code 0.5},
+	 *                      this slice is applied from beginning to end when the progress is {@code 50%} or more, and the combination
+	 *                      slice is applied from beginning to end when the progress is less than {@code 50%}
 	 * @return	A slice which prepends the given slice to this one.
 	 */
 	default Slice prepend(Slice combination, double threshold) {
@@ -134,7 +134,7 @@ public interface Slice {
 	}
 
 	/**
-	 * Prepends the given slice to this one, with the default threshold of <code>0.5</code>.
+	 * Prepends the given slice to this one, with the default threshold of {@code 0.5}.
 	 * @param combination	The slice to prepend.
 	 * @return	A slice which prepends the given slice to this one.
 	 * @see #prepend(Slice, double)

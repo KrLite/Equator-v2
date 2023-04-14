@@ -14,11 +14,11 @@ public interface Cyclic<T> {
 	T previous();
 
 	/**
-	 * Cycle to the next element if <code>reverse</code> is <code>false</code>, or the previous
-	 * element if <code>reverse</code> is <code>true</code>.
-	 * @param reverse	<code>true</code> to cycle to the previous element, <code>false</code> to cycle to the next element.
-	 * @return	The next element if <code>reverse</code> is <code>false</code>, or the previous
-	 * 			element if <code>reverse</code> is <code>true</code>.
+	 * Cycle to the next element if {@code reverse} is {@code false}, or the previous
+	 * element if {@code reverse} is {@code true}.
+	 * @param reverse	{@code true} to cycle to the previous element, {@code false} to cycle to the next element.
+	 * @return	The next element if {@code reverse} is {@code false}, or the previous
+	 * 			element if {@code reverse} is {@code true}.
 	 */
 	default T fromBoolean(boolean reverse) {
 		return reverse ? previous() : next();

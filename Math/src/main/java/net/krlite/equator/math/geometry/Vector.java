@@ -13,40 +13,40 @@ import net.krlite.equator.render.frame.FrameInfo;
 @net.krlite.equator.base.Math("2.2.1")
 public record Vector(double theta, double magnitude) implements Convertible.Scaled<Vector> {
 	/**
-	 * A vector with a magnitude of <code>0</code> and an angle of <code>0</code>.
+	 * A vector with a magnitude of {@code 0} and an angle of {@code 0}.
 	 */
 	public static final Vector ZERO = new Vector(0, 0);
 
 	/**
-	 * A vector with a magnitude of <code>1</code> and an angle of <code>π / 4</code>, representing the unit vector <code>(√2 / 2, √2 / 2)</code>.
+	 * A vector with a magnitude of {@code 1} and an angle of {@code π / 4}, representing the unit vector {@code (√2 / 2, √2 / 2)}.
 	 */
 	public static final Vector UNIT = new Vector(Math.PI / 4, 1);
 
 	/**
-	 * A vector with a magnitude of <code>√2</code> and an angle of <code>π / 4</code>, representing the unit vector <code>(1, 1)</code>.
+	 * A vector with a magnitude of {@code √2} and an angle of {@code π / 4}, representing the unit vector {@code (1, 1)}.
 	 */
 	public static final Vector UNIT_SQUARE = new Vector(Math.PI / 4, Math.sqrt(2));
 
 	/**
-	 * A vector with a magnitude of <code>1</code> and an angle of <code>0</code>, representing the unit vector <code>(1, 0)</code>
+	 * A vector with a magnitude of {@code 1} and an angle of {@code 0}, representing the unit vector {@code (1, 0)}
 	 * which is the positive unit on the X axis.
 	 */
 	public static final Vector UNIT_X = new Vector(0, 1);
 
 	/**
-	 * A vector with a magnitude of <code>1</code> and an angle of <code>π / 2</code>, representing the unit vector <code>(0, 1)</code>
+	 * A vector with a magnitude of {@code 1} and an angle of {@code π / 2}, representing the unit vector {@code (0, 1)}
 	 * which is the positive unit on the Y axis.
 	 */
 	public static final Vector UNIT_Y = new Vector(Math.PI / 2, 1);
 
 	/**
-	 * A vector with a magnitude of <code>1</code> and an angle of <code>π</code>, representing the unit vector <code>(-1, 0)</code>
+	 * A vector with a magnitude of {@code 1} and an angle of {@code π}, representing the unit vector {@code (-1, 0)}
 	 * which is the negative unit on the X axis.
 	 */
 	public static final Vector NEGATIVE_UNIT_X = new Vector(Math.PI, 1);
 
 	/**
-	 * A vector with a magnitude of <code>1</code> and an angle of <code>3π / 2</code>, representing the unit vector <code>(0, -1)</code>
+	 * A vector with a magnitude of {@code 1} and an angle of {@code 3π / 2}, representing the unit vector {@code (0, -1)}
 	 * which is tne negative unit on the Y axis.
 	 */
 	public static final Vector NEGATIVE_UNIT_Y = new Vector(-Math.PI / 2, 1);

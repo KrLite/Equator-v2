@@ -1,8 +1,6 @@
 package net.krlite.equator.render.vanilla;
 
-import it.unimi.dsi.fastutil.doubles.DoubleIterator;
 import net.krlite.equator.base.Cyclic;
-import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.visual.texture.Texture;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -25,7 +23,7 @@ public class ButtonRenderImplementation {
 		}
 	}
 
-	public static void renderButton(MatrixStack matrixStack, Box box, State state) {
+	public static void render(MatrixStack matrixStack, Box box, State state) {
 		box.ready(Texture.fromIdentifier(ClickableWidget.WIDGETS_TEXTURE).uvBox(256, 256, 0, state.y(), 200, 20))
 				.renderNineSliced(matrixStack, 20, 20, 4, 4, 200, 20);
 	}

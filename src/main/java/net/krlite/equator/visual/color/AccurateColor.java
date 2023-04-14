@@ -5,6 +5,10 @@ import net.krlite.equator.math.algebra.Theory;
 
 import java.awt.*;
 
+/**
+ * <h1>AccurateColor</h1>
+ * Represents a color with 64-bit precision per channel, and is stored as 4 doubles (64-bit floating point numbers).
+ */
 public class AccurateColor {
 	private static final IllegalArgumentException COLOR_ARRAY_LENGTH_EXCEPTION = new IllegalArgumentException("Color array must be of length 3 to 4");
 

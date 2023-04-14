@@ -50,7 +50,7 @@ public class Window {
 
 			/**
 			 * Called when the window is iconified.
-			 * @param iconified	<code>true</code> if the window is iconified, <code>false</code> otherwise.
+			 * @param iconified	{@code true} if the window is iconified, {@code false} otherwise.
 			 */
 			void onIconify(boolean iconified);
 		}
@@ -67,7 +67,7 @@ public class Window {
 
 			/**
 			 * Called when the window is maximized.
-			 * @param maximized	<code>true</code> if the window is maximized, <code>false</code> otherwise.
+			 * @param maximized	{@code true} if the window is maximized, {@code false} otherwise.
 			 */
 			void onMaximize(boolean maximized);
 		}
@@ -84,13 +84,13 @@ public class Window {
 
 			/**
 			 * Called when the window is focused.
-			 * @param focused	<code>true</code> if the window is focused, <code>false</code> otherwise.
+			 * @param focused	{@code true} if the window is focused, {@code false} otherwise.
 			 */
 			void onFocus(boolean focused);
 		}
 
 		/**
-		 * Callback for the {@link Window} move event, while the <code>position</code> is in the
+		 * Callback for the {@link Window} move event, while the {@code position} is in the
 		 * {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
 		 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
 		 */
@@ -111,7 +111,7 @@ public class Window {
 		}
 
 		/**
-		 * Callback for the {@link Window} resize event, while the <code>window</code> is in the
+		 * Callback for the {@link Window} resize event, while the {@code window} is in the
 		 * {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
 		 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
 		 */
@@ -142,8 +142,8 @@ public class Window {
 
 			/**
 			 * Called when the window's content scale is changed.
-			 * @param xScaling	The new <code>x-scaling</code> of the window.
-			 * @param yScaling	The new <code>y-scaling</code> of the window.
+			 * @param xScaling	The new {@code x-scaling} of the window.
+			 * @param yScaling	The new {@code y-scaling} of the window.
 			 */
 			void onContentScale(float xScaling, float yScaling);
 		}

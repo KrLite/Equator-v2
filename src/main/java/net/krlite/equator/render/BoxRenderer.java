@@ -8,6 +8,7 @@ import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
 import net.krlite.equator.render.base.Renderable;
+import net.krlite.equator.render.vanilla.ButtonRenderImplementation;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.color.Palette;
 import net.krlite.equator.visual.texture.Texture;
@@ -22,6 +23,19 @@ import org.joml.Quaternionf;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
+/**
+ * <h1>BoxRenderer</h1>
+ * Based on a {@link Box} and contains a {@link Texture} <b>and/or</b> a {@link AccurateColor}. A {@link Quaterniondc Quaternion}
+ * modifier can be applied during rendering.
+ * @see Box
+ * @see Quaterniondc
+ * @see AccurateColor
+ * @see Texture
+ * @param box		The {@link Box} to render the texture <b>and/or</b> color on.
+ * @param modifier	The {@link Quaterniondc Quaternion} modifier to apply during rendering.
+ * @param color		The <b>Optional</b> {@link AccurateColor} to render with.
+ * @param texture	The <b>Optional</b> {@link Texture} to render with.
+ */
 public record BoxRenderer(
 		Box box, Quaterniondc modifier,
 		@Nullable AccurateColor color, @Nullable Texture texture
@@ -49,13 +63,25 @@ public record BoxRenderer(
 		this(box, new Quaterniond(), null, null);
 	}
 
-	// box() is a record method
+	@Override
+	public Box box() {
+		return box;
+	}
 
-	// modifier() is a record method
+	@Override
+	public Quaterniondc modifier() {
+		return modifier;
+	}
 
-	// color() is a record method
+	@Override
+	public AccurateColor color() {
+		return color;
+	}
 
-	// texture() is a record method
+	@Override
+	public Texture texture() {
+		return texture;
+	}
 
 	private BoxRenderer preserve(Box box, Box uvBox) {
 		return new BoxRenderer(box, modifier(), color(), hasTexture() ? Objects.requireNonNull(texture()).uvBox(uvBox) : texture());
@@ -148,9 +174,7 @@ public record BoxRenderer(
 	}
 
 	public void render(MatrixStack matrixStack, float z) {
-		if (!isRenderable()) {
-			return;
-		}
+		if (!isRenderable()) return;
 
 		if (hasColor()) {
 			RenderSystem.enableBlend();

@@ -6,7 +6,6 @@ import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.render.vanilla.TooltipRenderImplementation;
 import net.krlite.equator.visual.color.AccurateColor;
-import net.krlite.equator.visual.color.Palette;
 import net.krlite.equator.visual.text.Paragraph;
 import net.krlite.equator.visual.text.Section;
 import net.minecraft.client.MinecraftClient;
@@ -19,6 +18,22 @@ import org.joml.Quaternionf;
 
 import java.util.function.UnaryOperator;
 
+/**
+ * <h1>SectionRenderer</h1>
+ * Based on {@link Box} and contains a {@link Section} to hold the text to render. An {@link AccurateColor} can be
+ * applied to the text and a {@link Quaterniondc Quaternion} modifier can be applied during rendering.
+ * @see Box
+ * @see Quaterniondc
+ * @see Section
+ * @see AccurateColor
+ * @param box			The {@link Box} to render the text in.
+ * @param modifier		The {@link Quaterniondc Quaternion} modifier to apply during rendering.
+ * @param section		The {@link Section} to hold the text to render.
+ * @param color			The {@link AccurateColor} to apply to the text.
+ * @param vertical		The {@link Section.Alignment} which determines the vertical alignment of the text.
+ * @param horizontal	The {@link Paragraph.Alignment} which determines the horizontal alignment of the text.
+ * @param shadow		Whether the text should be rendered with a shadow.
+ */
 public record SectionRenderer(
 		Box box, Quaterniondc modifier, Section section, @Nullable AccurateColor color,
 		Section.Alignment vertical, Paragraph.Alignment horizontal, boolean shadow
@@ -27,19 +42,40 @@ public record SectionRenderer(
 		this(box, new Quaterniond(), section, null, Section.Alignment.TOP, Paragraph.Alignment.LEFT, false);
 	}
 
-	// box() is a record method
+	@Override
+	public Box box() {
+		return box;
+	}
 
-	// modifier() is a record method
+	@Override
+	public Quaterniondc modifier() {
+		return modifier;
+	}
 
-	// section() is a record method
+	@Override
+	public Section section() {
+		return section;
+	}
 
-	// color() is a record method
+	@Override
+	public AccurateColor color() {
+		return color;
+	}
 
-	// vertical() is a record method
+	@Override
+	public Section.Alignment vertical() {
+		return vertical;
+	}
 
-	// horizontal() is a record method
+	@Override
+	public Paragraph.Alignment horizontal() {
+		return horizontal;
+	}
 
-	// shadow() is a record method
+	@Override
+	public boolean shadow() {
+		return shadow;
+	}
 
 	public SectionRenderer modifier(Quaterniondc modifier) {
 		return new SectionRenderer(box(), modifier, section(), color(), vertical(), horizontal(), shadow());
@@ -115,9 +151,7 @@ public record SectionRenderer(
 	}
 
 	public void render(MatrixStack matrixStack, TextRenderer textRenderer, boolean cut) {
-		if (!isRenderable()) {
-			return;
-		}
+		if (!isRenderable()) return;
 
 		Scissor scissor = box().scissor();
 
@@ -155,7 +189,7 @@ public record SectionRenderer(
 
 		double actualHeight = preserve(preserved).actualHeight();
 
-		TooltipRenderImplementation.renderTooltip(matrixStack, !ignoreVerticalAlignment ? box() : box().height(actualHeight + 2 * bleeding));
+		TooltipRenderImplementation.render(matrixStack, !ignoreVerticalAlignment ? box() : box().height(actualHeight + 2 * bleeding));
 		preserve(!ignoreVerticalAlignment ? preserved : preserved.height(actualHeight)).render(matrixStack, textRenderer, true);
 	}
 

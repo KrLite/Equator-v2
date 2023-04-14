@@ -15,6 +15,12 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * <h1>Paragraph</h1>
+ * Represents a paragraph of text.
+ * @param text		The text of the paragraph.
+ * @param scalar	The scalar to multiply the font size by.
+ */
 public record Paragraph(Text text, double scalar) {
 	interface AlignmentFunction {
 		Vector apply(Box box, Text text, TextRenderer textRenderer, double fontSize, double scalar);
@@ -37,7 +43,7 @@ public record Paragraph(Text text, double scalar) {
 		}
 	}
 
-	public static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n"), FORMATTING_PATTERN = Pattern.compile("§(?<code>[0-9a-fk-or])");
+	public static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n"), FORMATTING_PATTERN = Pattern.compile("§(?{@code [0-9a-fk-or])");
 	public static final String NEWLINE = "\n";
 
 	public static Paragraph spacing(double scalar) {

@@ -11,8 +11,19 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
+/**
+ * <h1>Animation</h1>
+ * Handles the animation between two values.
+ */
 public class Animation implements Runnable {
+	/**
+	 * Callbacks for animation events.
+	 * @see Animation
+	 */
 	public interface Callbacks {
+		/**
+		 * Callback for the {@link Animation} start event.
+		 */
 		interface Start {
 			Event<Callbacks.Start> EVENT = EventFactory.createArrayBacked(Callbacks.Start.class, (listeners) -> (animation) -> {
 				for (Callbacks.Start listener : listeners) {
@@ -20,9 +31,16 @@ public class Animation implements Runnable {
 				}
 			});
 
+			/**
+			 * Called when an animation starts.
+			 * @param animation The animation that started.
+			 */
 			void onStart(Animation animation);
 		}
 
+		/**
+		 * Callback for the {@link Animation} complete event.
+		 */
 		interface Complete {
 			Event<Complete> EVENT = EventFactory.createArrayBacked(Complete.class, (listeners) -> (animation) -> {
 				for (Complete listener : listeners) {
@@ -30,9 +48,16 @@ public class Animation implements Runnable {
 				}
 			});
 
+			/**
+			 * Called when an animation completes.
+			 * @param animation The animation that completed.
+			 */
 			void onCompletion(Animation animation);
 		}
 
+		/**
+		 * Callback for the {@link Animation} repeat event.
+		 */
 		interface Repeat {
 			Event<Repeat> EVENT = EventFactory.createArrayBacked(Repeat.class, (listeners) -> (animation) -> {
 				for (Repeat listener : listeners) {
@@ -40,26 +65,44 @@ public class Animation implements Runnable {
 				}
 			});
 
+			/**
+			 * Called when an animation repeats.
+			 * @param animation The animation that repeated.
+			 */
 			void onRepetition(Animation animation);
 		}
 
-		interface StartFrame {
-			Event<StartFrame> EVENT = EventFactory.createArrayBacked(StartFrame.class, (listeners) -> (animation) -> {
-				for (StartFrame listener : listeners) {
+		/**
+		 * Callback for the {@link Animation} frame start event.
+		 */
+		interface FrameStart {
+			Event<FrameStart> EVENT = EventFactory.createArrayBacked(FrameStart.class, (listeners) -> (animation) -> {
+				for (FrameStart listener : listeners) {
 					listener.onFrameStart(animation);
 				}
 			});
 
+			/**
+			 * Called when an animation frame starts. That is, before the value is updated.
+			 * @param animation The animation that is being updated.
+			 */
 			void onFrameStart(Animation animation);
 		}
 
-		interface EndFrame {
-			Event<EndFrame> EVENT = EventFactory.createArrayBacked(EndFrame.class, (listeners) -> (animation) -> {
-				for (EndFrame listener : listeners) {
+		/**
+		 * Callback for the {@link Animation} frame end event.
+		 */
+		interface FrameEnd {
+			Event<FrameEnd> EVENT = EventFactory.createArrayBacked(FrameEnd.class, (listeners) -> (animation) -> {
+				for (FrameEnd listener : listeners) {
 					listener.onFrameEnd(animation);
 				}
 			});
 
+			/**
+			 * Called when an animation frame ends. That is, after the value is updated.
+			 * @param animation The animation that is being updated.
+			 */
 			void onFrameEnd(Animation animation);
 		}
 	}
@@ -182,7 +225,7 @@ public class Animation implements Runnable {
 	 */
 	@Override
 	public void run() {
-		Callbacks.StartFrame.EVENT.invoker().onFrameStart(this);
+		Callbacks.FrameStart.EVENT.invoker().onFrameStart(this);
 
 		if (isCompleted()) {
 			if (repeat()) {
@@ -197,7 +240,7 @@ public class Animation implements Runnable {
 			progress.addAndGet(period());
 		}
 
-		Callbacks.EndFrame.EVENT.invoker().onFrameEnd(this);
+		Callbacks.FrameEnd.EVENT.invoker().onFrameEnd(this);
 	}
 
 	public void start() {

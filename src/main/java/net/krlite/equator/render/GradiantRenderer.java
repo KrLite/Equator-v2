@@ -1,7 +1,6 @@
 package net.krlite.equator.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
 import net.krlite.equator.render.base.Renderable;
@@ -12,6 +11,20 @@ import org.joml.Matrix4f;
 
 import java.util.function.UnaryOperator;
 
+/**
+ * <h1>GradiantRenderer</h1>
+ * Based on a {@link Box} and contains up to 4 {@link AccurateColor}s, usually used to render a gradiant.
+ * A {@link org.joml.Quaterniondc Quaternion} modifier can be applied during rendering.
+ * @see Box
+ * @see AccurateColor
+ * @param box			The {@link Box} to render the gradiant in. If a color is not specified, it will be transparent
+ *                      and equivalent to {@link AccurateColor#TRANSPARENT}. Transparent colors <b>only involve opacity</b>
+ *                      in the rendering process.
+ * @param topLeft		The <b>Optional</b> {@link AccurateColor} of the top left corner.
+ * @param bottomLeft	The <b>Optional</b> {@link AccurateColor} of the bottom left corner.
+ * @param bottomRight	The <b>Optional</b> {@link AccurateColor} of the bottom right corner.
+ * @param topRight		The <b>Optional</b> {@link AccurateColor} of the top right corner.
+ */
 public record GradiantRenderer(
 		Box box, AccurateColor topLeft, AccurateColor bottomLeft, AccurateColor bottomRight, AccurateColor topRight
 ) implements Renderable {
@@ -31,15 +44,30 @@ public record GradiantRenderer(
 		this(box, AccurateColor.TRANSPARENT);
 	}
 
-	// box() is a record method
+	@Override
+	public Box box() {
+		return box;
+	}
 
-	// topLeft() is a record method
+	@Override
+	public AccurateColor topLeft() {
+		return topLeft;
+	}
 
-	// bottomLeft() is a record method
+	@Override
+	public AccurateColor bottomLeft() {
+		return bottomLeft;
+	}
 
-	// bottomRight() is a record method
+	@Override
+	public AccurateColor bottomRight() {
+		return bottomRight;
+	}
 
-	// topRight() is a record method
+	@Override
+	public AccurateColor topRight() {
+		return topRight;
+	}
 
 	private GradiantRenderer preserve(Box box) {
 		return new GradiantRenderer(box, topLeft(), bottomLeft(), bottomRight(), topRight());
@@ -222,9 +250,7 @@ public record GradiantRenderer(
 	}
 
 	public void render(MatrixStack matrixStack, float z) {
-		if (!isRenderable()) {
-			return;
-		}
+		if (!isRenderable()) return;
 
 		RenderSystem.enableBlend();
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
@@ -412,7 +438,7 @@ public record GradiantRenderer(
 	}
 
 	public void renderOutlineShadow(MatrixStack matrixStack, float z) {
-		renderOutline(matrixStack, box.s() * 0.55, OutlineMode.EDGE_FADING, z);
+		renderOutline(matrixStack, box.diag() * 0.55, OutlineMode.EDGE_FADING, z);
 	}
 
 	public void renderOutlineShadow(MatrixStack matrixStack) {

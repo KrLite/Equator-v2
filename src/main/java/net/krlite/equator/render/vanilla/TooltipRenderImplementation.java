@@ -10,7 +10,7 @@ public class TooltipRenderImplementation {
 	 * @param matrixStack	The {@link MatrixStack} to render to.
 	 * @param box			The {@link Box} to render the tooltip in.
 	 */
-	public static void renderTooltip(MatrixStack matrixStack, Box box) {
+	public static void render(MatrixStack matrixStack, Box box) {
 		Box bleed = box.expand(-1);
 
 		// Rectangle

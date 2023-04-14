@@ -20,114 +20,114 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public enum Keyboard {
 	// Symbols
 	/**
-	 * The <code>space</code> key.
+	 * The {@code space} key.
 	 */
 	SPACE(GLFW.GLFW_KEY_SPACE),
 	/**
-	 * <h1><code>"</code><br /><code>'</code></h1>
-	 * The <code>apostrophe(quote)</code> key.
+	 * <h1>{@code "}<br />{@code '}</h1>
+	 * The {@code apostrophe (quote)} key.
 	 */
 	APOSTROPHE(GLFW.GLFW_KEY_APOSTROPHE),
 	/**
-	 * <h1><code><</code><br /><code>,</code></h1>
-	 * The <code>comma(less than)</code> key.
+	 * <h1>{@code <}<br />{@code ,}</h1>
+	 * The {@code comma (less than)} key.
 	 */
 	COMMA(GLFW.GLFW_KEY_COMMA),
 	/**
-	 * <h1><code>_</code><br /><code>-</code></h1>
-	 * The <code>minus(underscore)</code> key.
+	 * <h1>{@code _}<br />{@code -}</h1>
+	 * The {@code minus (underscore)} key.
 	 */
 	MINUS(GLFW.GLFW_KEY_MINUS),
 	/**
-	 * <h1><code>></code><br /><code>.</code></h1>
-	 * The <code>period(greater than)</code> key.
+	 * <h1>{@code >}<br />{@code .}</h1>
+	 * The {@code period (greater than)} key.
 	 */
 	PERIOD(GLFW.GLFW_KEY_PERIOD),
 	/**
-	 * <h1><code>?</code><br /><code>/</code></h1>
-	 * The <code>slash(question mark)</code> key.
+	 * <h1>{@code ?}<br />{@code /}</h1>
+	 * The {@code slash (question mark)} key.
 	 */
 	SLASH(GLFW.GLFW_KEY_SLASH),
 	/**
-	 * <h1><code>|</code><br /><code>\</code></h1>
-	 * The <code>backslash(pipe mark)</code> key.
+	 * <h1>{@code |}<br />{@code \}</h1>
+	 * The {@code backslash (pipe mark)} key.
 	 */
 	BACKSLASH(GLFW.GLFW_KEY_BACKSLASH),
 	/**
-	 * <h1><code>:</code><br /><code>;</code></h1>
-	 * The <code>semicolon(colon)</code> key.
+	 * <h1>{@code :}<br />{@code ;}</h1>
+	 * The {@code semicolon (colon)} key.
 	 */
 	SEMICOLON(GLFW.GLFW_KEY_SEMICOLON),
 	/**
-	 * <h1><code>+</code><br /><code>=</code></h1>
-	 * The <code>equal(plus)</code> key.
+	 * <h1>{@code +}<br />{@code =}</h1>
+	 * The {@code equal (plus)} key.
 	 */
 	EQUAL(GLFW.GLFW_KEY_EQUAL),
 	/**
-	 * <h1><code>{</code><br /><code>[</code></h1>
-	 * The <code>left bracket(left brace)</code> key.
+	 * <h1><tt>&#123</tt><br />{@code [}</h1>
+	 * The {@code left bracket (left brace)} key.
 	 */
 	LEFT_BRACKET(GLFW.GLFW_KEY_LEFT_BRACKET),
 	/**
-	 * <h1><code>}</code><br /><code>]</code></h1>
-	 * The <code>right bracket(right brace)</code> key.
+	 * <h1><tt>&#125</tt><br />{@code ]}</h1>
+	 * The {@code right bracket (right brace)} key.
 	 */
 	RIGHT_BRACKET(GLFW.GLFW_KEY_RIGHT_BRACKET),
 	/**
-	 * <h1><code>~</code><br /><code>`</code></h1>
-	 * The <code>grave accent(tilde)</code> key.
+	 * <h1>{@code ~}<br />{@code `}</h1>
+	 * The {@code grave accent (tilde)} key.
 	 */
 	GRAVE_ACCENT(GLFW.GLFW_KEY_GRAVE_ACCENT),
 
 	// Numbers
 	/**
-	 * <h1><code>)</code><br /><code>0</code></h1>
-	 * The <code>zero(right parenthesis)</code> key.
+	 * <h1>{@code )}<br />{@code 0}</h1>
+	 * The {@code zero (right parenthesis)} key.
 	 */
 	NUM_0(GLFW.GLFW_KEY_0),
 	/**
-	 * <h1><code>!</code><br /><code>1</code></h1>
-	 * The <code>one(exclamation mark)</code> key.
+	 * <h1>{@code !}<br />{@code 1}</h1>
+	 * The {@code one (exclamation mark)} key.
 	 */
 	NUM_1(GLFW.GLFW_KEY_1),
 	/**
-	 * <h1><code>@</code><br /><code>2</code></h1>
-	 * The <code>two(at sign)</code> key.
+	 * <h1>{@code @}<br />{@code 2}</h1>
+	 * The {@code two (at sign)} key.
 	 */
 	NUM_2(GLFW.GLFW_KEY_2),
 	/**
-	 * <h1><code>#</code><br /><code>3</code></h1>
-	 * The <code>three(hash)</code> key.
+	 * <h1>{@code #}<br />{@code 3}</h1>
+	 * The {@code three (hash)} key.
 	 */
 	NUM_3(GLFW.GLFW_KEY_3),
 	/**
-	 * <h1><code>$</code><br /><code>4</code></h1>
-	 * The <code>four(dollar sign)</code> key.
+	 * <h1>{@code $}<br />{@code 4}</h1>
+	 * The {@code four (dollar sign)} key.
 	 */
 	NUM_4(GLFW.GLFW_KEY_4),
 	/**
-	 * <h1><code>%</code><br /><code>5</code></h1>
-	 * The <code>five(percent sign)</code> key.
+	 * <h1>{@code %}<br />{@code 5}</h1>
+	 * The {@code five (percent sign)} key.
 	 */
 	NUM_5(GLFW.GLFW_KEY_5),
 	/**
-	 * <h1><code>^</code><br /><code>6</code></h1>
-	 * The <code>six(caret)</code> key.
+	 * <h1>{@code ^}<br />{@code 6}</h1>
+	 * The {@code six (caret)} key.
 	 */
 	NUM_6(GLFW.GLFW_KEY_6),
 	/**
-	 * <h1><code>&</code><br /><code>7</code></h1>
-	 * The <code>seven(ampersand)</code> key.
+	 * <h1>{@code &}<br />{@code 7}</h1>
+	 * The {@code seven (ampersand)} key.
 	 */
 	NUM_7(GLFW.GLFW_KEY_7),
 	/**
-	 * <h1><code>*</code><br /><code>8</code></h1>
-	 * The <code>eight(asterisk)</code> key.
+	 * <h1>{@code *}<br />{@code 8}</h1>
+	 * The {@code eight (asterisk)} key.
 	 */
 	NUM_8(GLFW.GLFW_KEY_8),
 	/**
-	 * <h1><code>(</code><br /><code>9</code></h1>
-	 * The <code>nine(left parenthesis)</code> key.
+	 * <h1>{@code (}<br />{@code 9}</h1>
+	 * The {@code nine (left parenthesis)} key.
 	 */
 	NUM_9(GLFW.GLFW_KEY_9),
 
@@ -140,43 +140,43 @@ public enum Keyboard {
 
 	// Function Keys
 	/**
-	 * <h1><code>↩︎</code></h1>
-	 * The <code>enter</code> key.
+	 * <h1>{@code ↩︎}</h1>
+	 * The {@code enter} key.
 	 */
 	ENTER(GLFW.GLFW_KEY_ENTER),
 	/**
-	 * <h1><code>⇥</code></h1>
-	 * The <code>tab</code> key.
+	 * <h1>{@code ⇥}</h1>
+	 * The {@code tab} key.
 	 */
 	TAB(GLFW.GLFW_KEY_TAB),
 	/**
-	 * <h1><code>⌫</code></h1>
-	 * The <code>backspace</code> key.
+	 * <h1>{@code ⌫}</h1>
+	 * The {@code backspace} key.
 	 */
 	BACKSPACE(GLFW.GLFW_KEY_BACKSPACE),
 	/**
-	 * <h1><code>⌦</code></h1>
-	 * The <code>delete</code> key.
+	 * <h1>{@code ⌦}</h1>
+	 * The {@code delete} key.
 	 */
 	DELETE(GLFW.GLFW_KEY_DELETE),
 	/**
-	 * <h1><code>→</code></h1>
-	 * The <code>right arrow</code> key.
+	 * <h1>{@code →}</h1>
+	 * The {@code right arrow} key.
 	 */
 	RIGHT(GLFW.GLFW_KEY_RIGHT),
 	/**
-	 * <h1><code>←</code></h1>
-	 * The <code>left arrow</code> key.
+	 * <h1>{@code ←}</h1>
+	 * The {@code left arrow} key.
 	 */
 	LEFT(GLFW.GLFW_KEY_LEFT),
 	/**
-	 * <h1><code>↓</code></h1>
-	 * The <code>down arrow</code> key.
+	 * <h1>{@code ↓}</h1>
+	 * The {@code down arrow} key.
 	 */
 	DOWN(GLFW.GLFW_KEY_DOWN),
 	/**
-	 * <h1><code>↑</code></h1>
-	 * The <code>up arrow</code> key.
+	 * <h1>{@code ↑}</h1>
+	 * The {@code up arrow} key.
 	 */
 	UP(GLFW.GLFW_KEY_UP),
 	ESCAPE(GLFW.GLFW_KEY_ESCAPE), INSERT(GLFW.GLFW_KEY_INSERT), PAGE_DOWN(GLFW.GLFW_KEY_PAGE_DOWN), PAGE_UP(GLFW.GLFW_KEY_PAGE_UP),
@@ -200,52 +200,52 @@ public enum Keyboard {
 
 	// Modifiers
 	/**
-	 * <h1><code>↑</code></h1>
-	 * The <code>left shift</code> key.
+	 * <h1>{@code ↑}</h1>
+	 * The {@code left shift} key.
 	 */
 	LEFT_SHIFT(GLFW.GLFW_KEY_LEFT_SHIFT),
 	/**
-	 * <h1><code>⌃</code></h1>
-	 * The <code>left control</code> key.
+	 * <h1>{@code ⌃}</h1>
+	 * The {@code left control} key.
 	 */
 	LEFT_CONTROL(GLFW.GLFW_KEY_LEFT_CONTROL),
 	/**
-	 * <h1><code>⌥</code></h1>
-	 * The <code>left alt(left option)</code> key.
+	 * <h1>{@code ⌥}</h1>
+	 * The {@code left alt(left option)} key.
 	 */
 	LEFT_ALT(GLFW.GLFW_KEY_LEFT_ALT),
 	/**
-	 * <h1><code>⌘</code></h1>
-	 * The <code>left super(left windows, left command)</code> key.
+	 * <h1>{@code ⌘}</h1>
+	 * The {@code left super(left windows, left command)} key.
 	 */
 	LEFT_SUPER(GLFW.GLFW_KEY_LEFT_SUPER),
 
 	/**
-	 * <h1><code>↑</code></h1>
-	 * The <code>right shift</code> key.
+	 * <h1>{@code ↑}</h1>
+	 * The {@code right shift} key.
 	 */
 	RIGHT_SHIFT(GLFW.GLFW_KEY_RIGHT_SHIFT),
 	/**
-	 * <h1><code>⌃</code></h1>
-	 * The <code>right control</code> key.
+	 * <h1>{@code ⌃}</h1>
+	 * The {@code right control} key.
 	 */
 	RIGHT_CONTROL(GLFW.GLFW_KEY_RIGHT_CONTROL),
 	/**
-	 * <h1><code>⌥</code></h1>
-	 * The <code>right alt(right option)</code> key.
+	 * <h1>{@code ⌥}</h1>
+	 * The {@code right alt(right option)} key.
 	 */
 	RIGHT_ALT(GLFW.GLFW_KEY_RIGHT_ALT),
 	/**
-	 * <h1><code>⌘</code></h1>
-	 * The <code>right super(right windows, right command)</code> key.
+	 * <h1>{@code ⌘}</h1>
+	 * The {@code right super(right windows, right command)} key.
 	 */
 	RIGHT_SUPER(GLFW.GLFW_KEY_RIGHT_SUPER),
 
 	WORLD_1(GLFW.GLFW_KEY_WORLD_1),
 	WORLD_2(GLFW.GLFW_KEY_WORLD_2),
 	/**
-	 * <h1><code>☰</code></h1>
-	 * The <code>menu</code> key.
+	 * <h1>{@code ☰}</h1>
+	 * The {@code menu} key.
 	 */
 	MENU(GLFW.GLFW_KEY_MENU),
 
@@ -347,23 +347,23 @@ public enum Keyboard {
 
 	public enum Modifier {
 		/**
-		 * <h1><code>↑</code></h1>
-		 * The <code>shift</code> modifier.
+		 * <h1>{@code ↑}</h1>
+		 * The {@code shift} modifier.
 		 */
 		SHIFT(GLFW.GLFW_MOD_SHIFT),
 		/**
-		 * <h1><code>⌃</code></h1>
-		 * The <code>control</code> modifier.
+		 * <h1>{@code ⌃}</h1>
+		 * The {@code control} modifier.
 		 */
 		CONTROL(GLFW.GLFW_MOD_CONTROL),
 		/**
-		 * <h1><code>⌥</code></h1>
-		 * The <code>alt(option)</code> modifier.
+		 * <h1>{@code ⌥}</h1>
+		 * The {@code alt(option)} modifier.
 		 */
 		ALT(GLFW.GLFW_MOD_ALT),
 		/**
-		 * <h1><code>⌘</code></h1>
-		 * The <code>super(windows, command)</code> modifier.
+		 * <h1>{@code ⌘}</h1>
+		 * The {@code super(windows, command)} modifier.
 		 */
 		SUPER(GLFW.GLFW_MOD_SUPER),
 		CAPS_LOCK(GLFW.GLFW_MOD_CAPS_LOCK),

@@ -1,15 +1,12 @@
 package net.krlite.equator.test;
 
 import net.krlite.equator.math.geometry.Box;
-import net.krlite.equator.math.geometry.Vector;
 import net.krlite.equator.input.Keyboard;
 import net.krlite.equator.input.Mouse;
-import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.render.vanilla.ButtonRenderImplementation;
 import net.krlite.equator.visual.animation.Interpolation;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -60,6 +57,6 @@ public class CanvasScreen extends Screen {
 		renderBackground(matrixStack);
 
 		box.ready(AccurateColor.RED.opacity(0.1)).render(matrixStack);
-		ButtonRenderImplementation.renderButton(matrixStack, box, ButtonRenderImplementation.State.FOCUSED);
+		ButtonRenderImplementation.render(matrixStack, box, ButtonRenderImplementation.State.FOCUSED);
 	}
 }

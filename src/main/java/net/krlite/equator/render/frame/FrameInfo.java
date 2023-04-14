@@ -41,18 +41,18 @@ public class FrameInfo {
 	 * 			    System</b>.
 	 * 			    <br />
 	 * 			    <br />
-	 * 			    <code>origin -</code> the bottom left of the screen.
+	 * 			    {@code origin -} the bottom left of the screen.
 	 * 			    <br />
-	 * 			    <code>positive angle -</code> counter-clockwise.
+	 * 			    {@code positive angle -} counter-clockwise.
 	 * 			    <br />
 	 * 			    <br />
-	 * 				<code>
-	 * 					&emsp;x<0 ↑ x>0<br />
-	 * 					&emsp;y>0 | y>0<br />
-	 * 					-----+----→ θ+↑<br />
-	 * 					&emsp;x<0 | x>0<br />
-	 * 					&emsp;y<0 | y<0
-	 * 				</code>
+	 * 			    <pre>
+	 * 	 x<0 ┃ x>0
+	 * 	 y>0 ┃ y>0
+	 * 	─────╄━━━━━ θ+ ↑
+	 * 	 x<0 │ x>0
+	 * 	 y<0 │ y<0
+	 * 				</pre>
 	 * 			</p>
 	 * 		</p>
 	 * 		<p>
@@ -62,18 +62,18 @@ public class FrameInfo {
 	 * 			    on the screen.
 	 *				<br />
 	 * 		        <br />
-	 * 		        <code>origin -</code> the top left corner of the screen.
+	 * 		        {@code origin -} the top left corner of the screen.
 	 * 		        <br />
-	 * 		        <code>positive angle -</code> clockwise.
+	 * 		        {@code positive angle -} clockwise.
 	 * 			    <br />
 	 * 			    <br />
-	 * 				<code>
-	 * 					&emsp;x<0 | x>0<br />
-	 * 					&emsp;y<0 | y<0<br />
-	 * 					-----+----→ θ+↓<br />
-	 * 					&emsp;x<0 | x>0<br />
-	 * 					&emsp;y>0 ↓ y>0
-	 * 				</code>
+	 * 			    <pre>
+	 * 	 x<0 │ x>0
+	 * 	 y<0 │ y<0
+	 * 	─────╆━━━━━ θ+ ↓
+	 * 	 x<0 ┃ x>0
+	 * 	 y>0 ┃ y>0
+	 * 				</pre>
 	 * 			</p>
 	 * 		</p>
 	 * </p>
@@ -85,7 +85,7 @@ public class FrameInfo {
 	 * 		        Based on the <b>Raster Coordinate System</b> and is used by Minecraft.
 	 * 		        <br />
 	 * 		        <br />
-	 * 		        <code>size -</code> the <b>scaled</b> size of the window.
+	 * 		        {@code size -<} the <b>scaled</b> size of the window.
 	 * 		</p>
 	 * 		<p>
 	 * 		    <h2>Screen Coordinate</h2>
@@ -93,7 +93,7 @@ public class FrameInfo {
 	 * 		        Based on the <b>Raster Coordinate System</b> and is used by GLFW.
 	 * 		        <br />
 	 * 		        <br />
-	 * 		        <code>size -</code> the <b>unscaled</b> size of the window.
+	 * 		        {@code size -} the <b>unscaled</b> size of the window.
 	 * 		    </p>
 	 * 		</p>
 	 * 		<p>
@@ -102,18 +102,18 @@ public class FrameInfo {
 	 * 		        Based on the <b>Cartesian Coordinate System</b> and is used by OpenGL and GLSL.
 	 * 		        <br />
 	 * 		        <br />
-	 * 		        <code>size -</code> the size of the frame.
+	 * 		        {@code size -} the size of the frame.
 	 * 		    </p>
 	 * 		<p>
 	 * </p>
 	 */
 	public static class Convertor {
 		public static Vector scaledToScreen(Vector vector) {
-			return vector.multiply(screen().s() / scaled().s());
+			return vector.multiply(screen().diag() / scaled().diag());
 		}
 
 		public static Vector screenToScaled(Vector vector) {
-			return vector.multiply(scaled().s() / screen().s());
+			return vector.multiply(scaled().diag() / screen().diag());
 		}
 
 		public static Vector scaledToOpenGL(Vector vector) {

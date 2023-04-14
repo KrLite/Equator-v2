@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.krlite.equator.Equator;
 import net.krlite.equator.math.geometry.Vector;
-import net.krlite.equator.render.frame.FrameInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
@@ -80,15 +79,55 @@ public enum Mouse {
 	}
 
 	public enum Cursor {
+		/**
+		 * <h1>↖</h1>
+		 * The regular arrow cursor shape.
+		 */
 		ARROW(GLFW.GLFW_ARROW_CURSOR),
+		/**
+		 * <h1>{@code ╎}</h1>
+		 * The text input I-beam cursor shape.
+		 */
 		I_BEAM(GLFW.GLFW_IBEAM_CURSOR),
+		/**
+		 * <h1>{@code +}</h1>
+		 * The crosshair shape.
+		 */
 		CROSSHAIR(GLFW.GLFW_CROSSHAIR_CURSOR),
+		/**
+		 * <h1>{@code ☝️}</h1>
+		 * The pointing hand shape.
+		 */
 		HAND(GLFW.GLFW_POINTING_HAND_CURSOR),
+		/**
+		 * <h1>{@code ↕}</h1>
+		 * The horizontal resize/move arrow shape.
+		 */
 		RESIZE_HORIZONTAL(GLFW.GLFW_RESIZE_EW_CURSOR),
+		/**
+		 * <h1>{@code ↔}</h1>
+		 * The vertical resize/move arrow shape.
+		 */
 		RESIZE_VERTICAL(GLFW.GLFW_RESIZE_NS_CURSOR),
+		/**
+		 * <h1>{@code ↖↘}</h1>
+		 * The top-left to bottom-right diagonal resize/move arrow shape.
+		 */
 		RESIZE_NW_SE(GLFW.GLFW_RESIZE_NWSE_CURSOR),
+		/**
+		 * <h1>{@code ↙↗}</h1>
+		 * The top-right to bottom-left diagonal resize/move arrow shape.
+		 */
 		RESIZE_NE_SW(GLFW.GLFW_RESIZE_NESW_CURSOR),
+		/**
+		 * <h1>{@code ↕↔}</h1>
+		 * The top-left and bottom-right diagonal resize/move arrow shape.
+		 */
 		RESIZE_ALL(GLFW.GLFW_RESIZE_ALL_CURSOR),
+		/**
+		 * <h1>{@code ⌀}</h1>
+		 * The not allowed shape.
+		 */
 		NOT_ALLOWED(GLFW.GLFW_NOT_ALLOWED_CURSOR);
 
 		private final int value;
@@ -131,7 +170,7 @@ public enum Mouse {
 		}
 
 		/**
-		 * Callback for the {@link Mouse} scroll event, while the <code>scroll</code> is in the
+		 * Callback for the {@link Mouse} scroll event, while the {@code scroll} is in the
 		 * {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
 		 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
 		 */
@@ -152,7 +191,7 @@ public enum Mouse {
 		}
 
 		/**
-		 * Callback for the {@link Mouse} drag event, while the <code>position</code> is in the
+		 * Callback for the {@link Mouse} drag event, while the {@code position} is in the
 		 * {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
 		 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
 		 */
@@ -192,7 +231,7 @@ public enum Mouse {
 		}
 
 		/**
-		 * Callback for the {@link Mouse} move event, while the <code>position</code> is in the
+		 * Callback for the {@link Mouse} move event, while the {@code position} is in the
 		 * {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
 		 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
 		 */

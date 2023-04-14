@@ -3,11 +3,23 @@ package net.krlite.equator.visual.animation;
 import java.util.function.UnaryOperator;
 
 /**
- * A multi-parameter function that accepts the start, end and progress and returns a value.
- * Mostly, slices should follow the formula {@code start + (end - start) * processedProgress},
- * where {@code processedProgress} is the progress that has been processed by the slice. In
- * other words, the slice should map the progress to a new value, which is then used to
- * interpolate between the start and end values.
+ * <h1>Slice</h1>
+ * A <b>multi-parameter function</b> that accepts the start, end and progress values and returns a mapped
+ * value.
+ * <br />
+ * <br />
+ * For example, {@link net.krlite.equator.math.algebra.Curves#LINEAR Curves.LINEAR} is a slice that maps
+ * the progress to itself, which means that the value is interpolated linearly between the start and end
+ * values;
+ * <br />
+ * {@link net.krlite.equator.math.algebra.Curves.Exponential.Quadratic#IN Curves.Exponential.Quadratic.EASE}
+ * is a slice that maps the progress to the square of itself, which means that the value is interpolated
+ * quadratically between the start and end values, that is, it starts slow and ends fast;
+ * <br />
+ * <br />
+ * Most slices follow the formula {@code start + (end - start) * mapped}, where {@code mapped} is the
+ * value of the progress mapped by the slice. Basically, different slices map the progress to different
+ * values, thus changing the formula behaviour.
  */
 @FunctionalInterface
 public interface Slice {
@@ -95,9 +107,9 @@ public interface Slice {
 	/**
 	 * Appends the given slice to this one, with the given threshold.
 	 * @param combination	The slice to append.
-	 * @param threshold		The threshold at which the combination slice is applied. For example, if the threshold is <code>0.5</code>,
-	 *                      the combination slice is applied from beginning to end when the progress is <code>50%</code> or more, and this
-	 *                      slice is applied from beginning to end when the progress is less than <code>50%</code>.
+	 * @param threshold		The threshold at which the combination slice is applied. For example, if the threshold is {@code 0.5},
+	 *                      the combination slice is applied from beginning to end when the progress is {@code 50%} or more, and this
+	 *                      slice is applied from beginning to end when the progress is less than {@code 50%}.
 	 * @return	A slice which appends the given slice to this one.
 	 */
 	default Slice append(Slice combination, double threshold) {
@@ -108,7 +120,7 @@ public interface Slice {
 	}
 
 	/**
-	 * Appends the given slice to this one, with the default threshold of <code>0.5</code>.
+	 * Appends the given slice to this one, with the default threshold of {@code 0.5}.
 	 * @param combination	The slice to append.
 	 * @return	A slice which appends the given slice to this one.
 	 * @see #append(Slice, double)
@@ -120,9 +132,9 @@ public interface Slice {
 	/**
 	 * Prepends the given slice to this one, with the given threshold.
 	 * @param combination	The slice to prepend.
-	 * @param threshold		The threshold at which the combination slice is applied. For example, if the threshold is <code>0.5</code>,
-	 *                      this slice is applied from beginning to end when the progress is <code>50%</code> or more, and the combination
-	 *                      slice is applied from beginning to end when the progress is less than <code>50%</code>
+	 * @param threshold		The threshold at which the combination slice is applied. For example, if the threshold is {@code 0.5},
+	 *                      this slice is applied from beginning to end when the progress is {@code 50%} or more, and the combination
+	 *                      slice is applied from beginning to end when the progress is less than {@code 50%}
 	 * @return	A slice which prepends the given slice to this one.
 	 */
 	default Slice prepend(Slice combination, double threshold) {
@@ -133,7 +145,7 @@ public interface Slice {
 	}
 
 	/**
-	 * Prepends the given slice to this one, with the default threshold of <code>0.5</code>.
+	 * Prepends the given slice to this one, with the default threshold of {@code 0.5}.
 	 * @param combination	The slice to prepend.
 	 * @return	A slice which prepends the given slice to this one.
 	 * @see #prepend(Slice, double)

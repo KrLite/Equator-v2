@@ -11,6 +11,17 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
+/**
+ * <h1>Section</h1>
+ * Represents a section of text.
+ * @param fontSize			The font size.
+ * @param titleScalar		The scalar to multiply the font size by for titles.
+ * @param subtitleScalar	The scalar to multiply the font size by for subtitles.
+ * @param lineSpacing		The spacing between lines.
+ * @param paragraphSpacing	The spacing between paragraphs.
+ * @param paragraphs		The paragraphs of text.
+ * @see Paragraph
+ */
 public record Section(
 		double fontSize, double titleScalar, double subtitleScalar,
 		double lineSpacing, double paragraphSpacing, Paragraph... paragraphs

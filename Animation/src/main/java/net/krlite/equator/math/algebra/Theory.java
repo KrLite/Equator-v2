@@ -8,12 +8,12 @@ public class Theory {
 	public static final double EPSILON = 1e-6;
 
 	/**
-	 * <h1><code>a ≈ b</code></h1>
-	 * Returns <code>true</code> if the two doubles are equal within a small margin of error.
+	 * <h1>{@code a ≈ b}</h1>
+	 * Returns {@code true} if the two doubles are equal within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
-	 * @return	<code>true</code> if the two doubles are equal within a small margin of error,
-	 * 			<code>false</code> otherwise.
+	 * @return	{@code true} if the two doubles are equal within a small margin of error,
+	 * 			{@code false} otherwise.
 	 * @see #EPSILON
 	 */
 	public static boolean looseEquals(double a, double b) {
@@ -21,12 +21,12 @@ public class Theory {
 	}
 
 	/**
-	 * <h1><code>a ≠ b</code></h1>
-	 * Returns <code>true</code> if the two doubles are not equal within a small margin of error.
+	 * <h1>{@code a ≠ b}</h1>
+	 * Returns {@code true} if the two doubles are not equal within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
-	 * @return	<code>true</code> if the two doubles are not equal within a small margin of error,
-	 * 			<code>false</code> otherwise.
+	 * @return	{@code true} if the two doubles are not equal within a small margin of error,
+	 * 			{@code false} otherwise.
 	 * @see #EPSILON
 	 */
 	public static boolean looseUnequals(double a, double b) {
@@ -34,12 +34,12 @@ public class Theory {
 	}
 
 	/**
-	 * <h1><code>a > b</code></h1>
-	 * Returns <code>true</code> if the first double is greater than the second double within a small margin of error.
+	 * <h1>{@code a > b}</h1>
+	 * Returns {@code true} if the first double is greater than the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
-	 * @return	<code>true</code> if the first double is greater than the second double within a small margin of error,
-	 * 			<code>false</code> otherwise.
+	 * @return	{@code true} if the first double is greater than the second double within a small margin of error,
+	 * 			{@code false} otherwise.
 	 * @see #EPSILON
 	 */
 	public static boolean looseGreater(double a, double b) {
@@ -47,12 +47,12 @@ public class Theory {
 	}
 
 	/**
-	 * <h1><code>a ≥ b</code></h1>
-	 * Returns <code>true</code> if the first double is greater than or equal to the second double within a small margin of error.
+	 * <h1>{@code a ≥ b}</h1>
+	 * Returns {@code true} if the first double is greater than or equal to the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
-	 * @return	<code>true</code> if the first double is greater than or equal to the second double within a small margin of error,
-	 * 			<code>false</code> otherwise.
+	 * @return	{@code true} if the first double is greater than or equal to the second double within a small margin of error,
+	 * 			{@code false} otherwise.
 	 * @see #EPSILON
 	 */
 	public static boolean looseGreaterEquals(double a, double b) {
@@ -60,12 +60,12 @@ public class Theory {
 	}
 
 	/**
-	 * <h1><code>a < b</code></h1>
-	 * Returns <code>true</code> if the first double is less than the second double within a small margin of error.
+	 * <h1>{@code a < b}</h1>
+	 * Returns {@code true} if the first double is less than the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
-	 * @return	<code>true</code> if the first double is less than the second double within a small margin of error,
-	 * 			<code>false</code> otherwise.
+	 * @return	{@code true} if the first double is less than the second double within a small margin of error,
+	 * 			{@code false} otherwise.
 	 * @see #EPSILON
 	 */
 	public static boolean looseLess(double a, double b) {
@@ -73,12 +73,12 @@ public class Theory {
 	}
 
 	/**
-	 * <h1><code>a ≤ b</code></h1>
-	 * Returns <code>true</code> if the first double is less than or equal to the second double within a small margin of error.
+	 * <h1>{@code a ≤ b}</h1>
+	 * Returns {@code true} if the first double is less than or equal to the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
-	 * @return	<code>true</code> if the first double is less than or equal to the second double within a small margin of error,
-	 * 			<code>false</code> otherwise.
+	 * @return	{@code true} if the first double is less than or equal to the second double within a small margin of error,
+	 * 			{@code false} otherwise.
 	 * @see #EPSILON
 	 */
 	public static boolean looseLessEquals(double a, double b) {
@@ -86,13 +86,13 @@ public class Theory {
 	}
 
 	/**
-	 * <h1><code>(a, b)</code></h1>
-	 * Returns <code>true</code> if the value is between the left and right bound within a small margin of error.
+	 * <h1>{@code (a, b)}</h1>
+	 * Returns {@code true} if the value is between the left and right bound within a small margin of error.
 	 * @param x	The value to check.
 	 * @param a	The left bound.
 	 * @param b	The right bound.
-	 * @return	<code>true</code> if the value is between the left and right bound within a small margin of error,
-	 * 			<code>false</code> otherwise.
+	 * @return	{@code true} if the value is between the left and right bound within a small margin of error,
+	 * 			{@code false} otherwise.
 	 * @see #EPSILON
 	 */
 	public static boolean looseBetween(double x, double a, double b) {
@@ -100,13 +100,13 @@ public class Theory {
 	}
 
 	/**
-	 * <h1><code>[a, b]</code></h1>
-	 * Returns <code>true</code> if the double is between or equal to the left and right bound within a small margin of error.
+	 * <h1>{@code [a, b]}</h1>
+	 * Returns {@code true} if the double is between or equal to the left and right bound within a small margin of error.
 	 * @param x	The double to check.
 	 * @param a	The left bound.
 	 * @param b	The right bound.
-	 * @return	<code>true</code> if the double is between or equal to the left and right bound within a small margin of error,
-	 * 			<code>false</code> otherwise.
+	 * @return	{@code true} if the double is between or equal to the left and right bound within a small margin of error,
+	 * 			{@code false} otherwise.
 	 * @see #EPSILON
 	 */
 	public static boolean looseBetweenEquals(double x, double a, double b) {
@@ -114,11 +114,11 @@ public class Theory {
 	}
 
 	/**
-	 * <h1><code>≈ 0</code></h1>
-	 * Returns <code>true</code> if the double is zero within a small margin of error.
+	 * <h1>{@code ≈ 0}</h1>
+	 * Returns {@code true} if the double is zero within a small margin of error.
 	 * @param value	The double to check.
-	 * @return	<code>true</code> if the double is zero within a small margin of error,
-	 * 			<code>false</code> otherwise.
+	 * @return	{@code true} if the double is zero within a small margin of error,
+	 * 			{@code false} otherwise.
 	 * @see #EPSILON
 	 */
 	public static boolean isZero(double value) {
