@@ -7,7 +7,7 @@ import java.awt.*;
 
 /**
  * <h1>AccurateColor</h1>
- * Represents a color with 64-bit precision per channel, and is stored as 4 doubles (64-bit floating point numbers).
+ * Represents a color with <b>64-bit precision per channel</b>, and is stored as 4 doubles (64-bit floating point numbers).
  */
 public class AccurateColor {
 	private static final IllegalArgumentException COLOR_ARRAY_LENGTH_EXCEPTION = new IllegalArgumentException("Color array must be of length 3 to 4");
@@ -234,44 +234,44 @@ public class AccurateColor {
 		return red;
 	}
 
-	public float redAsFloat() {
-		return (float) red();
-	}
-
-	public int redAsInt() {
-		return (int) (red() * 255);
-	}
-
 	public double green() {
 		return green;
-	}
-
-	public float greenAsFloat() {
-		return (float) green();
-	}
-
-	public int greenAsInt() {
-		return (int) (green() * 255);
 	}
 
 	public double blue() {
 		return blue;
 	}
 
-	public float blueAsFloat() {
-		return (float) blue();
-	}
-
-	public int blueAsInt() {
-		return (int) (blue() * 255);
-	}
-
 	public double opacity() {
 		return opacity;
 	}
 
+	public float redAsFloat() {
+		return (float) red();
+	}
+
+	public float greenAsFloat() {
+		return (float) green();
+	}
+
+	public float blueAsFloat() {
+		return (float) blue();
+	}
+
 	public float opacityAsFloat() {
 		return (float) opacity();
+	}
+
+	public int redAsInt() {
+		return (int) (red() * 255);
+	}
+
+	public int greenAsInt() {
+		return (int) (green() * 255);
+	}
+
+	public int blueAsInt() {
+		return (int) (blue() * 255);
 	}
 
 	public int opacityAsInt() {
@@ -280,25 +280,6 @@ public class AccurateColor {
 
 	public boolean hasColor() {
 		return !transparent;
-	}
-
-	public Color toColor() {
-		return new Color(redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt());
-	}
-
-	public int toInt() {
-		return toColor().getRGB();
-	}
-	public Double[] toDoubleArray() {
-		return new Double[] { red(), green(), blue(), opacity() };
-	}
-
-	public float[] toFloatArray() {
-		return new float[] { redAsFloat(), greenAsFloat(), blueAsFloat(), opacityAsFloat() };
-	}
-
-	public int[] toIntArray() {
-		return new int[] { redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt() };
 	}
 
 	public AccurateColor red(double red) {
@@ -321,33 +302,33 @@ public class AccurateColor {
 		return hasColor() ? this : another;
 	}
 
-	public AccurateColor mix(AccurateColor another, double lambda) {
+	public AccurateColor blend(AccurateColor another, double factor) {
 		return new AccurateColor(
-			red() * (1 - lambda) + another.red() * lambda,
-			green() * (1 - lambda) + another.green() * lambda,
-			blue() * (1 - lambda) + another.blue() * lambda,
-			opacity() * (1 - lambda) + another.opacity() * lambda
+			red() * (1 - factor) + another.red() * factor,
+			green() * (1 - factor) + another.green() * factor,
+			blue() * (1 - factor) + another.blue() * factor,
+			opacity() * (1 - factor) + another.opacity() * factor
 		);
+	}
+
+	public AccurateColor blend(AccurateColor another) {
+		return blend(another, 0.5);
+	}
+
+	public AccurateColor blendOpacity(AccurateColor another, double factor) {
+		return opacity(opacity() * (1 - factor) + another.opacity() * factor);
+	}
+
+	public AccurateColor blendOpacity(AccurateColor another) {
+		return blendOpacity(another, 0.5);
+	}
+
+	public AccurateColor mix(AccurateColor another, double factor) {
+		return AccurateColor.fromArray(Mixbox.lerpFloat(toFloatArray(), another.toFloatArray(), (float) factor));
 	}
 
 	public AccurateColor mix(AccurateColor another) {
 		return mix(another, 0.5);
-	}
-
-	public AccurateColor opacityMix(AccurateColor another, double lambda) {
-		return opacity(opacity() * (1 - lambda) + another.opacity() * lambda);
-	}
-
-	public AccurateColor opacityMix(AccurateColor another) {
-		return opacityMix(another, 0.5);
-	}
-
-	public AccurateColor pigmentMix(AccurateColor another, double lambda) {
-		return AccurateColor.fromArray(Mixbox.lerpFloat(toFloatArray(), another.toFloatArray(), (float) lambda));
-	}
-
-	public AccurateColor pigmentMix(AccurateColor another) {
-		return pigmentMix(another, 0.5);
 	}
 
 	public AccurateColor transparent() {
@@ -358,11 +339,11 @@ public class AccurateColor {
 		return opacity(1);
 	}
 
-	public AccurateColor lighter(double lambda) {
+	public AccurateColor lighter(double factor) {
 		return new AccurateColor(
-			red() * (1 - lambda) + 1 * lambda,
-			green() * (1 - lambda) + 1 * lambda,
-			blue() * (1 - lambda) + 1 * lambda,
+			red() * (1 - factor) + 1 * factor,
+			green() * (1 - factor) + 1 * factor,
+			blue() * (1 - factor) + 1 * factor,
 			opacity()
 		);
 	}
@@ -371,16 +352,70 @@ public class AccurateColor {
 		return lighter(0.5);
 	}
 
-	public AccurateColor darker(double lambda) {
+	public AccurateColor darker(double factor) {
 		return new AccurateColor(
-			red() * (1 - lambda) + 0 * lambda,
-			green() * (1 - lambda) + 0 * lambda,
-			blue() * (1 - lambda) + 0 * lambda,
+			red() * (1 - factor) + 0 * factor,
+			green() * (1 - factor) + 0 * factor,
+			blue() * (1 - factor) + 0 * factor,
 			opacity()
 		);
 	}
 
 	public AccurateColor darker() {
 		return darker(0.5);
+	}
+
+	@Override
+	public boolean equals(Object another) {
+		return another instanceof AccurateColor
+					   && red() == ((AccurateColor) another).red()
+					   && green() == ((AccurateColor) another).green()
+					   && blue() == ((AccurateColor) another).blue()
+					   && opacity() == ((AccurateColor) another).opacity()
+					   && transparent() == ((AccurateColor) another).transparent();
+	}
+
+	public boolean looseEquals(Object another) {
+		return another instanceof AccurateColor
+					   && Theory.looseEquals(red(), ((AccurateColor) another).red())
+					   && Theory.looseEquals(green(), ((AccurateColor) another).green())
+					   && Theory.looseEquals(blue(), ((AccurateColor) another).blue())
+					   && Theory.looseEquals(opacity(), ((AccurateColor) another).opacity())
+					   && transparent() == ((AccurateColor) another).transparent();
+	}
+
+	public Color toColor() {
+		return new Color(redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt());
+	}
+
+	public int toInt() {
+		return toColor().getRGB();
+	}
+
+	public int[] toIntArray() {
+		return new int[] { redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt() };
+	}
+
+	public float[] toFloatArray() {
+		return new float[] { redAsFloat(), greenAsFloat(), blueAsFloat(), opacityAsFloat() };
+	}
+
+	public Double[] toDoubleArray() {
+		return new Double[] { red(), green(), blue(), opacity() };
+	}
+
+	public String toHex() {
+		return String.format("0x%02x%02x%02x%02x", redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt());
+	}
+
+	@Override
+	public String toString() {
+		return toString(false);
+	}
+
+	public String toString(boolean precisely) {
+		return !hasColor() ? "<transparent>" : precisely
+													   ? String.format("RGBA<%f, %f, %f, %f>", red(), green(), blue(), opacity())
+													   : String.format("RGBA<%d, %d, %d, %d>", redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt());
 	}
 }

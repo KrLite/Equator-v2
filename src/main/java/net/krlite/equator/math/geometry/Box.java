@@ -1,12 +1,10 @@
 package net.krlite.equator.math.geometry;
 
+import com.google.common.collect.ImmutableMap;
 import net.krlite.equator.math.algebra.Theory;
+import net.krlite.equator.render.*;
 import net.krlite.equator.render.frame.Convertible;
 import net.krlite.equator.render.frame.FrameInfo;
-import net.krlite.equator.render.BoxRenderer;
-import net.krlite.equator.render.GradiantRenderer;
-import net.krlite.equator.render.ModelRenderer;
-import net.krlite.equator.render.SectionRenderer;
 import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.render.vanilla.ButtonRenderImplementation;
 import net.krlite.equator.render.vanilla.TooltipRenderImplementation;
@@ -18,7 +16,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.*;
 import java.util.function.UnaryOperator;
 
 /**
@@ -1364,6 +1364,16 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	}
 
 	/**
+	 * Readies a {@link OvalRenderer} for rendering, which can hold multiple {@link AccurateColor}s and renders them
+	 * as an oval.
+	 * @param renderer	An {@link UnaryOperator} which processes the {@link OvalRenderer}.
+	 * @return	The processed {@link OvalRenderer}.
+	 */
+	public OvalRenderer readyOval(UnaryOperator<OvalRenderer> renderer) {
+		return renderer.apply(new OvalRenderer(this));
+	}
+
+	/**
 	 * Readies a {@link SectionRenderer} for rendering, which can hold a {@link Section} to render text.
 	 * @param section	An {@link UnaryOperator} which processes the {@link Section} that handles
 	 *                  the text.
@@ -1432,6 +1442,18 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 */
 	public ModelRenderer ready(Block block) {
 		return new ModelRenderer(this).model(block);
+	}
+
+	/**
+	 * An alias for {@link #readyOval(UnaryOperator)} with an {@link AccurateColor} center color ready, and readies the
+	 * color map for rendering.
+	 * @param centerColor	The {@link AccurateColor} of the center of the oval.
+	 * @param colorMap		An {@link UnaryOperator} which processes the {@link ImmutableMap.Builder} of the color map.
+	 * @return	An {@link OvalRenderer} with the {@link AccurateColor} center color and the color map ready.
+	 */
+	public OvalRenderer ready(AccurateColor centerColor, UnaryOperator<ImmutableMap.Builder<Double, AccurateColor>> colorMap) {
+		OvalRenderer ovalRenderer = new OvalRenderer(this).centerColor(centerColor);
+		return ovalRenderer.colorMap(colorMap.apply(ImmutableMap.builder()).build());
 	}
 
 	/**

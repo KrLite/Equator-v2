@@ -12,6 +12,7 @@ import net.krlite.equator.render.vanilla.ButtonRenderImplementation;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.color.Palette;
 import net.krlite.equator.visual.texture.Texture;
+import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +22,7 @@ import org.joml.Quaterniondc;
 import org.joml.Quaternionf;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
@@ -41,21 +43,30 @@ public record BoxRenderer(
 		@Nullable AccurateColor color, @Nullable Texture texture
 ) implements Renderable {
 	protected enum State {
-		UNABLE(null),
-		COLOR(VertexFormats.POSITION_COLOR),
-		TEXTURE(VertexFormats.POSITION_TEXTURE),
-		COLOR_TEXTURE(VertexFormats.POSITION_COLOR_TEXTURE);
+		UNABLE(null, null),
+		COLOR(VertexFormats.POSITION_COLOR, GameRenderer::getPositionColorProgram),
+		TEXTURE(VertexFormats.POSITION_TEXTURE, GameRenderer::getPositionTexProgram),
+		COLOR_TEXTURE(VertexFormats.POSITION_COLOR_TEXTURE, GameRenderer::getPositionColorTexProgram);
 
 		@Nullable
 		private final VertexFormat vertexFormat;
 
-		State(@Nullable VertexFormat vertexFormat) {
+		@Nullable
+		private final Supplier<ShaderProgram> shaderProgram;
+
+		State(@Nullable VertexFormat vertexFormat, @Nullable Supplier<ShaderProgram> shaderProgram) {
 			this.vertexFormat = vertexFormat;
+			this.shaderProgram = shaderProgram;
 		}
 
 		@Nullable
 		public VertexFormat vertexFormat() {
 			return vertexFormat;
+		}
+
+		@Nullable
+		public Supplier<ShaderProgram> shaderProgram() {
+			return shaderProgram;
 		}
 	}
 
@@ -125,7 +136,7 @@ public record BoxRenderer(
 
 	@Override
 	public boolean isRenderable() {
-		return Renderable.isBoxLegal(box()) && (hasTexture() || hasColor());
+		return Renderable.isBoxLegal(box()) && (hasTexture() || hasColor()) && state() != State.UNABLE;
 	}
 
 	public boolean hasColor() {
@@ -180,12 +191,7 @@ public record BoxRenderer(
 			RenderSystem.enableBlend();
 		}
 
-		switch (state()) {
-			case COLOR -> RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-			case TEXTURE -> RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-			case COLOR_TEXTURE -> RenderSystem.setShader(GameRenderer::getPositionColorTexProgram);
-			default -> { return; }
-		}
+		RenderSystem.setShader(Objects.requireNonNull(state().shaderProgram()));
 
 		if (hasTexture()) {
 			RenderSystem.setShaderTexture(0, Objects.requireNonNull(texture()).identifier());

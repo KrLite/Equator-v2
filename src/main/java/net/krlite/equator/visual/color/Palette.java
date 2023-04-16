@@ -12,6 +12,18 @@ public class Palette {
 		return AccurateColor.fromHSL(Theory.mod(t, 1) * 360, 1, 0.72, 1);
 	}
 
+	public AccurateColor random() {
+		return new AccurateColor(Math.random(), Math.random(), Math.random(), 1);
+	}
+
+	public AccurateColor randomHue() {
+		return AccurateColor.fromHSL(Math.random() * 360, 1, 0.72, 1);
+	}
+
+	public AccurateColor randomGrayscale() {
+		return AccurateColor.fromGrayscale(Math.random());
+	}
+
 	public static final AccurateColor BROWN = new AccurateColor(0.5, 0.25, 0, 1), TEAL = new AccurateColor(0, 0.5, 0.5, 1),
 			GOLD = new AccurateColor(1, 0.75, 0, 1), SILVER = new AccurateColor(0.75, 0.75, 0.75, 1), NAVY = new AccurateColor(0, 0, 0.5, 1),
 			MAROON = new AccurateColor(0.5, 0, 0, 1), OLIVE = new AccurateColor(0.5, 0.5, 0, 1), LIME = new AccurateColor(0, 1, 0, 1),

@@ -225,7 +225,7 @@ public record GradiantRenderer(
 
 		if (fallbackFirst.hasColor() || fallbackSecond.hasColor()) {
 			if (fallbackFirst.hasColor() && fallbackSecond.hasColor()) {
-				return fallbackFirst.pigmentMix(fallbackSecond).transparent();
+				return fallbackFirst.mix(fallbackSecond).transparent();
 			}
 			else if (fallbackFirst.hasColor()) {
 				return fallbackFirst.transparent();
@@ -273,57 +273,57 @@ public record GradiantRenderer(
 		render(matrixStack, 0);
 	}
 
-	public enum OutlineMode {
+	public enum OutliningMode {
 		SCISSOR, EDGE, EDGE_FADING
 	}
 
-	public void renderOutline(MatrixStack matrixStack, Vector expansion, OutlineMode outlineMode, float z) {
-		Box corner = Box.fromVectorCentered(box().center(), expansion);
-		Box gapHorizontal = Box.fromVectorCentered(box().center(), Vector.fromCartesian(box().w(), expansion.y()));
-		Box gapVertical = Box.fromVectorCentered(box().center(), Vector.fromCartesian(expansion.x(), box().h()));
+	public void renderOutline(MatrixStack matrixStack, Vector expansion, OutliningMode outliningMode, float z) {
+		Box corner 			= Box.fromVectorCentered(box().center(), expansion);
+		Box gapHorizontal 	= Box.fromVectorCentered(box().center(), Vector.fromCartesian(box().w(), expansion.y()));
+		Box gapVertical 	= Box.fromVectorCentered(box().center(), Vector.fromCartesian(expansion.x(), box().h()));
 
 		double width = box().w() + expansion.x() * 2, height = box().h() + expansion.y() * 2;
 		double xCornerScalar = expansion.x() / width, yCornerScalar = expansion.y() / height;
 
-		AccurateColor topLeft = topLeft(), topLeftBottom = AccurateColor.TRANSPARENT, topLeftTop = AccurateColor.TRANSPARENT, topLeftDiagonal = AccurateColor.TRANSPARENT;
-		AccurateColor bottomLeft = bottomLeft(), bottomLeftBottom = AccurateColor.TRANSPARENT, bottomLeftTop = AccurateColor.TRANSPARENT, bottomLeftDiagonal = AccurateColor.TRANSPARENT;
-		AccurateColor bottomRight = bottomRight(), bottomRightBottom = AccurateColor.TRANSPARENT, bottomRightTop = AccurateColor.TRANSPARENT, bottomRightDiagonal = AccurateColor.TRANSPARENT;
-		AccurateColor topRight = topRight(), topRightBottom = AccurateColor.TRANSPARENT, topRightTop = AccurateColor.TRANSPARENT, topRightDiagonal = AccurateColor.TRANSPARENT;
+		AccurateColor topLeft 		= topLeft(), 		topLeftBottom 		= AccurateColor.TRANSPARENT, 	topLeftTop 		= AccurateColor.TRANSPARENT, 	topLeftDiagonal 		= AccurateColor.TRANSPARENT;
+		AccurateColor bottomLeft 	= bottomLeft(), 	bottomLeftBottom 	= AccurateColor.TRANSPARENT, 	bottomLeftTop 	= AccurateColor.TRANSPARENT, 	bottomLeftDiagonal 		= AccurateColor.TRANSPARENT;
+		AccurateColor bottomRight 	= bottomRight(), 	bottomRightBottom 	= AccurateColor.TRANSPARENT, 	bottomRightTop 	= AccurateColor.TRANSPARENT, 	bottomRightDiagonal 	= AccurateColor.TRANSPARENT;
+		AccurateColor topRight 		= topRight(), 		topRightBottom 		= AccurateColor.TRANSPARENT, 	topRightTop 	= AccurateColor.TRANSPARENT, 	topRightDiagonal 		= AccurateColor.TRANSPARENT;
 
-		switch (outlineMode) {
+		switch (outliningMode) {
 			case SCISSOR -> {
-				topLeftTop = get(xCornerScalar, 0);
-				topLeftBottom = get(0, yCornerScalar);
-				topLeftDiagonal = get(xCornerScalar, yCornerScalar);
+				topLeftTop 				= get(xCornerScalar, 0);
+				topLeftBottom 			= get(0, yCornerScalar);
+				topLeftDiagonal 		= get(xCornerScalar, yCornerScalar);
 
-				bottomLeftTop = get(0, 1 - yCornerScalar);
-				bottomLeftBottom = get(xCornerScalar, 1);
-				bottomLeftDiagonal = get(xCornerScalar, 1 - yCornerScalar);
+				bottomLeftTop 			= get(0, 1 - yCornerScalar);
+				bottomLeftBottom 		= get(xCornerScalar, 1);
+				bottomLeftDiagonal 		= get(xCornerScalar, 1 - yCornerScalar);
 
-				bottomRightTop = get(1, 1 - yCornerScalar);
-				bottomRightBottom = get(1 - xCornerScalar, 1);
-				bottomRightDiagonal = get(1 - xCornerScalar, 1 - yCornerScalar);
+				bottomRightTop 			= get(1, 1 - yCornerScalar);
+				bottomRightBottom 		= get(1 - xCornerScalar, 1);
+				bottomRightDiagonal 	= get(1 - xCornerScalar, 1 - yCornerScalar);
 
-				topRightTop = get(1 - xCornerScalar, 0);
-				topRightBottom = get(1, yCornerScalar);
-				topRightDiagonal = get(1 - xCornerScalar, yCornerScalar);
+				topRightTop 			= get(1 - xCornerScalar, 0);
+				topRightBottom 			= get(1, yCornerScalar);
+				topRightDiagonal 		= get(1 - xCornerScalar, yCornerScalar);
 			}
 			case EDGE -> {
-				topLeftTop = get(xCornerScalar, 0);
-				topLeftBottom = get(0, yCornerScalar);
-				topLeftDiagonal = getCenter();
+				topLeftTop 				= get(xCornerScalar, 0);
+				topLeftBottom 			= get(0, yCornerScalar);
+				topLeftDiagonal 		= getCenter();
 
-				bottomLeftTop = get(0, 1 - yCornerScalar);
-				bottomLeftBottom = get(xCornerScalar, 1);
-				bottomLeftDiagonal = getCenter();
+				bottomLeftTop 			= get(0, 1 - yCornerScalar);
+				bottomLeftBottom 		= get(xCornerScalar, 1);
+				bottomLeftDiagonal 		= getCenter();
 
-				bottomRightTop = get(1, 1 - yCornerScalar);
-				bottomRightBottom = get(1 - xCornerScalar, 1);
-				bottomRightDiagonal = getCenter();
+				bottomRightTop 			= get(1, 1 - yCornerScalar);
+				bottomRightBottom 		= get(1 - xCornerScalar, 1);
+				bottomRightDiagonal 	= getCenter();
 
-				topRightTop = get(1 - xCornerScalar, 0);
-				topRightBottom = get(1, yCornerScalar);
-				topRightDiagonal = getCenter();
+				topRightTop 			= get(1 - xCornerScalar, 0);
+				topRightBottom 			= get(1, yCornerScalar);
+				topRightDiagonal 		= getCenter();
 			}
 			case EDGE_FADING -> {
 				topLeftDiagonal = topLeft;
@@ -405,40 +405,40 @@ public record GradiantRenderer(
 				.render(matrixStack, z);
 	}
 
-	public void renderOutline(MatrixStack matrixStack, Vector expansion, OutlineMode outlineMode) {
-		renderOutline(matrixStack, expansion, outlineMode, 0);
+	public void renderOutline(MatrixStack matrixStack, Vector expansion, OutliningMode outliningMode) {
+		renderOutline(matrixStack, expansion, outliningMode, 0);
 	}
 
 	public void renderOutline(MatrixStack matrixStack, Vector expansion) {
-		renderOutline(matrixStack, expansion, OutlineMode.SCISSOR, 0);
+		renderOutline(matrixStack, expansion, OutliningMode.SCISSOR, 0);
 	}
 
-	public void renderOutline(MatrixStack matrixStack, double xExpansion, double yExpansion, OutlineMode outlineMode, float z) {
-		renderOutline(matrixStack, Vector.fromCartesian(xExpansion, yExpansion), outlineMode, z);
+	public void renderOutline(MatrixStack matrixStack, double xExpansion, double yExpansion, OutliningMode outliningMode, float z) {
+		renderOutline(matrixStack, Vector.fromCartesian(xExpansion, yExpansion), outliningMode, z);
 	}
 
-	public void renderOutline(MatrixStack matrixStack, double xExpansion, double yExpansion, OutlineMode outlineMode) {
-		renderOutline(matrixStack, xExpansion, yExpansion, outlineMode, 0);
+	public void renderOutline(MatrixStack matrixStack, double xExpansion, double yExpansion, OutliningMode outliningMode) {
+		renderOutline(matrixStack, xExpansion, yExpansion, outliningMode, 0);
 	}
 
 	public void renderOutline(MatrixStack matrixStack, double xExpansion, double yExpansion) {
-		renderOutline(matrixStack, xExpansion, yExpansion, OutlineMode.SCISSOR, 0);
+		renderOutline(matrixStack, xExpansion, yExpansion, OutliningMode.SCISSOR, 0);
 	}
 
-	public void renderOutline(MatrixStack matrixStack, double expansion, OutlineMode outlineMode, float z) {
-		renderOutline(matrixStack, expansion, expansion, outlineMode, z);
+	public void renderOutline(MatrixStack matrixStack, double expansion, OutliningMode outliningMode, float z) {
+		renderOutline(matrixStack, expansion, expansion, outliningMode, z);
 	}
 
-	public void renderOutline(MatrixStack matrixStack, double expansion, OutlineMode outlineMode) {
-		renderOutline(matrixStack, expansion, outlineMode, 0);
+	public void renderOutline(MatrixStack matrixStack, double expansion, OutliningMode outliningMode) {
+		renderOutline(matrixStack, expansion, outliningMode, 0);
 	}
 
 	public void renderOutline(MatrixStack matrixStack, double expansion) {
-		renderOutline(matrixStack, expansion, OutlineMode.SCISSOR, 0);
+		renderOutline(matrixStack, expansion, OutliningMode.SCISSOR, 0);
 	}
 
 	public void renderOutlineShadow(MatrixStack matrixStack, float z) {
-		renderOutline(matrixStack, box.diag() * 0.55, OutlineMode.EDGE_FADING, z);
+		renderOutline(matrixStack, box.diag() * 0.55, OutliningMode.EDGE_FADING, z);
 	}
 
 	public void renderOutlineShadow(MatrixStack matrixStack) {
