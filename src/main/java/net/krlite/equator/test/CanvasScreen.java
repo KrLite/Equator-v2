@@ -3,17 +3,23 @@ package net.krlite.equator.test;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.input.Keyboard;
 import net.krlite.equator.input.Mouse;
-import net.krlite.equator.math.geometry.Vector;
-import net.krlite.equator.render.OvalRenderer;
-import net.krlite.equator.render.frame.FrameInfo;
+import net.krlite.equator.render.renderer.OvalRenderer;
 import net.krlite.equator.visual.animation.Interpolation;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import org.lwjgl.openal.AL10;
+import org.lwjgl.openal.ALUtil;
+import org.lwjgl.openal.EXTEfx;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
+import org.lwjgl.opengl.GL30;
 
-import java.util.AbstractMap;
+import java.nio.ByteBuffer;
 
 public class CanvasScreen extends Screen {
 	public CanvasScreen() {
@@ -39,16 +45,14 @@ public class CanvasScreen extends Screen {
 		Keyboard.Callbacks.Key.EVENT.register((key, scanCode, action, mods) -> {
 			if (MinecraftClient.getInstance().currentScreen != this) return;
 
-			/*
 			if (action.isPress()) {
 				if (key == Keyboard.E) {
 					if (client != null) {
-						client.setScreen(new LayerScreen());
+						//client.setScreen(new LayerScreen());
+						client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 					}
 				}
 			}
-
-			 */
 		});
 	}
 
@@ -60,6 +64,7 @@ public class CanvasScreen extends Screen {
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
 		renderBackground(matrixStack);
 
+		/*
 		box.ready(AccurateColor.WHITE.opacity(0.1)).render(matrixStack);
 
 		box.ready(AccurateColor.WHITE,
@@ -70,5 +75,7 @@ public class CanvasScreen extends Screen {
 				.radians(Math.PI + Math.PI * interpolation.value())
 				.offset(3 * Math.PI / 2 * interpolation.value())
 				.renderOutline(matrixStack, 2, OvalRenderer.OutliningMode.INWARD);
+
+		 */
 	}
 }

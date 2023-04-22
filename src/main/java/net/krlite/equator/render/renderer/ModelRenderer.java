@@ -1,8 +1,7 @@
-package net.krlite.equator.render;
+package net.krlite.equator.render.renderer;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.render.base.Renderable;
 import net.minecraft.block.Block;

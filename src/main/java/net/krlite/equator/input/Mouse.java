@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.krlite.equator.Equator;
 import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.render.RenderManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
@@ -288,40 +289,7 @@ public enum Mouse {
 	}
 
 	public static long createCursor(Identifier identifier, int xHot, int yHot) {
-		Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
-		if (resource.isEmpty()) {
-			Equator.LOGGER.error("Failed to find cursor texture");
-			return 0;
-		}
-		
-		try {
-			InputStream stream = resource.get().getInputStream();
-			BufferedImage textureImage = ImageIO.read(stream);
-
-			int width = textureImage.getWidth();
-			int height = textureImage.getHeight();
-			int[] pixels = textureImage.getRGB(0, 0, width, height, null, 0, width);
-			ByteBuffer buffer = ByteBuffer.allocateDirect(width * height * 4);
-
-			for (int y = height - 1; y >= 0; y--) {
-				for (int x = 0; x < width; x++) {
-					int pixel = pixels[y * width + x];
-					buffer.put((byte) ((pixel >> 16) & 0xFF)); // Red component
-					buffer.put((byte) ((pixel >> 8) & 0xFF));  // Green component
-					buffer.put((byte) (pixel & 0xFF));         // Blue component
-					buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha component
-				}
-			}
-
-			buffer.flip();
-			GLFWImage cursorImage = GLFWImage.create();
-			cursorImage.set(width, height, buffer);
-
-			return GLFW.glfwCreateCursor(cursorImage, xHot, yHot);
-		} catch (IOException ioException) {
-			Equator.LOGGER.error("Failed to read cursor texture", ioException);
-			return 0;
-		}
+		return GLFW.glfwCreateCursor(RenderManager.getGLFWImage(identifier), xHot, yHot);
 	}
 
 	public static long createCursor(Identifier identifier) {

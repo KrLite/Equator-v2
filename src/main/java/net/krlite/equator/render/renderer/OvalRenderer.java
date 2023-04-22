@@ -1,4 +1,4 @@
-package net.krlite.equator.render;
+package net.krlite.equator.render.renderer;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.systems.RenderSystem;

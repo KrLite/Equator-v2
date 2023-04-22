@@ -2,7 +2,12 @@ package net.krlite.equator.visual.texture;
 
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.render.RenderManager;
 import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFWImage;
+
+import java.nio.ByteBuffer;
+import java.util.function.UnaryOperator;
 
 public class Texture {
 	private static String combinePaths(String... paths) {
@@ -62,6 +67,10 @@ public class Texture {
 
 	public Box uvBox() {
 		return uvBox;
+	}
+
+	public Texture uvBox(UnaryOperator<Box> operator) {
+		return uvBox(operator.apply(uvBox()));
 	}
 
 	public Texture uvBox(Box uvBox) {
@@ -160,11 +169,15 @@ public class Texture {
 		return uvBox(uvBox().scaleCenter(scalar));
 	}
 
-	public Texture shift(Vector shift) {
-		return uvBox(uvBox().shift(shift.remainder(1)));
+	public ByteBuffer getByteBuffer() {
+		return RenderManager.getByteBuffer(identifier());
 	}
 
-	public Texture shift(double uOffset, double vOffset) {
-		return shift(new Vector(uOffset, vOffset));
+	public GLFWImage getGLFWImage() {
+		return RenderManager.getGLFWImage(identifier());
+	}
+
+	public int getGlId() {
+		return RenderManager.getGlId(identifier());
 	}
 }

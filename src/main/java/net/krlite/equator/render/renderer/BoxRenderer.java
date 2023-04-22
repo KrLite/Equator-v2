@@ -1,16 +1,12 @@
-package net.krlite.equator.render;
+package net.krlite.equator.render.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import it.unimi.dsi.fastutil.doubles.DoubleIterator;
 import net.krlite.equator.math.algebra.Theory;
-import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.math.geometry.Box;
 import net.krlite.equator.math.geometry.Vector;
 import net.krlite.equator.render.base.Renderable;
-import net.krlite.equator.render.vanilla.ButtonRenderImplementation;
 import net.krlite.equator.visual.color.AccurateColor;
-import net.krlite.equator.visual.color.Palette;
 import net.krlite.equator.visual.texture.Texture;
 import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.render.*;

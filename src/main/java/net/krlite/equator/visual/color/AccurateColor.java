@@ -5,13 +5,13 @@ import net.krlite.equator.math.algebra.Theory;
 
 import java.awt.*;
 
+import static net.krlite.equator.base.Exceptions.Visual.*;
+
 /**
  * <h1>AccurateColor</h1>
  * Represents a color with <b>64-bit precision per channel</b>, and is stored as 4 doubles (64-bit floating point numbers).
  */
 public class AccurateColor {
-	private static final IllegalArgumentException COLOR_ARRAY_LENGTH_EXCEPTION = new IllegalArgumentException("Color array must be of length 3 to 4");
-
 	public static final AccurateColor BLACK = fromColor(Color.BLACK), WHITE = fromColor(Color.WHITE),
 			GRAY = fromColor(Color.GRAY), LIGHT_GRAY = fromColor(Color.LIGHT_GRAY), DARK_GRAY = fromColor(Color.DARK_GRAY),
 			RED = fromColor(Color.RED), GREEN = fromColor(Color.GREEN), BLUE = fromColor(Color.BLUE),
