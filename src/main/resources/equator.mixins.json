@@ -7,8 +7,7 @@
   ],
   "client": [
 	"MinecraftClientMixin",
-	"TitleScreenMixin",
-	"WindowMixin"
+	"TitleScreenMixin"
   ],
   "injectors": {
 	"defaultRequire": 0
