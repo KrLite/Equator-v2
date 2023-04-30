@@ -2,6 +2,7 @@ package net.krlite.equator.visual.animation;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.krlite.equator.math.algebra.Theory;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ScheduledFuture;
@@ -16,14 +17,7 @@ import java.util.function.UnaryOperator;
  * Handles the animation between two values.
  */
 public class Animation implements Runnable {
-	/**
-	 * Callbacks for animation events.
-	 * @see Animation
-	 */
 	public interface Callbacks {
-		/**
-		 * Callback for the {@link Animation} start event.
-		 */
 		interface Start {
 			Event<Callbacks.Start> EVENT = EventFactory.createArrayBacked(Callbacks.Start.class, (listeners) -> (animation) -> {
 				for (Callbacks.Start listener : listeners) {
@@ -31,16 +25,9 @@ public class Animation implements Runnable {
 				}
 			});
 
-			/**
-			 * Called when an animation starts.
-			 * @param animation The animation that started.
-			 */
 			void onStart(Animation animation);
 		}
 
-		/**
-		 * Callback for the {@link Animation} complete event.
-		 */
 		interface Complete {
 			Event<Complete> EVENT = EventFactory.createArrayBacked(Complete.class, (listeners) -> (animation) -> {
 				for (Complete listener : listeners) {
@@ -48,16 +35,9 @@ public class Animation implements Runnable {
 				}
 			});
 
-			/**
-			 * Called when an animation completes.
-			 * @param animation The animation that completed.
-			 */
 			void onCompletion(Animation animation);
 		}
 
-		/**
-		 * Callback for the {@link Animation} repeat event.
-		 */
 		interface Repeat {
 			Event<Repeat> EVENT = EventFactory.createArrayBacked(Repeat.class, (listeners) -> (animation) -> {
 				for (Repeat listener : listeners) {
@@ -65,16 +45,9 @@ public class Animation implements Runnable {
 				}
 			});
 
-			/**
-			 * Called when an animation repeats.
-			 * @param animation The animation that repeated.
-			 */
 			void onRepetition(Animation animation);
 		}
 
-		/**
-		 * Callback for the {@link Animation} frame start event.
-		 */
 		interface FrameStart {
 			Event<FrameStart> EVENT = EventFactory.createArrayBacked(FrameStart.class, (listeners) -> (animation) -> {
 				for (FrameStart listener : listeners) {
@@ -82,16 +55,9 @@ public class Animation implements Runnable {
 				}
 			});
 
-			/**
-			 * Called when an animation frame starts. That is, before the value is updated.
-			 * @param animation The animation that is being updated.
-			 */
 			void onFrameStart(Animation animation);
 		}
 
-		/**
-		 * Callback for the {@link Animation} frame end event.
-		 */
 		interface FrameEnd {
 			Event<FrameEnd> EVENT = EventFactory.createArrayBacked(FrameEnd.class, (listeners) -> (animation) -> {
 				for (FrameEnd listener : listeners) {
@@ -99,10 +65,6 @@ public class Animation implements Runnable {
 				}
 			});
 
-			/**
-			 * Called when an animation frame ends. That is, after the value is updated.
-			 * @param animation The animation that is being updated.
-			 */
 			void onFrameEnd(Animation animation);
 		}
 	}
@@ -220,9 +182,6 @@ public class Animation implements Runnable {
 		this.future.set(future);
 	}
 
-	/**
-	 * Runs this operation.
-	 */
 	@Override
 	public void run() {
 		Callbacks.FrameStart.EVENT.invoker().onFrameStart(this);
@@ -262,7 +221,7 @@ public class Animation implements Runnable {
 		if (isPaused()) future(AnimationThreadPoolExecutor.join(this, 0));
 	}
 
-	public void swichPauseResume() {
+	public void switchPauseResume() {
 		if (isPaused()) resume();
 		else pause();
 	}
@@ -298,5 +257,35 @@ public class Animation implements Runnable {
 
 	public boolean isCompleted() {
 		return progress.get() >= duration();
+	}
+
+	public void onStart(Runnable runnable) {
+		Callbacks.Start.EVENT.register((animation) -> {
+			if (animation == this) runnable.run();
+		});
+	}
+
+	public void onCompletion(Runnable runnable) {
+		Callbacks.Complete.EVENT.register((animation) -> {
+			if (animation == this) runnable.run();
+		});
+	}
+
+	public void onRepetition(Runnable runnable) {
+		Callbacks.Repeat.EVENT.register((animation) -> {
+			if (animation == this) runnable.run();
+		});
+	}
+
+	public void onFrameStart(Runnable runnable) {
+		Callbacks.FrameStart.EVENT.register((animation) -> {
+			if (animation == this) runnable.run();
+		});
+	}
+
+	public void onFrameEnd(Runnable runnable) {
+		Callbacks.FrameEnd.EVENT.register((animation) -> {
+			if (animation == this) runnable.run();
+		});
 	}
 }

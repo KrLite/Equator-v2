@@ -15,14 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Handles the interpolation between two values.
  */
 public class Interpolation implements Runnable {
-	/**
-	 * Callbacks for interpolation events.
-	 * @see Interpolation
-	 */
 	public interface Callbacks {
-		/**
-		 * Callback for the {@link Interpolation} start event.
-		 */
 		interface Start {
 			Event<Start> EVENT = EventFactory.createArrayBacked(Start.class, (listeners) -> (interpolation) -> {
 				for (Start listener : listeners) {
@@ -30,16 +23,9 @@ public class Interpolation implements Runnable {
 				}
 			});
 
-			/**
-			 * Called when an interpolation starts.
-			 * @param interpolation The interpolation that started.
-			 */
 			void onStart(Interpolation interpolation);
 		}
 
-		/**
-		 * Callback for the {@link Interpolation} complete event.
-		 */
 		interface Complete {
 			Event<Complete> EVENT = EventFactory.createArrayBacked(Complete.class, (listeners) -> (interpolation) -> {
 				for (Complete listener : listeners) {
@@ -47,16 +33,9 @@ public class Interpolation implements Runnable {
 				}
 			});
 
-			/**
-			 * Called when an interpolation completes.
-			 * @param interpolation The interpolation that completed.
-			 */
 			void onCompletion(Interpolation interpolation);
 		}
 
-		/**
-		 * Callback for the {@link Interpolation} frame start event.
-		 */
 		interface FrameStart {
 			Event<FrameStart> EVENT = EventFactory.createArrayBacked(FrameStart.class, (listeners) -> (interpolation) -> {
 				for (FrameStart listener : listeners) {
@@ -64,16 +43,9 @@ public class Interpolation implements Runnable {
 				}
 			});
 
-			/**
-			 * Called when an interpolation frame starts. That is, before the value is updated.
-			 * @param interpolation	The interpolation that is being updated.
-			 */
 			void onFrameStart(Interpolation interpolation);
 		}
 
-		/**
-		 * Callback for the {@link Interpolation} frame end event.
-		 */
 		interface FrameEnd {
 			Event<FrameEnd> EVENT = EventFactory.createArrayBacked(FrameEnd.class, (listeners) -> (interpolation) -> {
 				for (FrameEnd listener : listeners) {
@@ -81,10 +53,6 @@ public class Interpolation implements Runnable {
 				}
 			});
 
-			/**
-			 * Called when an interpolation frame ends. That is, after the value is updated.
-			 * @param interpolation	The interpolation that is being updated.
-			 */
 			void onFrameEnd(Interpolation interpolation);
 		}
 	}
@@ -256,5 +224,29 @@ public class Interpolation implements Runnable {
 
 	public boolean isCompleted() {
 		return Theory.looseEquals(value(), targetValue());
+	}
+
+	public void onStart(Runnable runnable) {
+		Callbacks.Start.EVENT.register((interpolation) -> {
+			if (interpolation == this) runnable.run();
+		});
+	}
+
+	public void onCompletion(Runnable runnable) {
+		Callbacks.Complete.EVENT.register((interpolation) -> {
+			if (interpolation == this) runnable.run();
+		});
+	}
+
+	public void onFrameStart(Runnable runnable) {
+		Callbacks.FrameStart.EVENT.register((interpolation) -> {
+			if (interpolation == this) runnable.run();
+		});
+	}
+
+	public void onFrameEnd(Runnable runnable) {
+		Callbacks.FrameEnd.EVENT.register((interpolation) -> {
+			if (interpolation == this) runnable.run();
+		});
 	}
 }

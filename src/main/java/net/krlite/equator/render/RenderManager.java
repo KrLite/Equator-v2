@@ -1,5 +1,6 @@
 package net.krlite.equator.render;
 
+import net.krlite.equator.base.Exceptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
@@ -18,7 +19,7 @@ public class RenderManager {
 	public static int[] getSize(Identifier identifier) {
 		Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
 		if (resource.isEmpty()) {
-			throw new RuntimeException(String.format(IDENTIFIER_NOT_FOUND_EXCEPTION.getMessage(), identifier));
+			throw new RuntimeException(Exceptions.Render.identifierNotFound(identifier, null));
 		}
 
 		try {
@@ -26,7 +27,7 @@ public class RenderManager {
 			BufferedImage textureImage = ImageIO.read(stream);
 			return new int[] { textureImage.getWidth(), textureImage.getHeight() };
 		} catch (IOException ioException) {
-			throw new RuntimeException(String.format(IDENTIFIER_FAILED_TO_LOAD_EXCEPTION.getMessage(), identifier), ioException);
+			throw new RuntimeException(Exceptions.Render.identifierFailedToLoad(identifier, ioException));
 		}
 	}
 
@@ -41,7 +42,7 @@ public class RenderManager {
 	public static ByteBuffer getByteBuffer(Identifier identifier) {
 		Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
 		if (resource.isEmpty()) {
-			throw new RuntimeException(String.format(IDENTIFIER_NOT_FOUND_EXCEPTION.getMessage(), identifier));
+			throw new RuntimeException(Exceptions.Render.identifierNotFound(identifier, null));
 		}
 
 		try {
@@ -66,7 +67,7 @@ public class RenderManager {
 			buffer.flip();
 			return buffer;
 		} catch (IOException ioException) {
-			throw new RuntimeException(String.format(IDENTIFIER_FAILED_TO_LOAD_EXCEPTION.getMessage(), identifier), ioException);
+			throw new RuntimeException(Exceptions.Render.identifierFailedToLoad(identifier, ioException));
 		}
 	}
 
