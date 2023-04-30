@@ -1,4 +1,4 @@
-package net.krlite.equator.math.geometry.volume;
+package net.krlite.equator.math.geometry.volume.base;
 
 import net.krlite.equator.math.geometry.base.Modifier;
 

@@ -1,4 +1,4 @@
-package net.krlite.equator.math.geometry.flat;
+package net.krlite.equator.math.geometry.flat.base;
 
 import net.krlite.equator.math.geometry.base.Modifier;
 

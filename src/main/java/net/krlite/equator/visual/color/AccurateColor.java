@@ -10,24 +10,47 @@ public class AccurateColor {
 	// Constants
 
 	public static final AccurateColor
-			BLACK = new AccurateColor(Color.BLACK),
-			WHITE = new AccurateColor(Color.WHITE),
+			BLACK = fromColor(Color.BLACK),
+			WHITE = fromColor(Color.WHITE),
 			TRANSPARENT = new AccurateColor(RGB, new double[] { 0, 0, 0 }, 0, true);
 
 	public static final AccurateColor
-			GRAY = new AccurateColor(Color.GRAY),
-			LIGHT_GRAY = new AccurateColor(Color.LIGHT_GRAY),
-			DARK_GRAY = new AccurateColor(Color.DARK_GRAY);
+			GRAY = fromColor(Color.GRAY),
+			LIGHT_GRAY = fromColor(Color.LIGHT_GRAY),
+			DARK_GRAY = fromColor(Color.DARK_GRAY);
 
 	public static final AccurateColor
-			RED = new AccurateColor(Color.RED),
-			GREEN = new AccurateColor(Color.GREEN),
-			BLUE = new AccurateColor(Color.BLUE),
-			CYAN = new AccurateColor(Color.CYAN),
-			MAGENTA = new AccurateColor(Color.MAGENTA),
-			YELLOW = new AccurateColor(Color.YELLOW),
-			ORANGE = new AccurateColor(Color.ORANGE),
-			PINK = new AccurateColor(Color.PINK);
+			RED = fromColor(Color.RED),
+			GREEN = fromColor(Color.GREEN),
+			BLUE = fromColor(Color.BLUE),
+			CYAN = fromColor(Color.CYAN),
+			MAGENTA = fromColor(Color.MAGENTA),
+			YELLOW = fromColor(Color.YELLOW),
+			ORANGE = fromColor(Color.ORANGE),
+			PINK = fromColor(Color.PINK);
+
+	// Static Constructors
+
+	public static AccurateColor fromRGBA(long rgba) {
+		return new AccurateColor(RGB.fromInt((int) (rgba >> 8)), ((rgba >> 24) & 0xFF) / 255.0);
+	}
+
+	public static AccurateColor fromRGBA(int red, int green, int blue, int alpha) {
+		return new AccurateColor(red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0);
+	}
+
+	public static AccurateColor fromRGBA(int red, int green, int blue) {
+		return fromRGBA(red, green, blue, 255);
+	}
+
+	public static AccurateColor fromColor(Color color) {
+		return new AccurateColor(RGB.fromColor(color), color.getAlpha() / 255.0);
+	}
+
+	public static AccurateColor fromHexString(String hexString) {
+		long hex = Long.decode(hexString);
+		return fromRGBA(hex | (hex > 0xFFFFFF ? 0x0 : 0xFF000000L));
+	}
 
 	// Constructors
 
@@ -46,34 +69,24 @@ public class AccurateColor {
 		this(RGB, rgb, opacity);
 	}
 
+	public AccurateColor(double[] rgba) {
+		this(rgba, rgba[3]);
+	}
+
 	public AccurateColor(double red, double green, double blue, double opacity) {
 		this(new double[] { red, green, blue }, opacity);
+	}
+
+	public AccurateColor(double red, double green, double blue) {
+		this(red, green, blue, 1);
 	}
 
 	public AccurateColor(double gray, double opacity) {
 		this(gray, gray, gray, opacity);
 	}
 
-	public AccurateColor(int rgb, double opacity) {
-		this(RGB.fromInt(rgb), opacity);
-	}
-
-	public AccurateColor(long rgba) {
-		this(RGB.fromInt((int) (rgba >> 8)), ((rgba >> 24) & 0xFF) / 255.0);
-	}
-
-	public AccurateColor(Color color) {
-		this(RGB.fromColor(color), color.getAlpha() / 255.0);
-	}
-
-	public AccurateColor(String hexString) {
-		this.colorspace = RGB;
-		this.color = RGB.fromHexString(hexString);
-
-		long rgb = Long.decode(hexString);
-		this.opacity = rgb > 0xFFFFFF ? ((rgb >> 24) & 0xFF) / 255.0 : 1;
-
-		this.transparent = false;
+	public AccurateColor(double gray) {
+		this(gray, 1);
 	}
 
 	public AccurateColor(AccurateColor another, Colorspace colorspace) {

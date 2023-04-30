@@ -1,4 +1,6 @@
-package net.krlite.equator.visual.color;
+package net.krlite.equator.visual.color.base;
+
+import net.krlite.equator.visual.color.Colorspace;
 
 import java.awt.*;
 

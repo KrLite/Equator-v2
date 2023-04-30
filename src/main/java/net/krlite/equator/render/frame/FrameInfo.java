@@ -85,7 +85,7 @@ public class FrameInfo {
 	 * 		        Based on the <b>Raster Coordinate System</b> and is used by Minecraft.
 	 * 		        <br />
 	 * 		        <br />
-	 * 		        {@code size -<} the <b>scaled</b> size of the window.
+	 * 		        {@code size -} the <b>scaled</b> size of the window.
 	 * 		</p>
 	 * 		<p>
 	 * 		    <h2>Screen Coordinate</h2>
@@ -109,11 +109,11 @@ public class FrameInfo {
 	 */
 	public static class Convertor {
 		public static Vector scaledToScreen(Vector vector) {
-			return vector.multiply(screen().d() / scaled().d());
+			return vector.scale(screen().d() / scaled().d());
 		}
 
 		public static Vector screenToScaled(Vector vector) {
-			return vector.multiply(scaled().d() / screen().d());
+			return vector.scale(scaled().d() / screen().d());
 		}
 
 		public static Vector scaledToOpenGL(Vector vector) {
@@ -125,11 +125,11 @@ public class FrameInfo {
 		}
 
 		public static Vector screenToOpenGL(Vector vector) {
-			return vector.y(screen().h() - vector.y()).multiply(2);
+			return vector.y(screen().h() - vector.y()).scale(2);
 		}
 
 		public static Vector openGLToScreen(Vector vector) {
-			return vector.y(screen().h() - vector.y()).divide(2);
+			return vector.y(screen().h() - vector.y()).scale(0.5);
 		}
 
 		public static Box scaledToScreen(Box box) {
@@ -149,11 +149,11 @@ public class FrameInfo {
 		}
 
 		public static Box screenToOpenGL(Box box) {
-			return new Box(box.origin().y(screen().h() - box.origin().y() - box.h()).multiply(2), box.size().multiply(2));
+			return new Box(box.origin().y(screen().h() - box.origin().y() - box.h()).scale(2), box.size().scale(2));
 		}
 
 		public static Box openGLToScreen(Box box) {
-			return new Box(box.origin().y(screen().h() - box.origin().y() - box.h()).divide(2), box.size().divide(2));
+			return new Box(box.origin().y(screen().h() - box.origin().y() - box.h()).scale(0.5), box.size().scale(0.5));
 		}
 	}
 }
