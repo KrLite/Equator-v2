@@ -3,22 +3,15 @@ package net.krlite.equator.input;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.krlite.equator.Equator;
-import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.render.RenderManager;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.*;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**

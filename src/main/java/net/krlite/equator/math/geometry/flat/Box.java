@@ -1,4 +1,4 @@
-package net.krlite.equator.math.geometry;
+package net.krlite.equator.math.geometry.flat;
 
 import com.google.common.collect.ImmutableMap;
 import net.krlite.equator.math.algebra.Theory;
@@ -142,7 +142,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		this(Vector.fromCartesian(xMin, yMin), Vector.fromCartesian(xMax - xMin, yMax - yMin));
 	}
 
-	// Instance Variable Accessors
+	// Accessors
 
 	/**
 	 * Gets the origin of the box. That is, the top left corner of the box.
@@ -202,7 +202,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	The center of the box.
 	 */
 	public Vector center() {
-		return topLeft().add(size().divide(2));
+		return topLeft().add(size().scale(0.5));
 	}
 
 
@@ -290,7 +290,39 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		return bottomLeft().subtract(topLeft());
 	}
 
-	// Instance Variable Mutators
+
+
+	public double x() {
+		return topLeft().x();
+	}
+
+	public double y() {
+		return topLeft().y();
+	}
+
+	public double w() {
+		return width().magnitude();
+	}
+
+	public double h() {
+		return height().magnitude();
+	}
+
+	public double d() {
+		return size().magnitude();
+	}
+
+
+
+	public double xCenter() {
+		return center().x();
+	}
+
+	public double yCenter() {
+		return center().y();
+	}
+
+	// Mutators
 
 	/**
 	 * Mutates the origin of the box.
@@ -355,7 +387,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box with the given center.
 	 */
 	public Box center(Vector center) {
-		return new Box(center.subtract(size().divide(2)), size());
+		return new Box(center.subtract(size().scale(0.5)), size());
 	}
 
 	/**
@@ -375,7 +407,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box with the given top center.
 	 */
 	public Box topCenter(Vector topCenter) {
-		return Box.fromVector(topCenter.subtract(width().divide(2)), topCenter.add(width().divide(2)));
+		return Box.fromVector(topCenter.subtract(width().scale(0.5)), topCenter.add(width().scale(0.5)));
 	}
 
 	/**
@@ -384,7 +416,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box with the given bottom center.
 	 */
 	public Box bottomCenter(Vector bottomCenter) {
-		return Box.fromVector(bottomCenter.subtract(width().divide(2)), bottomCenter.add(width().divide(2)));
+		return Box.fromVector(bottomCenter.subtract(width().scale(0.5)), bottomCenter.add(width().scale(0,.5)));
 	}
 
 	/**
@@ -393,7 +425,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box with the given left center.
 	 */
 	public Box leftCenter(Vector leftCenter) {
-		return Box.fromVector(leftCenter.subtract(height().divide(2)), leftCenter.add(height().divide(2)));
+		return Box.fromVector(leftCenter.subtract(height().scale(0.5)), leftCenter.add(height().scale(0.5)));
 	}
 
 	/**
@@ -402,7 +434,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box with the given right center.
 	 */
 	public Box rightCenter(Vector rightCenter) {
-		return Box.fromVector(rightCenter.subtract(height().divide(2)), rightCenter.add(height().divide(2)));
+		return Box.fromVector(rightCenter.subtract(height().scale(0.5)), rightCenter.add(height().scale(0.5)));
 	}
 
 
@@ -463,146 +495,47 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		return new Box(topLeft(), height().magnitude(height).add(width()));
 	}
 
-	// Instance Properties
+	// Properties
 
-	/**
-	 * Gets the area of the box, always positive. Note well that this is calculated as the absolute value of the cross
-	 * product of the width and height vectors.
-	 * @return	The area of the box.
-	 */
 	public double area() {
 		return Math.abs(width().cross(height()));
 	}
 
-	/**
-	 * Gets the perimeter of the box, always positive.
-	 * @return	The perimeter of the box.
-	 */
 	public double perimeter() {
 		return w() * 2 + h() * 2;
 	}
 
-	/**
-	 * Gets the x-coordinate of the origin of the box. That is, the x-coordinate of the top left corner of the box.
-	 * @return	The x-coordinate of the origin of the box.
-	 */
-	public double x() {
-		return topLeft().x();
-	}
-
-	/**
-	 * Gets the y-coordinate of the origin of the box. That is, the y-coordinate of the top left corner of the box.
-	 * @return	The y-coordinate of the origin of the box.
-	 */
-	public double y() {
-		return topLeft().y();
-	}
-
-	/**
-	 * Gets the x-coordinate of the center of the box.
-	 * @return	The x-coordinate of the center of the box.
-	 */
-	public double xCenter() {
-		return center().x();
-	}
-
-	/**
-	 * Gets the y-coordinate of the center of the box.
-	 * @return	The y-coordinate of the center of the box.
-	 */
-	public double yCenter() {
-		return center().y();
-	}
-
-	/**
-	 * Gets the width of the box. Alias for {@link #width()} then {@link Vector#magnitude()}.
-	 * @return	The width of the box.
-	 */
-	public double w() {
-		return width().magnitude();
-	}
-
-	/**
-	 * Gets the height of the box. Alias for {@link #height()} then {@link Vector#magnitude()}.
-	 * @return	The height of the box.
-	 */
-	public double h() {
-		return height().magnitude();
-	}
-
-	/**
-	 * Gets the diagonal length of the box. Alias for {@link #size()} then {@link Vector#magnitude()}.
-	 * @return	The diagonal length of the box.
-	 */
-	public double diag() {
-		return size().magnitude();
-	}
-
-	// Cross-Instant Properties
-
-	/**
-	 * Checks if the coordinate of the given vector is contained within the box.
-	 * @param point	The point to check.
-	 * @return	{@code true} if the point is contained within the box, {@code false} otherwise.
-	 */
 	public boolean contains(Vector point) {
 		return height().negate().cross(point.subtract(bottomLeft())) * height().cross(point.subtract(topRight())) >= 0
 					   && width().cross(point.subtract(topLeft())) * width().negate().cross(point.subtract(bottomRight())) >= 0;
 	}
 
-	/**
-	 * Checks if the given coordinate is contained within the box.
-	 * @param x	The x-coordinate of the point to check.
-	 * @param y	The y-coordinate of the point to check.
-	 * @return	{@code true} if the point is contained within the box, {@code false} otherwise.
-	 */
 	public boolean contains(double x, double y) {
 		return contains(Vector.fromCartesian(x, y));
 	}
 
-	/**
-	 * Checks if the given box is contained within this box.
-	 * @param another	The box to check.
-	 * @return	{@code true} if the given box is contained within this box, {@code false} otherwise.
-	 */
 	public boolean contains(Box another) {
 		return contains(another.topLeft()) && contains(another.bottomRight());
 	}
 
-	/**
-	 * Checks if this box and the given box intersect. That is, if they have any points in common.
-	 * @param another	The box to check.
-	 * @return	{@code true} if the two boxes intersect, {@code false} otherwise.
-	 */
 	public boolean intersects(Box another) {
 		return !(Theory.isZero(area()) || Theory.isZero(another.area()) ||
 						 (Theory.looseGreater(left(), another.right()) && Theory.looseGreater(another.left(), right())) ||
 						 (Theory.looseGreater(bottom(), another.top()) && Theory.looseGreater(another.bottom(), top())));
 	}
 
-	// Instant Variants
+	// Operations
 
-	/**
-	 * Gets the smallest square box that contains this box. Note well that the center of the returned box is the same as
-	 * the center of this box.
-	 * @return	The minimum square box that contains this box.
-	 */
 	public Box squareOuter() {
 		double max = width().magnitudeMax(height());
 		return width(max).height(max).center(center());
 	}
 
-	/**
-	 * Gets the largest square box that is contained by this box. Note well that the center of the returned box is the
-	 * same as the center of this box.
-	 * @return	The maximum square box that is contained by this box.
-	 */
 	public Box squareInner() {
 		double min = width().magnitudeMin(height());
 		return width(min).height(min).center(center());
 	}
 
-	// Instance Operations
 
 	/**
 	 * Translates the top left corner of the box by the given factors. That is, the top left corner is moved by the
@@ -618,7 +551,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose top left corner is translated by the given factors.
 	 */
 	public Box translateTopLeft(double xFactor, double yFactor) {
-		return topLeft(topLeft().add(width().multiply(xFactor)).add(height().multiply(yFactor)));
+		return topLeft(topLeft().add(width().scale(xFactor)).add(height().scale(yFactor)));
 	}
 
 	/**
@@ -635,7 +568,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose bottom left corner is translated by the given factors.
 	 */
 	public Box translateBottomLeft(double xFactor, double yFactor) {
-		return bottomLeft(bottomLeft().add(width().multiply(xFactor)).add(height().multiply(yFactor)));
+		return bottomLeft(bottomLeft().add(width().scale(xFactor)).add(height().scale(yFactor)));
 	}
 
 	/**
@@ -652,7 +585,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose bottom right corner is translated by the given factors.
 	 */
 	public Box translateBottomRight(double xFactor, double yFactor) {
-		return bottomRight(bottomRight().add(width().multiply(xFactor)).add(height().multiply(yFactor)));
+		return bottomRight(bottomRight().add(width().scale(xFactor)).add(height().scale(yFactor)));
 	}
 
 	/**
@@ -669,7 +602,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose top right corner is translated by the given factors.
 	 */
 	public Box translateTopRight(double xFactor, double yFactor) {
-		return topRight(topRight().add(width().multiply(xFactor)).add(height().multiply(yFactor)));
+		return topRight(topRight().add(width().scale(xFactor)).add(height().scale(yFactor)));
 	}
 
 
@@ -736,20 +669,20 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Translates the width of the box by the given factor. That is, the width is multiplied by the given factor.
-	 * @param factor	The factor by which to multiply the width of the box.
+	 * @param factor	The factor by which to scale the width of the box.
 	 * @return	A new box whose width is multiplied by the given factor.
 	 */
 	public Box translateWidth(double factor) {
-		return width(w() + width().multiply(factor).magnitude());
+		return width(w() + width().scale(factor).magnitude());
 	}
 
 	/**
 	 * Translates the height of the box by the given factor. That is, the height is multiplied by the given factor.
-	 * @param factor	The factor by which to multiply the height of the box.
+	 * @param factor	The factor by which to scale the height of the box.
 	 * @return	A new box whose height is multiplied by the given factor.
 	 */
 	public Box translateHeight(double factor) {
-		return height(h() + height().multiply(factor).magnitude());
+		return height(h() + height().scale(factor).magnitude());
 	}
 
 	/**
@@ -765,7 +698,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box translated by the given factors.
 	 */
 	public Box translate(double xFactor, double yFactor) {
-		return center(center().add(width().multiply(xFactor)).add(height().multiply(yFactor)));
+		return center(center().add(width().scale(xFactor)).add(height().scale(yFactor)));
 	}
 
 
@@ -1256,8 +1189,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 		for (int x = 0; x < xStep; x++) {
 			for (int y = 0; y < yStep; y++) {
-				grid[x][y] = new Box(topLeft().add(width().multiply(x / (double) xStep)).add(height().multiply(y / (double) yStep)),
-						width().multiply(1 / (double) xStep).add(height().multiply(1 / (double) yStep)));
+				grid[x][y] = new Box(topLeft().add(width().scale(x / (double) xStep)).add(height().scale(y / (double) yStep)),
+						width().scale(1 / (double) xStep).add(height().scale(1 / (double) yStep)));
 			}
 		}
 
@@ -1333,152 +1266,12 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	// Links
 
 	/**
-	 * Readies a {@link BoxRenderer} for rendering, which can hold a {@link Texture} <b>and</b>
-	 * an {@link AccurateColor}.
-	 * @param renderer	An {@link UnaryOperator} which processes the {@link BoxRenderer}.
-	 * @return	The processed {@link BoxRenderer}.
-	 */
-	public BoxRenderer ready(UnaryOperator<BoxRenderer> renderer) {
-		return renderer.apply(new BoxRenderer(this));
-	}
-
-	/**
-	 * Readies a {@link GradiantRenderer} for rendering, which can hold up to 4 {@link AccurateColor}s.
-	 * @param renderer	An {@link UnaryOperator} which processes the {@link GradiantRenderer}.
-	 * @return	The processed {@link GradiantRenderer}.
-	 */
-	public GradiantRenderer readyGradiant(UnaryOperator<GradiantRenderer> renderer) {
-		return renderer.apply(new GradiantRenderer(this));
-	}
-
-	/**
-	 * Readies a {@link ModelRenderer} for rendering, which can hold an {@link ItemStack} <b>or</b>
-	 * a {@link BlockState} and renders it as a 3D model.
-	 * @param renderer	An {@link UnaryOperator} which processes the {@link ModelRenderer}.
-	 * @return	The processed {@link ModelRenderer}.
-	 */
-	public ModelRenderer readyModel(UnaryOperator<ModelRenderer> renderer) {
-		return renderer.apply(new ModelRenderer(this));
-	}
-
-	/**
-	 * Readies a {@link OvalRenderer} for rendering, which can hold multiple {@link AccurateColor}s and renders them
-	 * as an oval.
-	 * @param renderer	An {@link UnaryOperator} which processes the {@link OvalRenderer}.
-	 * @return	The processed {@link OvalRenderer}.
-	 */
-	public OvalRenderer readyOval(UnaryOperator<OvalRenderer> renderer) {
-		return renderer.apply(new OvalRenderer(this));
-	}
-
-	/**
-	 * Readies a {@link SectionRenderer} for rendering, which can hold a {@link Section} to render text.
-	 * @param section	An {@link UnaryOperator} which processes the {@link Section} that handles
-	 *                  the text.
-	 * @param renderer	An {@link UnaryOperator} which processes the {@link SectionRenderer}.
-	 * @return	The processed {@link SectionRenderer}.
-	 */
-	public SectionRenderer readySection(UnaryOperator<Section> section, UnaryOperator<SectionRenderer> renderer) {
-		return renderer.apply(new SectionRenderer(this, section.apply(new Section())));
-	}
-
-	/**
-	 * An alias for {@link #ready(UnaryOperator)} with a {@link Texture} ready.
-	 * @param texture	The {@link Texture} to render.
-	 * @return	A {@link BoxRenderer} with the {@link Texture} ready.
-	 * @see #ready(UnaryOperator)
-	 */
-	public BoxRenderer ready(Texture texture) {
-		return new BoxRenderer(this).texture(texture);
-	}
-
-	/**
-	 * An alias for {@link #readyGradiant(UnaryOperator)} with an {@link AccurateColor} filled.
-	 * @param color	The {@link AccurateColor} to fill.
-	 * @return	A {@link BoxRenderer} with the {@link AccurateColor} ready.
-	 * @see #ready(UnaryOperator)
-	 */
-	public GradiantRenderer ready(AccurateColor color) {
-		return new GradiantRenderer(this).fill(color);
-	}
-
-	/**
-	 * An alias for {@link #readyModel(UnaryOperator)} with an {@link ItemStack} ready.
-	 * @param itemStack	The {@link ItemStack} to render.
-	 * @return	A {@link ModelRenderer} with the {@link ItemStack} ready.
-	 * @see #readyModel(UnaryOperator)
-	 */
-	public ModelRenderer ready(ItemStack itemStack) {
-		return new ModelRenderer(this).model(itemStack);
-	}
-
-	/**
-	 * An alias for {@link #readyModel(UnaryOperator)} with an {@link Item} ready.
-	 * @param item	The {@link Item} to render.
-	 * @return	A {@link ModelRenderer} with the {@link Item} ready.
-	 * @see #readyModel(UnaryOperator)
-	 */
-	public ModelRenderer ready(Item item) {
-		return new ModelRenderer(this).model(item);
-	}
-
-	/**
-	 * An alias for {@link #readyModel(UnaryOperator)} with a {@link BlockState} ready.
-	 * @param blockState	The {@link BlockState} to render.
-	 * @return	A {@link ModelRenderer} with the {@link BlockState} ready.
-	 * @see #readyModel(UnaryOperator)
-	 */
-	public ModelRenderer ready(BlockState blockState) {
-		return new ModelRenderer(this).model(blockState);
-	}
-
-	/**
-	 * An alias for {@link #readyModel(UnaryOperator)} with a {@link Block} ready.
-	 * @param block	The {@link Block} to render.
-	 * @return	A {@link ModelRenderer} with the {@link Block} ready.
-	 * @see #readyModel(UnaryOperator)
-	 */
-	public ModelRenderer ready(Block block) {
-		return new ModelRenderer(this).model(block);
-	}
-
-	/**
-	 * An alias for {@link #readyOval(UnaryOperator)} with an {@link AccurateColor} center color ready, and readies the
-	 * color map for rendering.
-	 * @param centerColor	The {@link AccurateColor} of the center of the oval.
-	 * @param colorMap		An {@link UnaryOperator} which processes the {@link ImmutableMap.Builder} of the color map.
-	 * @return	An {@link OvalRenderer} with the {@link AccurateColor} center color and the color map ready.
-	 */
-	public OvalRenderer ready(AccurateColor centerColor, UnaryOperator<ImmutableMap.Builder<Double, AccurateColor>> colorMap) {
-		OvalRenderer ovalRenderer = new OvalRenderer(this).centerColor(centerColor);
-		return ovalRenderer.colorMap(colorMap.apply(ImmutableMap.builder()).build());
-	}
-
-	/**
-	 * An alias for {@link #readySection(UnaryOperator, UnaryOperator)} with a {@link Section} ready.
-	 * @param section	The {@link Section} to render.
-	 * @return	A {@link SectionRenderer} with the {@link Section} ready.
-	 * @see #readySection(UnaryOperator, UnaryOperator)
-	 */
-	public SectionRenderer ready(Section section) {
-		return new SectionRenderer(this, section);
-	}
-
-	/**
 	 * Create a {@link Scissor} from this {@link Box}.
 	 * @return	A {@link Scissor} with the same dimensions as this {@link Box}.
 	 * @see Scissor
 	 */
 	public Scissor scissor() {
 		return new Scissor(this);
-	}
-
-	public void renderButton(MatrixStack matrixStack, ButtonRenderImplementation.State state) {
-		ButtonRenderImplementation.render(matrixStack, this, state);
-	}
-
-	public void renderToolTip(MatrixStack matrixStack) {
-		TooltipRenderImplementation.render(matrixStack, this);
 	}
 
 	// Object Methods

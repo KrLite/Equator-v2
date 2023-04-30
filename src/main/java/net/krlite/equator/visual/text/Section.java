@@ -1,7 +1,7 @@
 package net.krlite.equator.visual.text;
 
 import net.krlite.equator.base.Cyclic;
-import net.krlite.equator.math.geometry.Box;
+import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;

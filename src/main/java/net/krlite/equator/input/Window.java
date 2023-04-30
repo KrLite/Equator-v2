@@ -3,8 +3,8 @@ package net.krlite.equator.input;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.krlite.equator.Equator;
-import net.krlite.equator.math.geometry.Box;
-import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.math.geometry.flat.Box;
+import net.krlite.equator.math.geometry.flat.Vector;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.*;
 

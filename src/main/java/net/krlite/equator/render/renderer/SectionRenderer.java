@@ -1,7 +1,7 @@
 package net.krlite.equator.render.renderer;
 
-import net.krlite.equator.math.geometry.Box;
-import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.math.geometry.flat.Box;
+import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.render.vanilla.TooltipRenderImplementation;

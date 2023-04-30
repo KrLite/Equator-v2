@@ -1,7 +1,7 @@
 package net.krlite.equator.visual.texture;
 
-import net.krlite.equator.math.geometry.Box;
-import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.math.geometry.flat.Box;
+import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.render.RenderManager;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFWImage;

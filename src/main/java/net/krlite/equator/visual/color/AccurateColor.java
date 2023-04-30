@@ -7,6 +7,8 @@ import java.awt.*;
 import static net.krlite.equator.visual.color.Colorspace.*;
 
 public class AccurateColor {
+	// Constants
+
 	public static final AccurateColor
 			BLACK = new AccurateColor(Color.BLACK),
 			WHITE = new AccurateColor(Color.WHITE),
@@ -26,6 +28,8 @@ public class AccurateColor {
 			YELLOW = new AccurateColor(Color.YELLOW),
 			ORANGE = new AccurateColor(Color.ORANGE),
 			PINK = new AccurateColor(Color.PINK);
+
+	// Constructors
 
 	protected AccurateColor(Colorspace colorspace, double[] color, double opacity, boolean transparent) {
 		this.colorspace = colorspace;
@@ -76,10 +80,14 @@ public class AccurateColor {
 		this(colorspace, colorspace.from(another.color(), another.colorspace()), another.opacity(), !another.hasColor());
 	}
 
+	// Fields
+
 	private final Colorspace colorspace;
 	private final double[] color;
 	private final double opacity;
 	private final boolean transparent;
+
+	// Accessors
 
 	public Colorspace colorspace() {
 		return colorspace;
@@ -101,7 +109,7 @@ public class AccurateColor {
 		return (int) (opacity * 255);
 	}
 
-	// RGB Components
+	// Accessors: RGB Components
 
 	public double red() {
 		return new AccurateColor(this, RGB).color()[0];
@@ -139,7 +147,7 @@ public class AccurateColor {
 		return (int) (blue() * 255);
 	}
 
-	// Other Components
+	// Accessors: HSV/HSL Components
 
 	public double hue() {
 		return new AccurateColor(this, HSV).color()[0];
@@ -157,6 +165,8 @@ public class AccurateColor {
 		return new AccurateColor(this, HSL).color()[2];
 	}
 
+	// Accessors: CMYK Components
+
 	public double cyan() {
 		return new AccurateColor(this, CMYK).color()[0];
 	}
@@ -173,6 +183,8 @@ public class AccurateColor {
 		return new AccurateColor(this, CMYK).color()[3];
 	}
 
+	// Accessors: XYZ Components
+
 	public double x() {
 		return new AccurateColor(this, XYZ).color()[0];
 	}
@@ -184,6 +196,8 @@ public class AccurateColor {
 	public double z() {
 		return new AccurateColor(this, XYZ).color()[2];
 	}
+
+	// Accessors: LAB/LCH Components
 
 	public double L() {
 		return new AccurateColor(this, LAB).color()[0];
@@ -205,6 +219,8 @@ public class AccurateColor {
 		return new AccurateColor(this, LCH).color()[2];
 	}
 
+	// Mutators
+
 	public AccurateColor colorspace(Colorspace colorspace) {
 		return colorspace() == colorspace ? this : new AccurateColor(this, colorspace);
 	}
@@ -221,7 +237,7 @@ public class AccurateColor {
 		return opacity() == opacity ? this : new AccurateColor(colorspace(), color(), opacity);
 	}
 
-	// RGB Components
+	// Mutators: RGB Components
 
 	public AccurateColor red(double red) {
 		return color(new double[]{red, green(), blue()}, RGB);
@@ -235,7 +251,7 @@ public class AccurateColor {
 		return color(new double[]{red(), green(), blue}, RGB);
 	}
 
-	// Other Components
+	// Mutators: HSV/HSL Components
 
 	public AccurateColor hue(double hue) {
 		return color(new double[]{hue, saturation(), value()}, HSV);
@@ -253,6 +269,8 @@ public class AccurateColor {
 		return color(new double[]{hue(), saturation(), lightness}, HSL);
 	}
 
+	// Mutators: CMYK Components
+
 	public AccurateColor cyan(double cyan) {
 		return color(new double[]{cyan, magenta(), yellow(), black()}, CMYK);
 	}
@@ -269,6 +287,8 @@ public class AccurateColor {
 		return color(new double[]{cyan(), magenta(), yellow(), black}, CMYK);
 	}
 
+	// Mutators: XYZ Components
+
 	public AccurateColor x(double x) {
 		return color(new double[]{x, y(), z()}, XYZ);
 	}
@@ -280,6 +300,8 @@ public class AccurateColor {
 	public AccurateColor z(double z) {
 		return color(new double[]{x(), y(), z}, XYZ);
 	}
+
+	// Mutators: LAB/LCH Components
 
 	public AccurateColor L(double L) {
 		return color(new double[]{L, a(), b()}, LAB);
@@ -301,9 +323,13 @@ public class AccurateColor {
 		return color(new double[]{L(), C(), H}, LCH);
 	}
 
+	// Properties
+
 	public boolean hasColor() {
 		return !transparent;
 	}
+
+	// Operations
 
 	public AccurateColor interpolate(AccurateColor another, double ratio) {
 		return new AccurateColor(colorspace(), colorspace().interpolate(color(), another.color(), ratio, another.colorspace()), Theory.lerp(opacity(), another.opacity(), ratio));
@@ -372,6 +398,8 @@ public class AccurateColor {
 	public String toHexString() {
 		return String.format("0x%02x%02x%02x%02x", redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt());
 	}
+
+	// Object Methods
 
 	@Override
 	public String toString() {

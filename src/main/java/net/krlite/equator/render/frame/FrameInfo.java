@@ -1,7 +1,7 @@
 package net.krlite.equator.render.frame;
 
-import net.krlite.equator.math.geometry.Box;
-import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.math.geometry.flat.Box;
+import net.krlite.equator.math.geometry.flat.Vector;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 
@@ -109,11 +109,11 @@ public class FrameInfo {
 	 */
 	public static class Convertor {
 		public static Vector scaledToScreen(Vector vector) {
-			return vector.multiply(screen().diag() / scaled().diag());
+			return vector.multiply(screen().d() / scaled().d());
 		}
 
 		public static Vector screenToScaled(Vector vector) {
-			return vector.multiply(scaled().diag() / screen().diag());
+			return vector.multiply(scaled().d() / screen().d());
 		}
 
 		public static Vector scaledToOpenGL(Vector vector) {

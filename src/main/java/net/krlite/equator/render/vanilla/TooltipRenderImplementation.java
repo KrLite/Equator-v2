@@ -1,6 +1,6 @@
 package net.krlite.equator.render.vanilla;
 
-import net.krlite.equator.math.geometry.Box;
+import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.visual.color.Palette;
 import net.minecraft.client.util.math.MatrixStack;
 

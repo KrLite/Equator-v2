@@ -1,8 +1,8 @@
 package net.krlite.equator.render.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.krlite.equator.math.geometry.Box;
-import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.math.geometry.flat.Box;
+import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.minecraft.client.render.*;
@@ -438,7 +438,7 @@ public record GradiantRenderer(
 	}
 
 	public void renderOutlineShadow(MatrixStack matrixStack, float z) {
-		renderOutline(matrixStack, box.diag() * 0.55, OutliningMode.EDGE_FADING, z);
+		renderOutline(matrixStack, box.d() * 0.55, OutliningMode.EDGE_FADING, z);
 	}
 
 	public void renderOutlineShadow(MatrixStack matrixStack) {
