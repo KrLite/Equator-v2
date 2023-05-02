@@ -1,11 +1,11 @@
 package net.krlite.equator.math.geometry.volume.base;
 
-import net.krlite.equator.math.geometry.base.Modifier;
+import net.krlite.equator.math.logic.base.Transform;
 
-public record VolumeModifier(Modifier x, Modifier y, Modifier z) {
+public record VolumeModifier(Transform x, Transform y, Transform z) {
 	// Constants
 
-	public static final VolumeModifier NONE = new VolumeModifier(Modifier.NONE, Modifier.NONE, Modifier.NONE), NEGATE = new VolumeModifier(Modifier.NEGATE, Modifier.NEGATE, Modifier.NEGATE);
+	public static final VolumeModifier NONE = new VolumeModifier(Transform.NONE, Transform.NONE, Transform.NONE), NEGATE = new VolumeModifier(Transform.NEGATE, Transform.NEGATE, Transform.NEGATE);
 
 	// Static Constructors
 
@@ -15,7 +15,7 @@ public record VolumeModifier(Modifier x, Modifier y, Modifier z) {
 
 	// Constructors
 
-	public VolumeModifier(Modifier x, Modifier y, Modifier z) {
+	public VolumeModifier(Transform x, Transform y, Transform z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -23,29 +23,29 @@ public record VolumeModifier(Modifier x, Modifier y, Modifier z) {
 
 	// Accessors
 
-	public Modifier x() {
+	public Transform x() {
 		return x;
 	}
 
-	public Modifier y() {
+	public Transform y() {
 		return y;
 	}
 
-	public Modifier z() {
+	public Transform z() {
 		return z;
 	}
 
 	// Mutators
 
-	public VolumeModifier x(Modifier x) {
+	public VolumeModifier x(Transform x) {
 		return new VolumeModifier(x, y(), z());
 	}
 
-	public VolumeModifier y(Modifier y) {
+	public VolumeModifier y(Transform y) {
 		return new VolumeModifier(x(), y, z());
 	}
 
-	public VolumeModifier z(Modifier z) {
+	public VolumeModifier z(Transform z) {
 		return new VolumeModifier(x(), y(), z);
 	}
 
