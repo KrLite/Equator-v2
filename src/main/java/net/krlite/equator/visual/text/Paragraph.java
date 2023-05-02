@@ -91,7 +91,7 @@ public record Paragraph(Text text, double scalar) {
 	}
 
 	public Text[] wrap(double fontSize, double width) {
-		return isSpacing() ? new Text[]{text()} : Arrays.stream(concatFormatting(NEWLINE_PATTERN.matcher(
+		return isSpacing() ? new Text[] { text() } : Arrays.stream(concatFormatting(NEWLINE_PATTERN.matcher(
 				WordWrap.from(text().getString())
 						.breakWords(true)
 						.insertHyphens(true)
