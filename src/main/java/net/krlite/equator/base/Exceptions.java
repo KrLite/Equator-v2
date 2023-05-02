@@ -11,16 +11,8 @@ public class Exceptions {
 			return new IllegalArgumentException("Color array in colorspace " + colorspaceName + " must be of length " + expectedLength + ", but was" + length, cause);
 		}
 
-		public static IllegalArgumentException colorspaceNotSame(Throwable cause) {
-			return new IllegalArgumentException("Colorspaces must be the same", cause);
-		}
-
-		public static IllegalStateException modeUnexpected(String mode, Throwable cause) {
-			return new IllegalStateException("Unexpected mode '" + mode + "'", cause);
-		}
-
-		public static IndexOutOfBoundsException colorIndexOutOfBounds(int index, int length) {
-			return new IndexOutOfBoundsException("Color index " + index + " out of bounds " + length);
+		public static IOException colorspaceNotSupported(Colorspace colorspace, Throwable cause) {
+			return new IOException("Colorspace %s not supported" + colorspace.getName(), cause);
 		}
 	}
 

@@ -9,7 +9,7 @@ import net.krlite.equator.math.algebra.Theory;
  */
 public class Palette {
 	public static AccurateColor rainbow(double radians) {
-		return new AccurateColor(Colorspace.HSV, new double[] { Math.toDegrees(radians), 1, 0.72 }, 1);
+		return new AccurateColor(Colorspace.HSV, new double[]{ Math.toDegrees(radians), 1, 0.72}, 1);
 	}
 	
 	public static final AccurateColor BROWN = new AccurateColor(0.5, 0.25, 0, 1), TEAL = new AccurateColor(0, 0.5, 0.5, 1),

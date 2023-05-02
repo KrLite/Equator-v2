@@ -1,15 +1,15 @@
 package net.krlite.equator.math.geometry.volume.base;
 
-import net.krlite.equator.math.logic.base.Gate;
+import net.krlite.equator.math.geometry.base.Limiter;
 
-public record VolumeLimiter(Gate x, Gate y, Gate z) {
+public record VolumeLimiter(Limiter x, Limiter y, Limiter z) {
 	// Constants
 
-	public static final VolumeLimiter TRUE = new VolumeLimiter(Gate.TRUE, Gate.TRUE, Gate.TRUE), FALSE = new VolumeLimiter(Gate.FALSE, Gate.FALSE, Gate.FALSE);
+	public static final VolumeLimiter TRUE = new VolumeLimiter(Limiter.TRUE, Limiter.TRUE, Limiter.TRUE), FALSE = new VolumeLimiter(Limiter.FALSE, Limiter.FALSE, Limiter.FALSE);
 
 	// Constructors
 
-	public VolumeLimiter(Gate x, Gate y, Gate z) {
+	public VolumeLimiter(Limiter x, Limiter y, Limiter z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -17,29 +17,29 @@ public record VolumeLimiter(Gate x, Gate y, Gate z) {
 
 	// Accessors
 
-	public Gate x() {
+	public Limiter x() {
 		return x;
 	}
 
-	public Gate y() {
+	public Limiter y() {
 		return y;
 	}
 
-	public Gate z() {
+	public Limiter z() {
 		return z;
 	}
 
 	// Mutators
 
-	public VolumeLimiter x(Gate x) {
+	public VolumeLimiter x(Limiter x) {
 		return new VolumeLimiter(x, y(), z());
 	}
 
-	public VolumeLimiter y(Gate y) {
+	public VolumeLimiter y(Limiter y) {
 		return new VolumeLimiter(x(), y, z());
 	}
 
-	public VolumeLimiter z(Gate z) {
+	public VolumeLimiter z(Limiter z) {
 		return new VolumeLimiter(x(), y(), z);
 	}
 

@@ -253,87 +253,87 @@ public class AccurateColor {
 	// Mutators: RGB Components
 
 	public AccurateColor red(double red) {
-		return color(new double[] { red, green(), blue() }, RGB);
+		return color(new double[]{red, green(), blue()}, RGB);
 	}
 
 	public AccurateColor green(double green) {
-		return color(new double[] { red(), green, blue() }, RGB);
+		return color(new double[]{red(), green, blue()}, RGB);
 	}
 
 	public AccurateColor blue(double blue) {
-		return color(new double[] { red(), green(), blue }, RGB);
+		return color(new double[]{red(), green(), blue}, RGB);
 	}
 
 	// Mutators: HSV/HSL Components
 
 	public AccurateColor hue(double hue) {
-		return color(new double[] { hue, saturation(), value() }, HSV);
+		return color(new double[]{hue, saturation(), value()}, HSV);
 	}
 
 	public AccurateColor saturation(double saturation) {
-		return color(new double[] { hue(), saturation, value() }, HSV);
+		return color(new double[]{hue(), saturation, value()}, HSV);
 	}
 
 	public AccurateColor value(double value) {
-		return color(new double[] { hue(), saturation(), value }, HSV);
+		return color(new double[]{hue(), saturation(), value}, HSV);
 	}
 
 	public AccurateColor lightness(double lightness) {
-		return color(new double[] { hue(), saturation(), lightness }, HSL);
+		return color(new double[]{hue(), saturation(), lightness}, HSL);
 	}
 
 	// Mutators: CMYK Components
 
 	public AccurateColor cyan(double cyan) {
-		return color(new double[] { cyan, magenta(), yellow(), black() }, CMYK);
+		return color(new double[]{cyan, magenta(), yellow(), black()}, CMYK);
 	}
 
 	public AccurateColor magenta(double magenta) {
-		return color(new double[] { cyan(), magenta, yellow(), black() }, CMYK);
+		return color(new double[]{cyan(), magenta, yellow(), black()}, CMYK);
 	}
 
 	public AccurateColor yellow(double yellow) {
-		return color(new double[] { cyan(), magenta(), yellow, black() }, CMYK);
+		return color(new double[]{cyan(), magenta(), yellow, black()}, CMYK);
 	}
 
 	public AccurateColor black(double black) {
-		return color(new double[] { cyan(), magenta(), yellow(), black }, CMYK);
+		return color(new double[]{cyan(), magenta(), yellow(), black}, CMYK);
 	}
 
 	// Mutators: XYZ Components
 
 	public AccurateColor x(double x) {
-		return color(new double[] { x, y(), z() }, XYZ);
+		return color(new double[]{x, y(), z()}, XYZ);
 	}
 
 	public AccurateColor y(double y) {
-		return color(new double[] { x(), y, z() }, XYZ);
+		return color(new double[]{x(), y, z()}, XYZ);
 	}
 
 	public AccurateColor z(double z) {
-		return color(new double[] { x(), y(), z }, XYZ);
+		return color(new double[]{x(), y(), z}, XYZ);
 	}
 
 	// Mutators: LAB/LCH Components
 
 	public AccurateColor L(double L) {
-		return color(new double[] { L, a(), b() }, LAB);
+		return color(new double[]{L, a(), b()}, LAB);
 	}
 
 	public AccurateColor a(double a) {
-		return color(new double[] { L(), a, b() }, LAB);
+		return color(new double[]{L(), a, b()}, LAB);
 	}
 
 	public AccurateColor b(double b) {
-		return color(new double[] { L(), a(), b }, LAB);
+		return color(new double[]{L(), a(), b}, LAB);
 	}
 
 	public AccurateColor C(double C) {
-		return color(new double[] { L(), C, H() }, LCH);
+		return color(new double[]{L(), C, H()}, LCH);
 	}
 
 	public AccurateColor H(double H) {
-		return color(new double[] { L(), C(), H }, LCH);
+		return color(new double[]{L(), C(), H}, LCH);
 	}
 
 	// Properties

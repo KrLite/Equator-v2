@@ -374,10 +374,7 @@ public record BoxRenderer(
 	}
 
 	private void renderRepeating(MatrixStack matrixStack, double width, double height) {
-		if (!hasTexture()) {
-			render(matrixStack);
-			return;
-		}
+		if (!hasTexture()) render(matrixStack);
 
 		assert texture() != null;
 
