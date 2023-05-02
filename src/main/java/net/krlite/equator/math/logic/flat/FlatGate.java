@@ -1,8 +1,9 @@
 package net.krlite.equator.math.logic.flat;
 
 import net.krlite.equator.math.logic.base.Gate;
+import net.krlite.equator.math.logic.base.Gated;
 
-public record FlatGate(Gate x, Gate y) {
+public record FlatGate(Gate x, Gate y) implements Gated<FlatGate> {
 	// Constants
 
 	public static final FlatGate TRUE = new FlatGate(Gate.TRUE, Gate.TRUE), FALSE = new FlatGate(Gate.FALSE, Gate.FALSE);
@@ -34,34 +35,6 @@ public record FlatGate(Gate x, Gate y) {
 		return new FlatGate(x(), y);
 	}
 
-	public FlatGate not() {
-		return new FlatGate(x().not(), y().not());
-	}
-
-	public FlatGate and(FlatGate other) {
-		return new FlatGate(x().and(other.x()), y().and(other.y()));
-	}
-
-	public FlatGate or(FlatGate other) {
-		return new FlatGate(x().or(other.x()), y().or(other.y()));
-	}
-
-	public FlatGate nand(FlatGate other) {
-		return new FlatGate(x().nand(other.x()), y().nand(other.y()));
-	}
-
-	public FlatGate xor(FlatGate other) {
-		return new FlatGate(x().xor(other.x()), y().xor(other.y()));
-	}
-
-	public FlatGate nor(FlatGate other) {
-		return new FlatGate(x().nor(other.x()), y().nor(other.y()));
-	}
-
-	public FlatGate xnor(FlatGate other) {
-		return new FlatGate(x().xnor(other.x()), y().xnor(other.y()));
-	}
-
 	// Operations
 
 	public boolean x(double x) {
@@ -74,5 +47,42 @@ public record FlatGate(Gate x, Gate y) {
 
 	public boolean pass(double x, double y) {
 		return x(x) && y(y);
+	}
+
+	// Interface implementations
+
+	@Override
+	public FlatGate not() {
+		return new FlatGate(x().not(), y().not());
+	}
+
+	@Override
+	public FlatGate and(FlatGate other) {
+		return new FlatGate(x().and(other.x()), y().and(other.y()));
+	}
+
+	@Override
+	public FlatGate or(FlatGate other) {
+		return new FlatGate(x().or(other.x()), y().or(other.y()));
+	}
+
+	@Override
+	public FlatGate nand(FlatGate other) {
+		return new FlatGate(x().nand(other.x()), y().nand(other.y()));
+	}
+
+	@Override
+	public FlatGate xor(FlatGate other) {
+		return new FlatGate(x().xor(other.x()), y().xor(other.y()));
+	}
+
+	@Override
+	public FlatGate nor(FlatGate other) {
+		return new FlatGate(x().nor(other.x()), y().nor(other.y()));
+	}
+
+	@Override
+	public FlatGate xnor(FlatGate other) {
+		return new FlatGate(x().xnor(other.x()), y().xnor(other.y()));
 	}
 }

@@ -27,6 +27,5 @@ public class LayerScreen extends Screen {
 
 	@Override
 	public void renderBackground(MatrixStack matrixStack) {
-		FrameInfo.scaled().scaleCenter(0.5).ready(AccurateColor.WHITE.opacity(0.3)).render(matrixStack);
 	}
 }

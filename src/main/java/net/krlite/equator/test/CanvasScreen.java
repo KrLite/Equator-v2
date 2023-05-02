@@ -53,19 +53,5 @@ public class CanvasScreen extends Screen {
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
 		renderBackground(matrixStack);
-
-		/*
-		box.ready(AccurateColor.WHITE.opacity(0.1)).render(matrixStack);
-
-		box.ready(AccurateColor.WHITE,
-						builder -> builder.put(3 * Math.PI / 2, AccurateColor.CYAN)
-										   .put(Math.PI / 4, AccurateColor.RED)
-										   .put(Math.PI / 2, AccurateColor.GREEN)
-										   .put(2 * Math.PI / 3, AccurateColor.YELLOW))
-				.radians(Math.PI + Math.PI * interpolation.value())
-				.offset(3 * Math.PI / 2 * interpolation.value())
-				.renderOutline(matrixStack, 2, OvalRenderer.OutliningMode.INWARD);
-
-		 */
 	}
 }

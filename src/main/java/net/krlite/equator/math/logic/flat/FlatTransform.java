@@ -1,8 +1,9 @@
 package net.krlite.equator.math.logic.flat;
 
 import net.krlite.equator.math.logic.base.Transform;
+import net.krlite.equator.math.logic.base.Transformative;
 
-public record FlatTransform(Transform x, Transform y) {
+public record FlatTransform(Transform x, Transform y) implements Transformative<FlatTransform> {
 	// Constants
 
 	public static final FlatTransform NONE = new FlatTransform(Transform.NONE, Transform.NONE), NEGATE = new FlatTransform(Transform.NEGATE, Transform.NEGATE);
@@ -40,10 +41,6 @@ public record FlatTransform(Transform x, Transform y) {
 		return new FlatTransform(x(), y);
 	}
 
-	public FlatTransform andThen(FlatTransform after) {
-		return new FlatTransform(x().andThen(after.x()), y().andThen(after.y()));
-	}
-
 	// Operations
 
 	public double x(double x) {
@@ -52,5 +49,12 @@ public record FlatTransform(Transform x, Transform y) {
 
 	public double y(double y) {
 		return y().value(y);
+	}
+
+	// Interface Implementations
+
+	@Override
+	public FlatTransform andThen(FlatTransform after) {
+		return new FlatTransform(x().andThen(after.x()), y().andThen(after.y()));
 	}
 }
