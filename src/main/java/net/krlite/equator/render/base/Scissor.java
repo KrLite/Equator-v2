@@ -2,7 +2,6 @@ package net.krlite.equator.render.base;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.krlite.equator.math.geometry.flat.Box;
-import net.krlite.equator.render.renderer.BoxRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.function.Consumer;

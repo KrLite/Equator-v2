@@ -9,6 +9,7 @@ import net.krlite.equator.math.logic.flat.FlatGate;
 import net.krlite.equator.math.logic.flat.FlatTransform;
 import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.render.frame.FrameInfo;
+import net.krlite.equator.render.renderer.base.Basic;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.color.Colorspace;
 import net.krlite.equator.visual.texture.Texture;

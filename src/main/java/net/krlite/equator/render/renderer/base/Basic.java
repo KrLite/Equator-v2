@@ -1,4 +1,4 @@
-package net.krlite.equator.render.renderer;
+package net.krlite.equator.render.renderer.base;
 
 import net.minecraft.client.util.math.MatrixStack;
 
