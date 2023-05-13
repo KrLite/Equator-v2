@@ -8,7 +8,7 @@ package net.krlite.equator.render.frame;
  * @see FrameInfo.Convertor
  * @param <C>	The type of the convertible object.
  */
-@net.krlite.equator.base.Math("2.2.1")
+@net.krlite.equator.base.Math("2.3.0")
 public interface Convertible<C> {
 	/**
 	 * Fits the coordinate to the {@link FrameInfo.Convertor Scaled Coordinate}.

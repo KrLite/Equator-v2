@@ -1,6 +1,7 @@
 package net.krlite.equator.visual.color;
 
 import com.scrtwpns.Mixbox;
+import net.krlite.equator.base.Visual;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.visual.color.base.ColorStandard;
 
@@ -20,6 +21,7 @@ import static net.krlite.equator.visual.color.ColorConvertor.*;
  *     <li>{@link Colorspace#LCH}	&emsp;<code>- Luminance*,	Chroma*,		hue*		(CLELCh COLORSPACE)</code></li>
  * </ul>
  */
+@Visual("2.3.0")
 public enum Colorspace implements ColorStandard {
 	RGB("RGB") {
 		public static final double[] WHITE = {1, 1, 1};

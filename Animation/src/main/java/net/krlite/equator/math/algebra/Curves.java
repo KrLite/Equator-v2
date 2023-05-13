@@ -1,5 +1,6 @@
 package net.krlite.equator.math.algebra;
 
+import net.krlite.equator.base.Animation;
 import net.krlite.equator.visual.animation.Slice;
 
 /**
@@ -7,35 +8,28 @@ import net.krlite.equator.visual.animation.Slice;
  * Contains <b>curves</b> that can be used to <b>animate</b> values.
  * @see Slice
  */
-@net.krlite.equator.base.Animation("2.2.1")
+@Animation("2.3.0")
 public class Curves {
 	/**
 	 * <b>Zero</b>
-	 * <h2>{@code y = 0}</h2>
+	 * <h2><code>f(x) = 0</code></h2>
 	 * A line that <b>represents the start value.</b>
 	 */
 	public static final Slice ZERO = Slice.map(progress -> 0.0);
 
  	/**
 	 * <b>One</b>
-	 * <h2>{@code y = 1}</h2>
+	 * <h2><code>f(x) = 1</code></h2>
 	 * A line that <b>represents the end value.</b>
 	 */
 	public static final Slice ONE = Slice.map(progress -> 1.0);
 
 	/**
 	 * <b>Linear</b>
-	 * <h2{@code y = x}</h2>
+	 * <h2><code>f(x) = x</code></h2>
 	 * A <b>linear</b> curve.
 	 */
 	public static final Slice LINEAR = Slice.map(progress -> progress);
-
-	/**
-	 * <b>Sine</b>
-	 * <h2>{@code y = sin(2 * π * x)}</h2>
-	 * A curve that <b>oscillates.</b>
-	 */
-	public static final Slice SINE = Slice.map(progress -> Math.sin(progress * Math.PI * 2));
 
 	/**
 	 * <h2>Stairs</h2>
@@ -102,9 +96,9 @@ public class Curves {
 		/**
 		 * <b>Switch (on) Generator</b>
 		 * <p>
-		 *     {@code On: <b>{@link #ONE}</b>}
+		 *     <code>On: <b>{@link #ONE}</b></code>
 		 *     <br />
-		 *     {@code Off: <b>{@link #ZERO}</b>}
+		 *     <code>Off: <b>{@link #ZERO}</b></code>
 		 * </p>
 		 * @param threshold	The threshold.
 		 * @return	A {@code switch} curve that <b>turns on.</b>
@@ -197,7 +191,7 @@ public class Curves {
 	public static class Exponential {
 		/**
 		 * <b>Exponential (fade-in) Generator</b>
-		 * <h2>{@code y = x<sup>n</sup>}</h2>
+		 * <h2><code>f(x) = x<sup>n</sup></code></h2>
 		 * @param n	The exponent.
 		 * @return	A <b>fade-in</b> {@code exponential} curve.
 		 */
@@ -207,7 +201,7 @@ public class Curves {
 
 		/**
 		 * <b>Exponential (fade-out) Generator</b>
-		 * <h2>{@code y = 1 - (1 - x)<sup>n</sup>}</h2>
+		 * <h2><code>f(x) = 1 - (1 - x)<sup>n</sup></code></h2>
 		 * @param n	The exponent.
 		 * @return	A <b>fade-out</b> {@code exponential} curve.
 		 */
@@ -217,7 +211,7 @@ public class Curves {
 
 		/**
 		 * <b>Exponential Generator</b>
-		 * <h2>{@code y = x<sup>n</sup> / 2}</h2>
+		 * <h2><code>f(x) = x<sup>n</sup> / 2</code></h2>
 		 * @param n	The exponent.
 		 * @return	An {@code exponential} curve.
 		 */
@@ -238,21 +232,21 @@ public class Curves {
 		public static class Quadratic {
 			/**
 			 * <b>Quadratic (fade-in)</b>
-			 * <h2>{@code y = x<sup>2</sup>}</h2>
+			 * <h2><code>f(x) = x<sup>2</sup></code></h2>
 			 * A <b>fade-in</b> {@code quadratic} curve.
 			 */
 			public static final Slice IN = in(2);
 			
 			/**
 			 * <b>Quadratic (fade-out)</b>
-			 * <h2>{@code y = 1 - (1 - x)<sup>2</sup>}</h2>
+			 * <h2><code>f(x) = 1 - (1 - x)<sup>2</sup></code></h2>
 			 * A <b>fade-out</b> {@code quadratic} curve.
 			 */
 			public static final Slice OUT = out(2);
 			
 			/**
 			 * <b>Quadratic</b>
-			 * <h2>{@code y = x<sup>2</sup> / 2}</h2>
+			 * <h2><code>f(x) = x<sup>2</sup> / 2</code></h2>
 			 * A {@code quadratic} curve.
 			 */
 			public static final Slice EASE = ease(2);
@@ -265,21 +259,21 @@ public class Curves {
 		public static class Cubic {
 			/**
 			 * <b>Cubic (fade-in)</b>
-			 * <h2>{@code y = x<sup>3</sup>}</h2>
+			 * <h2><code>f(x) = x<sup>3</sup></code></h2>
 			 * A <b>fade-in</b> {@code cubic} curve.
 			 */
 			public static final Slice IN = in(3);
 			
 			/**
 			 * <b>Cubic (fade-out)</b>
-			 * <h2>{@code y = 1 - (1 - x)<sup>3</sup>}</h2>
+			 * <h2><code>f(x) = 1 - (1 - x)<sup>3</sup></code></h2>
 			 * A <b>fade-out</b> {@code cubic} curve.
 			 */
 			public static final Slice OUT = out(3);
 			
 			/**
 			 * <b>Cubic</b>
-			 * <h2>{@code y = x<sup>3</sup> / 2}</h2>
+			 * <h2><code>f(x) = x<sup>3</sup> / 2</code></h2>
 			 * A {@code cubic} curve.
 			 */
 			public static final Slice EASE = ease(3);
@@ -292,21 +286,21 @@ public class Curves {
 		public static class Quartic {
 			/**
 			 * <b>Quartic (fade-in)</b>
-			 * <h2>{@code y = x<sup>4</sup>}</h2>
+			 * <h2><code>f(x) = x<sup>4</sup></code></h2>
 			 * A <b>fade-in</b> {@code quartic} curve.
 			 */
 			public static final Slice IN = in(4);
 			
 			/**
 			 * <b>Quartic (fade-out)</b>
-			 * <h2>{@code y = 1 - (1 - x)<sup>4</sup>}</h2>
+			 * <h2><code>f(x) = 1 - (1 - x)<sup>4</sup></code></h2>
 			 * A <b>fade-out</b> {@code quartic} curve.
 			 */
 			public static final Slice OUT = out(4);
 			
 			/**
 			 * <b>Quartic</b>
-			 * <h2>{@code y = x<sup>4</sup> / 2}</h2>
+			 * <h2><code>f(x) = x<sup>4</sup> / 2</code></h2>
 			 * A {@code quartic} curve.
 			 */
 			public static final Slice EASE = ease(4);
@@ -319,21 +313,21 @@ public class Curves {
 		public static class Quintic {
 			/**
 			 * <b>Quintic (fade-in)</b>
-			 * <h2>{@code y = x<sup>5</sup>}</h2>
+			 * <h2><code>f(x) = x<sup>5</sup></code></h2>
 			 * A <b>fade-in</b> {@code quintic} curve.
 			 */
 			public static final Slice IN = in(5);
 			
 			/**
 			 * <b>Quintic (fade-out)</b>
-			 * <h2>{@code y = 1 - (1 - x)<sup>5</sup>}</h2>
+			 * <h2><code>f(x) = 1 - (1 - x)<sup>5</sup></code></h2>
 			 * A <b>fade-out</b> {@code quintic} curve.
 			 */
 			public static final Slice OUT = out(5);
 			
 			/**
 			 * <b>Quintic</b>
-			 * <h2>{@code y = x<sup>5</sup> / 2}</h2>
+			 * <h2><code>f(x) = x<sup>5</sup> / 2</code></h2>
 			 * A {@code quintic} curve.
 			 */
 			public static final Slice EASE = ease(5);
@@ -348,7 +342,7 @@ public class Curves {
 		/**
 		 * <b>Back (fade-in) Generator</b>
 		 * @param overshoot	The amount to overshoot.
-		 *                  <p>{@code Default: <b>1.70158</b>}</p>
+		 *                  <p><code>Default: <b>1.70158</b></code></p>
 		 * @return A <b>fade-in</b> {@code back} curve.
 		 */
 		public static Slice in(double overshoot) {
@@ -358,7 +352,7 @@ public class Curves {
 		/**
 		 * <b>Back (fade-out) Generator</b>
 		 * @param overshoot	The amount to overshoot.
-		 *                  <p>{@code Default: <b>1.70158</b>}</p>
+		 *                  <p><code>Default: <b>1.70158</b></code></p>
 		 * @return A <b>fade-out</b> {@code back} curve.
 		 */
 		public static Slice out(double overshoot) {
@@ -368,7 +362,7 @@ public class Curves {
 		/**
 		 * <b>Back Generator</b>
 		 * @param overshoot	The amount to overshoot.
-		 *                  <p>{@code Default: <b>1.70158</b>}</p>
+		 *                  <p><code>Default: <b>1.70158</b></code></p>
 		 * @return A {@code back} curve.
 		 */
 		public static Slice ease(double overshoot) {
@@ -415,9 +409,9 @@ public class Curves {
 		/**
 		 * <b>Elastic (fade-in) Generator</b>
 		 * @param amplitude	The amplitude of the oscillation.
-		 *                  <p>{@code Default: <b>1</b>}</p>
+		 *                  <p><code>Default: <b>1</b></code></p>
 		 * @param period	The period of the oscillation.
-		 *                  <p>{@code Default: <b>0.3</b>}</p>
+		 *                  <p><code>Default: <b>0.3</b></code></p>
 		 * @return A <b>fade-in</b> {@code elastic} curve.
 		 */
 		public static Slice in(double amplitude, double period) {
@@ -436,9 +430,9 @@ public class Curves {
 		/**
 		 * <b>Elastic (fade-out) Generator</b>
 		 * @param amplitude	The amplitude of the oscillation.
-		 *                  <p>{@code Default: <b>1</b>}</p>
+		 *                  <p><code>Default: <b>1</b></code></p>
 		 * @param period	The period of the oscillation.
-		 *                  <p>{@code Default: <b>0.3</b>}</p>
+		 *                  <p><code>Default: <b>0.3</b></code></p>
 		 * @return A <b>fade-out</b> {@code elastic} curve.
 		 */
 		public static Slice out(double amplitude, double period) {
@@ -457,9 +451,9 @@ public class Curves {
 		/**
 		 * <b>Elastic Generator</b>
 		 * @param amplitude	The amplitude of the oscillation.
-		 *                  <p>{@code Default: <b>1</b>}</p>
+		 *                  <p><code>Default: <b>1</b></code></p>
 		 * @param period	The period of the oscillation.
-		 *                  <p>{@code Default: <b>0.3</b>}</p>
+		 *                  <p><code>Default: <b>0.3</b></code></p>
 		 * @return An {@code elastic} curve.
 		 */
 		public static Slice ease(double amplitude, double period) {
@@ -551,21 +545,21 @@ public class Curves {
 	public static class Sinusoidal {
 		/**
 		 * <b>Sinusoidal (fade-in)</b>
-		 * <h2>{@code y = 1 - cos(x * π / 2)}</h2>
+		 * <h2><code>f(x) = 1 - cos(x * π / 2)</code></h2>
 		 * A <b>fade-in</b> {@code sinusoidal} curve.
 		 */
 		public static final Slice IN	= Slice.map(progress -> 1 - Math.cos(progress * Math.PI / 2));
 
 		/**
 		 * <b>Sinusoidal (fade-out)</b>
-		 * <h2>{@code y = sin(x * π / 2)}</h2>
+		 * <h2><code>f(x) = sin(x * π / 2)</code></h2>
 		 * A <b>fade-out</b> {@code sinusoidal} curve.
 		 */
 		public static final Slice OUT	= Slice.map(progress -> Math.sin(progress * Math.PI / 2));
 
 		/**
 		 * <b>Sinusoidal</b>
-		 * <h2>{@code y = (1 - cos(x * π)) / 2}</h2>
+		 * <h2><code>f(x) = (1 - cos(x * π)) / 2</code></h2>
 		 * A {@code sinusoidal} curve.
 		 */
 		public static final Slice EASE	= Slice.map(progress -> (1 - Math.cos(progress * Math.PI)) / 2);
@@ -578,25 +572,25 @@ public class Curves {
 	public static class TwoBasedExponential {
 		/**
 		 * <b>2-Based Exponential (fade-in)</b>
-		 * <h2>{@code y = 2<sup>10 * (x - 1)</sup>}</h2>
+		 * <h2><code>f(x) = 2<sup>10 * (x - 1)</sup></code></h2>
 		 * A <b>fade-in</b> {@code exponential} curve.
 		 */
 		public static final Slice IN	= Slice.map(progress -> Math.pow(2, 10 * (progress - 1)));
 
 		/**
 		 * <b>2-Based Exponential (fade-out)</b>
-		 * <h2>{@code y = -2<sup>-10 * x</sup> + 1}</h2>
+		 * <h2><code>f(x) = -2<sup>-10 * x</sup> + 1</code></h2>
 		 * A <b>fade-out</b> {@code exponential} curve.
 		 */
 		public static final Slice OUT	= Slice.map(progress -> -Math.pow(2, -10 * progress) + 1);
 
 		/**
 		 * <b>2-Based Exponential</b>
-		 * <h2>{@code 
-		 *     y = 2<sup>10 * (x - 1)</sup> if x < 0.5
+		 * <h2><code>
+		 *     f(x) = 2<sup>10 * (x - 1)</sup> if x < 0.5
 		 *     <br />
 		 *     -2<sup>-10 * (x - 1)</sup> + 1 if x >= 0.5
-		 * }</h2>
+		 * </code></h2>
 		 * An {@code exponential} curve.
 		 */
 		public static final Slice EASE	= Slice.map(progress -> {
@@ -615,25 +609,25 @@ public class Curves {
 	public static class Circular {
 		/**
 		 * <b>Circular (fade-in)</b>
-		 * <h2>{@code y = 1 - sqrt(1 - x<sup>2</sup>)}</h2>
+		 * <h2><code>f(x) = 1 - sqrt(1 - x<sup>2</sup>)</code></h2>
 		 * A <b>fade-in</b> {@code circular} curve.
 		 */
 		public static final Slice IN	= Slice.map(progress -> 1 - Math.sqrt(1 - Math.pow(progress, 2)));
 
 		/**
 		 * <b>Circular (fade-out)</b>
-		 * <h2>{@code y = sqrt(1 - (x - 1)<sup>2</sup>)}</h2>
+		 * <h2><code>f(x) = sqrt(1 - (x - 1)<sup>2</sup>)</code></h2>
 		 * A <b>fade-out</b> {@code circular} curve.
 		 */
 		public static final Slice OUT	= Slice.map(progress -> Math.sqrt(1 - Math.pow(progress - 1, 2)));
 
 		/**
 		 * <b>Circular</b>
-		 * <h2>{@code 
-		 *     y = (1 - sqrt(1 - x<sup>2</sup>)) / 2 if x < 0.5
+		 * <h2><code>
+		 *     f(x) = (1 - sqrt(1 - x<sup>2</sup>)) / 2 if x < 0.5
 		 *     <br />
-		 *     y = (sqrt(1 - (x - 1)<sup>2</sup>) + 1) / 2 if x >= 0.5
-		 * }</h2>
+		 *     f(x) = (sqrt(1 - (x - 1)<sup>2</sup>) + 1) / 2 if x >= 0.5
+		 * </code></h2>
 		 * A {@code circular} curve.
 		 */
 		public static final Slice EASE	= Slice.map(progress -> {

@@ -1,15 +1,21 @@
 package net.krlite.equator.math.algebra;
 
-@net.krlite.equator.base.Visual("2.2.1")
+import net.krlite.equator.base.Visual;
+
+/**
+ * <h1>Theory</h1>
+ * A collection of mathematical functions that are used in the library.
+ */
+@Visual("2.3.0")
 public class Theory {
 	/**
-	 * A small margin of error for comparing doubles.
+	 * A small margin of error for comparing doubles. The value is {@code 1e-6}, which equals to {@code 0.000001}.
 	 */
 	public static final double EPSILON = 1e-6;
 
 	/**
 	 * <h1>{@code a ≈ b}</h1>
-	 * Returns {@code true} if the two doubles are equal within a small margin of error.
+	 * Checks if the two doubles are equal within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
 	 * @return	{@code true} if the two doubles are equal within a small margin of error,
@@ -22,7 +28,7 @@ public class Theory {
 
 	/**
 	 * <h1>{@code a ≠ b}</h1>
-	 * Returns {@code true} if the two doubles are not equal within a small margin of error.
+	 * Checks if the two doubles are not equal within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
 	 * @return	{@code true} if the two doubles are not equal within a small margin of error,
@@ -35,7 +41,7 @@ public class Theory {
 
 	/**
 	 * <h1>{@code a > b}</h1>
-	 * Returns {@code true} if the first double is greater than the second double within a small margin of error.
+	 * Checks if the first double is greater than the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
 	 * @return	{@code true} if the first double is greater than the second double within a small margin of error,
@@ -48,7 +54,7 @@ public class Theory {
 
 	/**
 	 * <h1>{@code a ≥ b}</h1>
-	 * Returns {@code true} if the first double is greater than or equal to the second double within a small margin of error.
+	 * Checks if the first double is greater than or equal to the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
 	 * @return	{@code true} if the first double is greater than or equal to the second double within a small margin of error,
@@ -61,7 +67,7 @@ public class Theory {
 
 	/**
 	 * <h1>{@code a < b}</h1>
-	 * Returns {@code true} if the first double is less than the second double within a small margin of error.
+	 * Checks if the first double is less than the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
 	 * @return	{@code true} if the first double is less than the second double within a small margin of error,
@@ -74,7 +80,7 @@ public class Theory {
 
 	/**
 	 * <h1>{@code a ≤ b}</h1>
-	 * Returns {@code true} if the first double is less than or equal to the second double within a small margin of error.
+	 * Checks if the first double is less than or equal to the second double within a small margin of error.
 	 * @param a	The first double.
 	 * @param b	The second double.
 	 * @return	{@code true} if the first double is less than or equal to the second double within a small margin of error,
@@ -86,8 +92,8 @@ public class Theory {
 	}
 
 	/**
-	 * <h1>{@code (a, b)}</h1>
-	 * Returns {@code true} if the value is between the left and right bound within a small margin of error.
+	 * <h1>{@code x ∈ (a, b)}</h1>
+	 * Checks if a double is between the left and right bound within a small margin of error.
 	 * @param x	The value to check.
 	 * @param a	The left bound.
 	 * @param b	The right bound.
@@ -100,8 +106,8 @@ public class Theory {
 	}
 
 	/**
-	 * <h1>{@code [a, b]}</h1>
-	 * Returns {@code true} if the double is between or equal to the left and right bound within a small margin of error.
+	 * <h1>{@code x ∈ [a, b]}</h1>
+	 * Checks if a double is between or equal to the left and right bound within a small margin of error.
 	 * @param x	The double to check.
 	 * @param a	The left bound.
 	 * @param b	The right bound.
@@ -114,8 +120,8 @@ public class Theory {
 	}
 
 	/**
-	 * <h1>{@code ≈ 0}</h1>
-	 * Returns {@code true} if the double is zero within a small margin of error.
+	 * <h1>{@code value ≈ 0}</h1>
+	 * Checks if a double is zero within a small margin of error.
 	 * @param value	The double to check.
 	 * @return	{@code true} if the double is zero within a small margin of error,
 	 * 			{@code false} otherwise.

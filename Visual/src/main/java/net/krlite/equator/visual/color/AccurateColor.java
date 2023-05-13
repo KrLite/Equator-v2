@@ -1,14 +1,450 @@
 package net.krlite.equator.visual.color;
 
-import com.scrtwpns.Mixbox;
+import net.krlite.equator.base.Visual;
 import net.krlite.equator.math.algebra.Theory;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-@net.krlite.equator.base.Visual("2.2.1")
-public class AccurateColor {
-	private static final IllegalArgumentException COLOR_ARRAY_LENGTH_EXCEPTION = new IllegalArgumentException("Color array must be of length 3 to 4");
+import static net.krlite.equator.visual.color.Colorspace.*;
 
+@Visual("2.3.0")
+public class AccurateColor {
+	// Constants
+
+	public static final AccurateColor
+			BLACK = fromColor(Color.BLACK),
+			WHITE = fromColor(Color.WHITE),
+			TRANSPARENT = new AccurateColor(RGB, new double[] { 0, 0, 0 }, 0, true);
+
+	public static final AccurateColor
+			GRAY = fromColor(Color.GRAY),
+			LIGHT_GRAY = fromColor(Color.LIGHT_GRAY),
+			DARK_GRAY = fromColor(Color.DARK_GRAY);
+
+	public static final AccurateColor
+			RED = fromColor(Color.RED),
+			GREEN = fromColor(Color.GREEN),
+			BLUE = fromColor(Color.BLUE),
+			CYAN = fromColor(Color.CYAN),
+			MAGENTA = fromColor(Color.MAGENTA),
+			YELLOW = fromColor(Color.YELLOW),
+			ORANGE = fromColor(Color.ORANGE),
+			PINK = fromColor(Color.PINK);
+
+	// Static Constructors
+
+	public static AccurateColor fromARGB(long argb) {
+		return new AccurateColor(RGB.fromInt((int) argb), ((argb >> 24) & 0xFF) / 255.0);
+	}
+
+	public static AccurateColor fromRGB(int red, int green, int blue, int alpha) {
+		return new AccurateColor(red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0);
+	}
+
+	public static AccurateColor fromRGB(int red, int green, int blue) {
+		return fromRGB(red, green, blue, 255);
+	}
+
+	public static AccurateColor fromColor(Color color) {
+		return new AccurateColor(RGB.fromColor(color), color.getAlpha() / 255.0);
+	}
+
+	public static AccurateColor fromHexString(String hexString) {
+		long hex = Long.decode(hexString);
+		return fromARGB(hex | (hex > 0xFFFFFF ? 0x0 : 0xFF000000L));
+	}
+
+	// Constructors
+
+	protected AccurateColor(Colorspace colorspace, double[] color, double opacity, boolean transparent) {
+		this.colorspace = colorspace;
+		this.color = color;
+		this.opacity = opacity;
+		this.transparent = transparent;
+	}
+
+	public AccurateColor(Colorspace colorspace, double[] color, double opacity) {
+		this(colorspace, color, opacity, false);
+	}
+
+	public AccurateColor(double[] rgb, double opacity) {
+		this(RGB, rgb, opacity);
+	}
+
+	public AccurateColor(double[] rgba) {
+		this(rgba, rgba[3]);
+	}
+
+	public AccurateColor(double red, double green, double blue, double opacity) {
+		this(new double[] { red, green, blue }, opacity);
+	}
+
+	public AccurateColor(double red, double green, double blue) {
+		this(red, green, blue, 1);
+	}
+
+	public AccurateColor(double gray, double opacity) {
+		this(gray, gray, gray, opacity);
+	}
+
+	public AccurateColor(double gray) {
+		this(gray, 1);
+	}
+
+	public AccurateColor(AccurateColor another, Colorspace colorspace) {
+		this(colorspace, colorspace.from(another.color(), another.colorspace()), another.opacity(), !another.hasColor());
+	}
+
+	// Fields
+
+	private final Colorspace colorspace;
+	private final double[] color;
+	private final double opacity;
+	private final boolean transparent;
+
+	// Accessors
+
+	public Colorspace colorspace() {
+		return colorspace;
+	}
+
+	public double[] color() {
+		return color;
+	}
+
+	public double opacity() {
+		return opacity;
+	}
+
+	public float opacityAsFloat() {
+		return (float) opacity;
+	}
+
+	public int opacityAsInt() {
+		return (int) (opacity * 255);
+	}
+
+	// Accessors: RGB Components
+
+	public double red() {
+		return new AccurateColor(this, RGB).color()[0];
+	}
+
+	public float redAsFloat() {
+		return (float) red();
+	}
+
+	public int redAsInt() {
+		return (int) (red() * 255);
+	}
+
+	public double green() {
+		return new AccurateColor(this, RGB).color()[1];
+	}
+
+	public float greenAsFloat() {
+		return (float) green();
+	}
+
+	public int greenAsInt() {
+		return (int) (green() * 255);
+	}
+
+	public double blue() {
+		return new AccurateColor(this, RGB).color()[2];
+	}
+
+	public float blueAsFloat() {
+		return (float) blue();
+	}
+
+	public int blueAsInt() {
+		return (int) (blue() * 255);
+	}
+
+	// Accessors: HSV/HSL Components
+
+	public double hue() {
+		return new AccurateColor(this, HSV).color()[0];
+	}
+
+	public double saturation() {
+		return new AccurateColor(this, HSV).color()[1];
+	}
+
+	public double value() {
+		return new AccurateColor(this, HSV).color()[2];
+	}
+
+	public double lightness() {
+		return new AccurateColor(this, HSL).color()[2];
+	}
+
+	// Accessors: CMYK Components
+
+	public double cyan() {
+		return new AccurateColor(this, CMYK).color()[0];
+	}
+
+	public double magenta() {
+		return new AccurateColor(this, CMYK).color()[1];
+	}
+
+	public double yellow() {
+		return new AccurateColor(this, CMYK).color()[2];
+	}
+
+	public double black() {
+		return new AccurateColor(this, CMYK).color()[3];
+	}
+
+	// Accessors: XYZ Components
+
+	public double x() {
+		return new AccurateColor(this, XYZ).color()[0];
+	}
+
+	public double y() {
+		return new AccurateColor(this, XYZ).color()[1];
+	}
+
+	public double z() {
+		return new AccurateColor(this, XYZ).color()[2];
+	}
+
+	// Accessors: LAB/LCH Components
+
+	public double L() {
+		return new AccurateColor(this, LAB).color()[0];
+	}
+
+	public double a() {
+		return new AccurateColor(this, LAB).color()[1];
+	}
+
+	public double b() {
+		return new AccurateColor(this, LAB).color()[2];
+	}
+
+	public double C() {
+		return new AccurateColor(this, LCH).color()[1];
+	}
+
+	public double H() {
+		return new AccurateColor(this, LCH).color()[2];
+	}
+
+	// Mutators
+
+	public AccurateColor colorspace(Colorspace colorspace) {
+		return colorspace() == colorspace ? this : new AccurateColor(this, colorspace);
+	}
+
+	public AccurateColor color(double[] color) {
+		return color() == color ? this : new AccurateColor(colorspace(), color, opacity());
+	}
+
+	public AccurateColor color(double[] color, Colorspace colorspace) {
+		return colorspace() == colorspace ? color(color) : colorspace(colorspace).color(color).colorspace(colorspace());
+	}
+
+	public AccurateColor opacity(double opacity) {
+		return opacity() == opacity ? this : new AccurateColor(colorspace(), color(), opacity);
+	}
+
+	// Mutators: RGB Components
+
+	public AccurateColor red(double red) {
+		return color(new double[] { red, green(), blue() }, RGB);
+	}
+
+	public AccurateColor green(double green) {
+		return color(new double[] { red(), green, blue() }, RGB);
+	}
+
+	public AccurateColor blue(double blue) {
+		return color(new double[] { red(), green(), blue }, RGB);
+	}
+
+	// Mutators: HSV/HSL Components
+
+	public AccurateColor hue(double hue) {
+		return color(new double[] { hue, saturation(), value() }, HSV);
+	}
+
+	public AccurateColor saturation(double saturation) {
+		return color(new double[] { hue(), saturation, value() }, HSV);
+	}
+
+	public AccurateColor value(double value) {
+		return color(new double[] { hue(), saturation(), value }, HSV);
+	}
+
+	public AccurateColor lightness(double lightness) {
+		return color(new double[] { hue(), saturation(), lightness }, HSL);
+	}
+
+	// Mutators: CMYK Components
+
+	public AccurateColor cyan(double cyan) {
+		return color(new double[] { cyan, magenta(), yellow(), black() }, CMYK);
+	}
+
+	public AccurateColor magenta(double magenta) {
+		return color(new double[] { cyan(), magenta, yellow(), black() }, CMYK);
+	}
+
+	public AccurateColor yellow(double yellow) {
+		return color(new double[] { cyan(), magenta(), yellow, black() }, CMYK);
+	}
+
+	public AccurateColor black(double black) {
+		return color(new double[] { cyan(), magenta(), yellow(), black }, CMYK);
+	}
+
+	// Mutators: XYZ Components
+
+	public AccurateColor x(double x) {
+		return color(new double[] { x, y(), z() }, XYZ);
+	}
+
+	public AccurateColor y(double y) {
+		return color(new double[] { x(), y, z() }, XYZ);
+	}
+
+	public AccurateColor z(double z) {
+		return color(new double[] { x(), y(), z }, XYZ);
+	}
+
+	// Mutators: LAB/LCH Components
+
+	public AccurateColor L(double L) {
+		return color(new double[] { L, a(), b() }, LAB);
+	}
+
+	public AccurateColor a(double a) {
+		return color(new double[] { L(), a, b() }, LAB);
+	}
+
+	public AccurateColor b(double b) {
+		return color(new double[] { L(), a(), b }, LAB);
+	}
+
+	public AccurateColor C(double C) {
+		return color(new double[] { L(), C, H() }, LCH);
+	}
+
+	public AccurateColor H(double H) {
+		return color(new double[] { L(), C(), H }, LCH);
+	}
+
+	// Properties
+
+	public boolean hasColor() {
+		return !transparent;
+	}
+
+	public boolean approximates(@Nullable AccurateColor another, boolean ignoreOpacity) {
+		if (another == null) return false;
+		double[] rgb = colorspace(Colorspace.RGB).color(), anotherRGB = another.colorspace(RGB).color();
+		return Theory.looseEquals(rgb[0], anotherRGB[0]) && Theory.looseEquals(rgb[1], anotherRGB[1]) && Theory.looseEquals(rgb[2], anotherRGB[2]) && (ignoreOpacity || Theory.looseEquals(opacity(), another.opacity()));
+	}
+
+	public boolean approximates(@Nullable AccurateColor another) {
+		return approximates(another, false);
+	}
+
+	// Operations
+
+	public AccurateColor mix(AccurateColor another, double ratio, MixMode mixMode) {
+		return switch (mixMode) {
+			case OPACITY_ONLY -> opacity(Theory.lerp(opacity(), another.opacity(), ratio));
+			default -> new AccurateColor(colorspace(), colorspace().mix(color(), another.color(), ratio, another.colorspace(), mixMode), Theory.lerp(opacity(), another.opacity(), ratio));
+		};
+	}
+
+	public AccurateColor mix(AccurateColor another, MixMode mixMode) {
+		return mix(another, 0.5, mixMode);
+	}
+
+	public AccurateColor mix(AccurateColor another, double ratio) {
+		return mix(another, ratio, MixMode.BLEND);
+	}
+
+	public AccurateColor mix(AccurateColor another) {
+		return mix(another, 0.5);
+	}
+
+	public AccurateColor orElse(AccurateColor color) {
+		return hasColor() ? this : color;
+	}
+
+	public AccurateColor invert() {
+		return color(colorspace().invert(color()));
+	}
+
+	public AccurateColor transparent() {
+		return opacity(0);
+	}
+
+	public AccurateColor opaque() {
+		return opacity(1);
+	}
+
+	public AccurateColor lighten(double ratio) {
+		return color(colorspace().lighten(color(), ratio));
+	}
+
+	public AccurateColor darken(double ratio) {
+		return color(colorspace().darken(color(), ratio));
+	}
+
+	public AccurateColor moreTranslucent(double ratio) {
+		return opacity(Theory.lerp(opacity(), 0, ratio));
+	}
+
+	public AccurateColor lessTranslucent(double ratio) {
+		return opacity(Theory.lerp(opacity(), 1, ratio));
+	}
+
+	public int toInt() {
+		return colorspace().toInt(color()) + (int) (opacity() * 255) << 24;
+	}
+
+	public Color toColor() {
+		return new Color(toInt(), true);
+	}
+
+	public String toHexString() {
+		return String.format("0x%02x%02x%02x%02x", redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt());
+	}
+
+	// Object Methods
+
+	@Override
+	public String toString() {
+		return toString(false);
+	}
+
+	public String toString(boolean precisely) {
+		StringBuilder builder = new StringBuilder();
+
+		for (int i = 0; i < color().length; i++) {
+			builder.append(precisely ? color()[i] : String.format("%.2f", color()[i]));
+
+			if (i < color().length - 1) {
+				builder.append(", ");
+			}
+		}
+
+		return !hasColor() ? (getClass().getSimpleName() + "(transparent)")
+					   : (colorspace().getName() + "(" + builder + ")" + "-opacity(" + (precisely ? opacity() : String.format("%.2f", opacity())) + ")");
+	}
+}
+
+/*
+public class AccurateColor {
 	public static final AccurateColor BLACK = fromColor(Color.BLACK), WHITE = fromColor(Color.WHITE),
 			GRAY = fromColor(Color.GRAY), LIGHT_GRAY = fromColor(Color.LIGHT_GRAY), DARK_GRAY = fromColor(Color.DARK_GRAY),
 			RED = fromColor(Color.RED), GREEN = fromColor(Color.GREEN), BLUE = fromColor(Color.BLUE),
@@ -34,21 +470,21 @@ public class AccurateColor {
 
 	public static AccurateColor fromArray(double[] color) {
 		if (color.length < 3 || color.length > 4) {
-			throw COLOR_ARRAY_LENGTH_EXCEPTION;
+			throw new RuntimeException(Exceptions.Visual.colorArrayLength(color.length, null));
 		}
 		return new AccurateColor(color[0], color[1], color[2], color.length > 3 ? color[3] : 1);
 	}
 
 	public static AccurateColor fromArray(float[] color) {
 		if (color.length < 3 || color.length > 4) {
-			throw COLOR_ARRAY_LENGTH_EXCEPTION;
+			throw new RuntimeException(Exceptions.Visual.colorArrayLength(color.length, null));
 		}
 		return new AccurateColor(color[0], color[1], color[2], color.length > 3 ? color[3] : 1);
 	}
 
 	public static AccurateColor fromArray(int[] color) {
 		if (color.length < 3 || color.length > 4) {
-			throw COLOR_ARRAY_LENGTH_EXCEPTION;
+			throw new RuntimeException(Exceptions.Visual.colorArrayLength(color.length, null));
 		}
 		return new AccurateColor(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color.length > 3 ? color[3] / 255.0 : 1);
 	}
@@ -231,44 +667,44 @@ public class AccurateColor {
 		return red;
 	}
 
-	public float redAsFloat() {
-		return (float) red();
-	}
-
-	public int redAsInt() {
-		return (int) (red() * 255);
-	}
-
 	public double green() {
 		return green;
-	}
-
-	public float greenAsFloat() {
-		return (float) green();
-	}
-
-	public int greenAsInt() {
-		return (int) (green() * 255);
 	}
 
 	public double blue() {
 		return blue;
 	}
 
-	public float blueAsFloat() {
-		return (float) blue();
-	}
-
-	public int blueAsInt() {
-		return (int) (blue() * 255);
-	}
-
 	public double opacity() {
 		return opacity;
 	}
 
+	public float redAsFloat() {
+		return (float) red();
+	}
+
+	public float greenAsFloat() {
+		return (float) green();
+	}
+
+	public float blueAsFloat() {
+		return (float) blue();
+	}
+
 	public float opacityAsFloat() {
 		return (float) opacity();
+	}
+
+	public int redAsInt() {
+		return (int) (red() * 255);
+	}
+
+	public int greenAsInt() {
+		return (int) (green() * 255);
+	}
+
+	public int blueAsInt() {
+		return (int) (blue() * 255);
 	}
 
 	public int opacityAsInt() {
@@ -277,25 +713,6 @@ public class AccurateColor {
 
 	public boolean hasColor() {
 		return !transparent;
-	}
-
-	public Color toColor() {
-		return new Color(redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt());
-	}
-
-	public int toInt() {
-		return toColor().getRGB();
-	}
-	public Double[] toDoubleArray() {
-		return new Double[] { red(), green(), blue(), opacity() };
-	}
-
-	public float[] toFloatArray() {
-		return new float[] { redAsFloat(), greenAsFloat(), blueAsFloat(), opacityAsFloat() };
-	}
-
-	public int[] toIntArray() {
-		return new int[] { redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt() };
 	}
 
 	public AccurateColor red(double red) {
@@ -318,33 +735,33 @@ public class AccurateColor {
 		return hasColor() ? this : another;
 	}
 
-	public AccurateColor mix(AccurateColor another, double lambda) {
+	public AccurateColor blend(AccurateColor another, double factor) {
 		return new AccurateColor(
-			red() * (1 - lambda) + another.red() * lambda,
-			green() * (1 - lambda) + another.green() * lambda,
-			blue() * (1 - lambda) + another.blue() * lambda,
-			opacity() * (1 - lambda) + another.opacity() * lambda
+			red() * (1 - factor) + another.red() * factor,
+			green() * (1 - factor) + another.green() * factor,
+			blue() * (1 - factor) + another.blue() * factor,
+			opacity() * (1 - factor) + another.opacity() * factor
 		);
+	}
+
+	public AccurateColor blend(AccurateColor another) {
+		return blend(another, 0.5);
+	}
+
+	public AccurateColor blendOpacity(AccurateColor another, double factor) {
+		return opacity(opacity() * (1 - factor) + another.opacity() * factor);
+	}
+
+	public AccurateColor blendOpacity(AccurateColor another) {
+		return blendOpacity(another, 0.5);
+	}
+
+	public AccurateColor mix(AccurateColor another, double factor) {
+		return AccurateColor.fromArray(Mixbox.lerpFloat(toFloatArray(), another.toFloatArray(), (float) factor));
 	}
 
 	public AccurateColor mix(AccurateColor another) {
 		return mix(another, 0.5);
-	}
-
-	public AccurateColor opacityMix(AccurateColor another, double lambda) {
-		return opacity(opacity() * (1 - lambda) + another.opacity() * lambda);
-	}
-
-	public AccurateColor opacityMix(AccurateColor another) {
-		return opacityMix(another, 0.5);
-	}
-
-	public AccurateColor pigmentMix(AccurateColor another, double lambda) {
-		return AccurateColor.fromArray(Mixbox.lerpFloat(toFloatArray(), another.toFloatArray(), (float) lambda));
-	}
-
-	public AccurateColor pigmentMix(AccurateColor another) {
-		return pigmentMix(another, 0.5);
 	}
 
 	public AccurateColor transparent() {
@@ -355,11 +772,11 @@ public class AccurateColor {
 		return opacity(1);
 	}
 
-	public AccurateColor lighter(double lambda) {
+	public AccurateColor lighter(double factor) {
 		return new AccurateColor(
-			red() * (1 - lambda) + 1 * lambda,
-			green() * (1 - lambda) + 1 * lambda,
-			blue() * (1 - lambda) + 1 * lambda,
+			red() * (1 - factor) + 1 * factor,
+			green() * (1 - factor) + 1 * factor,
+			blue() * (1 - factor) + 1 * factor,
 			opacity()
 		);
 	}
@@ -368,11 +785,11 @@ public class AccurateColor {
 		return lighter(0.5);
 	}
 
-	public AccurateColor darker(double lambda) {
+	public AccurateColor darker(double factor) {
 		return new AccurateColor(
-			red() * (1 - lambda) + 0 * lambda,
-			green() * (1 - lambda) + 0 * lambda,
-			blue() * (1 - lambda) + 0 * lambda,
+			red() * (1 - factor) + 0 * factor,
+			green() * (1 - factor) + 0 * factor,
+			blue() * (1 - factor) + 0 * factor,
 			opacity()
 		);
 	}
@@ -380,4 +797,60 @@ public class AccurateColor {
 	public AccurateColor darker() {
 		return darker(0.5);
 	}
+
+	@Override
+	public boolean equals(Object another) {
+		return another instanceof AccurateColor
+					   && red() == ((AccurateColor) another).red()
+					   && green() == ((AccurateColor) another).green()
+					   && blue() == ((AccurateColor) another).blue()
+					   && opacity() == ((AccurateColor) another).opacity()
+					   && transparent() == ((AccurateColor) another).transparent();
+	}
+
+	public boolean looseEquals(Object another) {
+		return another instanceof AccurateColor
+					   && Theory.looseEquals(red(), ((AccurateColor) another).red())
+					   && Theory.looseEquals(green(), ((AccurateColor) another).green())
+					   && Theory.looseEquals(blue(), ((AccurateColor) another).blue())
+					   && Theory.looseEquals(opacity(), ((AccurateColor) another).opacity())
+					   && transparent() == ((AccurateColor) another).transparent();
+	}
+
+	public Color toColor() {
+		return new Color(redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt());
+	}
+
+	public int toInt() {
+		return toColor().getRGB();
+	}
+
+	public int[] toIntArray() {
+		return new int[] { redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt() };
+	}
+
+	public float[] toFloatArray() {
+		return new float[] { redAsFloat(), greenAsFloat(), blueAsFloat(), opacityAsFloat() };
+	}
+
+	public double[] toDoubleArray() {
+		return new double[] { red(), green(), blue(), opacity() };
+	}
+
+	public String toHex() {
+		return String.format("0x%02x%02x%02x%02x", redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt());
+	}
+
+	@Override
+	public String toString() {
+		return toString(false);
+	}
+
+	public String toString(boolean precisely) {
+		return !hasColor() ? "<transparent>" : precisely
+													   ? String.format("RGBA<%f, %f, %f, %f>", red(), green(), blue(), opacity())
+													   : String.format("RGBA<%d, %d, %d, %d>", redAsInt(), greenAsInt(), blueAsInt(), opacityAsInt());
+	}
 }
+
+ */

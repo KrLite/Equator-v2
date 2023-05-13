@@ -1,7 +1,7 @@
 package net.krlite.equator.render.frame;
 
-import net.krlite.equator.math.geometry.Box;
-import net.krlite.equator.math.geometry.Vector;
+import net.krlite.equator.math.geometry.flat.Box;
+import net.krlite.equator.math.geometry.flat.Vector;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 
@@ -9,7 +9,7 @@ import org.lwjgl.glfw.GLFW;
  * <h1>FrameInfo</h1>
  * Provides access to the screen and window properties.
  */
-@net.krlite.equator.base.Math("2.2.1")
+@net.krlite.equator.base.Math("2.3.0")
 public class FrameInfo {
 	public static float tickDelta() {
 		return MinecraftClient.getInstance().getTickDelta();
@@ -47,13 +47,13 @@ public class FrameInfo {
 	 * 			    {@code positive angle -} counter-clockwise.
 	 * 			    <br />
 	 * 			    <br />
-	 * 				{@code 
-	 * 					&emsp;x<0 ↑ x>0<br />
-	 * 					&emsp;y>0 | y>0<br />
-	 * 					-----+----→ θ+↑<br />
-	 * 					&emsp;x<0 | x>0<br />
-	 * 					&emsp;y<0 | y<0
-	 * 				}
+	 * 			    <pre>
+	 * 	 x<0 ┃ x>0
+	 * 	 y>0 ┃ y>0
+	 * 	─────╄━━━━━ θ+ ↑
+	 * 	 x<0 │ x>0
+	 * 	 y<0 │ y<0
+	 * 				</pre>
 	 * 			</p>
 	 * 		</p>
 	 * 		<p>
@@ -68,13 +68,13 @@ public class FrameInfo {
 	 * 		        {@code positive angle -} clockwise.
 	 * 			    <br />
 	 * 			    <br />
-	 * 				{@code 
-	 * 					&emsp;x<0 | x>0<br />
-	 * 					&emsp;y<0 | y<0<br />
-	 * 					-----+----→ θ+↓<br />
-	 * 					&emsp;x<0 | x>0<br />
-	 * 					&emsp;y>0 ↓ y>0
-	 * 				}
+	 * 			    <pre>
+	 * 	 x<0 │ x>0
+	 * 	 y<0 │ y<0
+	 * 	─────╆━━━━━ θ+ ↓
+	 * 	 x<0 ┃ x>0
+	 * 	 y>0 ┃ y>0
+	 * 				</pre>
 	 * 			</p>
 	 * 		</p>
 	 * </p>
@@ -110,11 +110,11 @@ public class FrameInfo {
 	 */
 	public static class Convertor {
 		public static Vector scaledToScreen(Vector vector) {
-			return vector.multiply(screen().s() / scaled().s());
+			return vector.scale(screen().d() / scaled().d());
 		}
 
 		public static Vector screenToScaled(Vector vector) {
-			return vector.multiply(scaled().s() / screen().s());
+			return vector.scale(scaled().d() / screen().d());
 		}
 
 		public static Vector scaledToOpenGL(Vector vector) {
@@ -126,11 +126,11 @@ public class FrameInfo {
 		}
 
 		public static Vector screenToOpenGL(Vector vector) {
-			return vector.y(screen().h() - vector.y()).multiply(2);
+			return vector.y(screen().h() - vector.y()).scale(2);
 		}
 
 		public static Vector openGLToScreen(Vector vector) {
-			return vector.y(screen().h() - vector.y()).divide(2);
+			return vector.y(screen().h() - vector.y()).scale(0.5);
 		}
 
 		public static Box scaledToScreen(Box box) {
@@ -150,11 +150,11 @@ public class FrameInfo {
 		}
 
 		public static Box screenToOpenGL(Box box) {
-			return new Box(box.origin().y(screen().h() - box.origin().y() - box.h()).multiply(2), box.size().multiply(2));
+			return new Box(box.origin().y(screen().h() - box.origin().y() - box.h()).scale(2), box.size().scale(2));
 		}
 
 		public static Box openGLToScreen(Box box) {
-			return new Box(box.origin().y(screen().h() - box.origin().y() - box.h()).divide(2), box.size().divide(2));
+			return new Box(box.origin().y(screen().h() - box.origin().y() - box.h()).scale(0.5), box.size().scale(0.5));
 		}
 	}
 }
