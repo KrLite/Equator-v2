@@ -356,7 +356,10 @@ public class AccurateColor {
 	// Operations
 
 	public AccurateColor mix(AccurateColor another, double ratio, MixMode mixMode) {
-		return new AccurateColor(colorspace(), colorspace().mix(color(), another.color(), ratio, another.colorspace(), mixMode), Theory.lerp(opacity(), another.opacity(), ratio));
+		return switch (mixMode) {
+			case OPACITY_ONLY -> opacity(Theory.lerp(opacity(), another.opacity(), ratio));
+			default -> new AccurateColor(colorspace(), colorspace().mix(color(), another.color(), ratio, another.colorspace(), mixMode), Theory.lerp(opacity(), another.opacity(), ratio));
+		};
 	}
 
 	public AccurateColor mix(AccurateColor another, MixMode mixMode) {

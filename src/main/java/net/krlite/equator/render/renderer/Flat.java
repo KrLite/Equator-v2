@@ -1023,8 +1023,12 @@ public class Flat extends Basic {
 			this.ovalMode = ovalMode;
 		}
 
+		public Oval(double offset, double radians, AccurateColor accurateColor) {
+			this(offset, radians, 0, accurateColor, ImmutableMap.of(), ColorStandard.MixMode.BLEND, OvalMode.GRADIANT_OUT);
+		}
+
 		public Oval(AccurateColor color) {
-			this(0, 2 * Math.PI, 0, color, ImmutableMap.of(), ColorStandard.MixMode.BLEND, OvalMode.GRADIANT_OUT);
+			this(0, 2 * Math.PI, color);
 		}
 
 		public Oval() {
@@ -1271,12 +1275,8 @@ public class Flat extends Basic {
 				Vector vertex = vertexAt(clampedOffset, 1);
 
 				// Render the inner (center) vertex
-				if (Theory.isZero(innerRadiusFactor())) {
-					renderVertex(builder, matrix, box().center(), colorCenter(), z());
-				} else {
-					renderVertex(builder, matrix, vertexAt(clampedOffset, innerRadiusFactor()),
-							ovalMode().getColor(this, clampedOffset - offset(), innerRadiusFactor()), z());
-				}
+				renderVertex(builder, matrix, vertexAt(clampedOffset, innerRadiusFactor()),
+						ovalMode().getColor(this, clampedOffset - offset(), innerRadiusFactor()), z());
 
 				// Render the outer vertex
 				renderVertex(builder, matrix, vertex,

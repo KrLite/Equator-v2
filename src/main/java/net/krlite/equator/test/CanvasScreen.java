@@ -9,6 +9,7 @@ import net.krlite.equator.render.vanilla.VanillaWidgets;
 import net.krlite.equator.visual.animation.Interpolation;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.color.Palette;
+import net.krlite.equator.visual.color.base.ColorStandard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -61,8 +62,14 @@ public class CanvasScreen extends Screen {
 
 		VanillaWidgets.Tooltip.render(matrixStack, box);
 
-		Box another = FrameInfo.scaled().topLeft(box.bottomRight());
+		Box another = FrameInfo.scaled().topLeft(box.bottomRight()).squareInner().alignBottomRight(FrameInfo.scaled());
 
-		new Flat(matrixStack, 0, another).new Rectangle(Palette.Minecraft.TOOLTIP_BACKGROUND).render();
+		new Flat(matrixStack, 0, another).new Oval()
+				.addColor(0, AccurateColor.MAGENTA)
+				.addColor(Math.PI / 2, AccurateColor.CYAN)
+				.addColor(3 * Math.PI / 2, AccurateColor.YELLOW)
+				.ovalMode(Flat.Oval.OvalMode.FILL)
+				.mixMode(ColorStandard.MixMode.PIGMENT)
+				.render();
 	}
 }
