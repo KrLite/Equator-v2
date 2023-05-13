@@ -1,14 +1,14 @@
 package net.krlite.equator.visual.animation;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.krlite.equator.math.algebra.Theory;
+import net.krlite.equator.math.algebra.Curves;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
@@ -69,18 +69,21 @@ public class Animation implements Runnable {
 		}
 	}
 
-	public Animation(double startValue, double endValue, long duration, TimeUnit timeUnit, Slice slice, boolean repeat) {
-		this.startValue = startValue;
-		this.endValue = endValue;
+	// Constructors
+
+	public Animation(double startValue, double endValue, double speed, long duration, TimeUnit timeUnit, Slice slice, boolean repeat) {
+		this.startValue = new AtomicDouble(startValue);
+		this.endValue = new AtomicDouble(endValue);
+		this.current = new AtomicDouble(0);
+		this.speed = new AtomicDouble(Math.max(0, speed));
 		this.duration = duration;
-		this.progress = new AtomicLong(0);
 		this.timeUnit = timeUnit;
 		this.slice = new AtomicReference<>(slice);
 		this.repeat = new AtomicBoolean(repeat);
 	}
 
 	public Animation(double startValue, double endValue, long duration, TimeUnit timeUnit, Slice slice) {
-		this(startValue, endValue, duration, timeUnit, slice, false);
+		this(startValue, endValue, 1, duration, timeUnit, slice, false);
 	}
 
 	public Animation(double startValue, double endValue, long duration, Slice slice) {
@@ -88,34 +91,42 @@ public class Animation implements Runnable {
 	}
 
 	protected Animation(Animation parent) {
-		this.startValue = parent.startValue();
-		this.endValue = parent.endValue();
+		this.startValue = new AtomicDouble(parent.startValue.get());
+		this.endValue = new AtomicDouble(parent.endValue.get());
+		this.current = new AtomicDouble(parent.current.get());
+		this.speed = new AtomicDouble(parent.speed.get());
 		this.duration = parent.duration();
-		this.progress = new AtomicLong(parent.progress.get());
 		this.timeUnit = parent.timeUnit();
 		this.slice = new AtomicReference<>(parent.slice.get());
 		this.repeat = new AtomicBoolean(parent.repeat.get());
 		this.future.set(parent.future.get());
 	}
 
-	private final double startValue, endValue;
+	// Fields
+
+	private final AtomicDouble startValue, endValue, current, speed;
 	private final long duration;
-	private final AtomicLong progress;
 	private final TimeUnit timeUnit;
 	private final AtomicReference<Slice> slice;
 	private final AtomicBoolean repeat;
 	private final AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>(null);
 
-	public Animation copy() {
-		return new Animation(this);
-	}
+	// Accessors
 
 	public double startValue() {
-		return startValue;
+		return startValue.get();
 	}
 
 	public double endValue() {
-		return endValue;
+		return endValue.get();
+	}
+
+	public double progress() {
+		return current.get() / duration();
+	}
+
+	public double speed() {
+		return speed.get();
 	}
 
 	public long duration() {
@@ -124,18 +135,6 @@ public class Animation implements Runnable {
 
 	public TimeUnit timeUnit() {
 		return timeUnit;
-	}
-
-	public double progress() {
-		return progress.get() / (double) duration;
-	}
-
-	public double value() {
-		return slice().apply(startValue(), endValue(), progress());
-	}
-
-	public double percentage() {
-		return slice().apply(0, 1, progress());
 	}
 
 	public Slice slice() {
@@ -150,8 +149,38 @@ public class Animation implements Runnable {
 		return timeUnit().toMillis(1);
 	}
 
+	public double value() {
+		return slice().apply(startValue(), endValue(), progress());
+	}
+
+	public double percentage() {
+		return Curves.LINEAR.apply(0, 1, progress());
+	}
+
+	private double accumulation() {
+		return period() * speed();
+	}
+
 	private ScheduledFuture<?> future() {
 		return future.get();
+	}
+
+	// Mutators
+
+	public void startValue(double startValue) {
+		this.startValue.set(startValue);
+	}
+
+	public void endValue(double endValue) {
+		this.endValue.set(endValue);
+	}
+
+	public void speed(double speed) {
+		this.speed.set(speed);
+	}
+
+	public void defaultSpeed() {
+		this.speed.set(1);
 	}
 
 	public void slice(Slice slice) {
@@ -175,12 +204,14 @@ public class Animation implements Runnable {
 	}
 
 	public void reverseProgress() {
-		progress.set(duration() - progress.get());
+		current.set(duration() - current.get());
 	}
 
 	private void future(@Nullable ScheduledFuture<?> future) {
 		this.future.set(future);
 	}
+
+	// Interface Implementations
 
 	@Override
 	public void run() {
@@ -196,10 +227,28 @@ public class Animation implements Runnable {
 				Callbacks.Complete.EVENT.invoker().onCompletion(this);
 			}
 		} else {
-			progress.addAndGet(period());
+			current.set(Math.min(duration(), current.addAndGet(accumulation())));
 		}
 
 		Callbacks.FrameEnd.EVENT.invoker().onFrameEnd(this);
+	}
+
+	// Functions
+
+	public boolean passingRatio(double at) {
+		if (at < 0 || at > 1) return false;
+
+		double value = at * duration();
+		return current.get() - accumulation() < value && current.get() >= value;
+	}
+
+	public boolean passingValue(double at) {
+		double last = slice().apply(startValue(), endValue(), (current.get() - accumulation()) / duration());
+		return (last < at && at <= value()) || (last > at && at >= value());
+	}
+
+	public Animation copy() {
+		return new Animation(this);
 	}
 
 	public void start() {
@@ -232,7 +281,7 @@ public class Animation implements Runnable {
 	}
 
 	public void reset() {
-		progress.set(0);
+		current.set(0);
 	}
 
 	public void restart() {
@@ -255,8 +304,12 @@ public class Animation implements Runnable {
 		return future() == null;
 	}
 
+	public boolean isNotStarted() {
+		return current.get() <= 0;
+	}
+
 	public boolean isCompleted() {
-		return progress.get() >= duration();
+		return current.get() >= duration();
 	}
 
 	public void onStart(Runnable runnable) {
@@ -286,6 +339,30 @@ public class Animation implements Runnable {
 	public void onFrameEnd(Runnable runnable) {
 		Callbacks.FrameEnd.EVENT.register((animation) -> {
 			if (animation == this) runnable.run();
+		});
+	}
+
+	public void onFrameStartAtRatio(double at, Runnable runnable) {
+		onFrameStart(() -> {
+			if (passingRatio(at)) runnable.run();
+		});
+	}
+
+	public void onFrameEndAtRatio(double at, Runnable runnable) {
+		onFrameEnd(() -> {
+			if (passingRatio(at)) runnable.run();
+		});
+	}
+
+	public void onFrameStartAtValue(double at, Runnable runnable) {
+		onFrameStart(() -> {
+			if (passingValue(at)) runnable.run();
+		});
+	}
+
+	public void onFrameEndAtValue(double at, Runnable runnable) {
+		onFrameEnd(() -> {
+			if (passingValue(at)) runnable.run();
 		});
 	}
 }

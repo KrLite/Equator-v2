@@ -57,8 +57,11 @@ public class Interpolation implements Runnable {
 		}
 	}
 
+	// Constructors
+
 	public Interpolation(double value, double originValue, double targetValue, double approximatedDuration, boolean pauseAtStart) {
 		this.value = new AtomicDouble(value);
+		this.lastValue = new AtomicDouble(value);
 		this.originValue = new AtomicDouble(originValue);
 		this.targetValue = new AtomicDouble(targetValue);
 		this.speed = new AtomicDouble(Theory.clamp(1 / approximatedDuration, 0, 1));
@@ -88,6 +91,7 @@ public class Interpolation implements Runnable {
 	
 	protected Interpolation(Interpolation parent) {
 		this.value = new AtomicDouble(parent.value.get());
+		this.lastValue = new AtomicDouble(parent.lastValue.get());
 		this.originValue = new AtomicDouble(parent.originValue.get());
 		this.targetValue = new AtomicDouble(parent.targetValue.get());
 		this.speed = new AtomicDouble(parent.speed.get());
@@ -96,13 +100,13 @@ public class Interpolation implements Runnable {
 		this.future.set(parent.future.get());
 	}
 
-	private final AtomicDouble value, originValue, targetValue, speed;
+	// Fields
+
+	private final AtomicDouble value, lastValue, originValue, targetValue, speed;
 	private final AtomicBoolean started = new AtomicBoolean(false), completed = new AtomicBoolean(false);
 	private final AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>(null);
 
-	public Interpolation copy() {
-		return new Interpolation(this);
-	}
+	// Accessors
 
 	public double value() {
 		return value.get();
@@ -132,6 +136,8 @@ public class Interpolation implements Runnable {
 		return future.get();
 	}
 
+	// Mutators
+
 	public void originValue(double originValue) {
 		this.originValue.set(originValue);
 	}
@@ -152,11 +158,7 @@ public class Interpolation implements Runnable {
 		this.future.set(future);
 	}
 
-	public void reverse() {
-		double originValue = originValue();
-		originValue(targetValue());
-		targetValue(originValue);
-	}
+	// Interface Implementations
 
 	/**
 	 * Runs this operation.
@@ -174,10 +176,27 @@ public class Interpolation implements Runnable {
 			started.set(false);
 		}
 		else {
+			lastValue.set(value.get());
 			value.accumulateAndGet(targetValue(), (current, target) -> Theory.lerp(current, target, speed()));
 		}
 
 		Callbacks.FrameEnd.EVENT.invoker().onFrameEnd(this);
+	}
+
+	// Functions
+
+	public boolean passing(double value) {
+		return (lastValue.get() < value && value <= value()) || (lastValue.get() > value && value >= value());
+	}
+
+	public Interpolation copy() {
+		return new Interpolation(this);
+	}
+
+	public void reverse() {
+		double originValue = originValue();
+		originValue(targetValue());
+		targetValue(originValue);
 	}
 
 	private void start(boolean pauseAtStart) {
@@ -247,6 +266,18 @@ public class Interpolation implements Runnable {
 	public void onFrameEnd(Runnable runnable) {
 		Callbacks.FrameEnd.EVENT.register((interpolation) -> {
 			if (interpolation == this) runnable.run();
+		});
+	}
+
+	public void onFrameStartAt(double at, Runnable runnable) {
+		onFrameStart(() -> {
+			if (passing(at)) runnable.run();
+		});
+	}
+
+	public void onFrameEndAt(double at, Runnable runnable) {
+		onFrameEnd(() -> {
+			if (passing(at);) runnable.run();
 		});
 	}
 }
