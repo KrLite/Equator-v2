@@ -87,6 +87,7 @@ public class FrameInfo {
 	 * 		        <br />
 	 * 		        <br />
 	 * 		        {@code size -} the <b>scaled</b> size of the window.
+	 * 		    </p>
 	 * 		</p>
 	 * 		<p>
 	 * 		    <h2>Screen Coordinate</h2>
@@ -105,7 +106,7 @@ public class FrameInfo {
 	 * 		        <br />
 	 * 		        {@code size -} the size of the frame.
 	 * 		    </p>
-	 * 		<p>
+	 * 		</p>
 	 * </p>
 	 */
 	public static class Convertor {

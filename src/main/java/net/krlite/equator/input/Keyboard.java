@@ -64,12 +64,12 @@ public enum Keyboard {
 	 */
 	EQUAL(GLFW.GLFW_KEY_EQUAL),
 	/**
-	 * <h1><tt>&#123</tt><br />{@code [}</h1>
+	 * <h1><tt>&#123;</tt><br />{@code [}</h1>
 	 * The {@code left bracket (left brace)} key.
 	 */
 	LEFT_BRACKET(GLFW.GLFW_KEY_LEFT_BRACKET),
 	/**
-	 * <h1><tt>&#125</tt><br />{@code ]}</h1>
+	 * <h1><tt>&#125;</tt><br />{@code ]}</h1>
 	 * The {@code right bracket (right brace)} key.
 	 */
 	RIGHT_BRACKET(GLFW.GLFW_KEY_RIGHT_BRACKET),

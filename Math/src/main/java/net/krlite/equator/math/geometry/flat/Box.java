@@ -1130,7 +1130,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	/**
 	 * Gets a grid (2D array) of boxes with the given steps. For example, if the box is {@code [(0, 0), (10, 10)]} and
 	 * the steps are {@code (2, 5)}, the result is
-	 * <table border="10">
+	 * <table>
 	 *     <tr>
 	 *         <th></th>
 	 *         <th>{@code 0}</th>
@@ -1186,7 +1186,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	/**
 	 * Gets a grid (2D array) of boxes with the given step. For example, if the box is {@code (0, 0, 10, 10)} and
 	 * the step is {@code 2}, the result is
-	 * <table border="10">
+	 * <table>
 	 *     <tr>
 	 *         <th></th>
 	 *         <th>{@code 0}</th>
