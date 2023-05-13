@@ -277,7 +277,7 @@ public class Interpolation implements Runnable {
 
 	public void onFrameEndAt(double at, Runnable runnable) {
 		onFrameEnd(() -> {
-			if (passing(at);) runnable.run();
+			if (passing(at)) runnable.run();
 		});
 	}
 }
