@@ -8,7 +8,7 @@ public interface Renderable {
 	void render();
 	boolean isRenderable();
 
-	static boolean isBoxLegal(@Nullable Box box) {
+	static boolean isLegal(@Nullable Box box) {
 		return box != null && Theory.looseGreater(box.area(), 0);
 	}
 }

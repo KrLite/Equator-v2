@@ -1,23 +1,5 @@
 package net.krlite.equator.render.renderer;
 
-import net.krlite.equator.math.geometry.flat.Box;
-import net.krlite.equator.math.geometry.flat.Vector;
-import net.krlite.equator.render.base.Renderable;
-import net.krlite.equator.render.base.Scissor;
-import net.krlite.equator.render.vanilla.TooltipRenderImplementation;
-import net.krlite.equator.visual.color.AccurateColor;
-import net.krlite.equator.visual.text.Paragraph;
-import net.krlite.equator.visual.text.Section;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Quaterniond;
-import org.joml.Quaterniondc;
-import org.joml.Quaternionf;
-
-import java.util.function.UnaryOperator;
-
 /**
  * <h1>SectionRenderer</h1>
  * Based on {@link Box} and contains a {@link Section} to hold the text to render. An {@link AccurateColor} can be
@@ -34,6 +16,7 @@ import java.util.function.UnaryOperator;
  * @param horizontal	The {@link Paragraph.Alignment} which determines the horizontal alignment of the text.
  * @param shadow		Whether the text should be rendered with a shadow.
  */
+/*
 public record SectionRenderer(
 		Box box, Quaterniondc modifier, Section section, @Nullable AccurateColor color,
 		Section.Alignment vertical, Paragraph.Alignment horizontal, boolean shadow
@@ -213,3 +196,4 @@ public record SectionRenderer(
 		print(true);
 	}
 }
+ */

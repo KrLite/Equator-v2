@@ -1,23 +1,9 @@
 package net.krlite.equator.math.geometry.flat;
 
-import com.google.common.collect.ImmutableMap;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.render.frame.Convertible;
 import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.render.base.Scissor;
-import net.krlite.equator.render.renderer.*;
-import net.krlite.equator.render.vanilla.ButtonRenderImplementation;
-import net.krlite.equator.render.vanilla.TooltipRenderImplementation;
-import net.krlite.equator.visual.color.AccurateColor;
-import net.krlite.equator.visual.text.Section;
-import net.krlite.equator.visual.texture.Texture;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
-import java.util.function.UnaryOperator;
 
 /**
  * <h1>Box</h1>

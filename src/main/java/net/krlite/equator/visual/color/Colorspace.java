@@ -82,19 +82,18 @@ public enum Colorspace implements ColorStandard {
 		}
 
 		@Override
-		public double[] interpolate(double[] self, double[] another, double ratio, Colorspace colorspace) {
+		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace, MixMode mixMode) {
 			double[] anotherRGB = from(another, colorspace);
-			return new double[] {
-					Theory.lerp(self[0], anotherRGB[0], ratio),
-					Theory.lerp(self[1], anotherRGB[1], ratio),
-					Theory.lerp(self[2], anotherRGB[2], ratio)
-			};
-		}
 
-		@Override
-		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherRGB = from(another, colorspace);
-			return floatToDouble(Mixbox.lerpFloat(doubleToFloat(self), doubleToFloat(anotherRGB), (float) ratio));
+			return switch (mixMode) {
+				case BLEND -> new double[] {
+						Theory.lerp(self[0], anotherRGB[0], ratio),
+						Theory.lerp(self[1], anotherRGB[1], ratio),
+						Theory.lerp(self[2], anotherRGB[2], ratio)
+				};
+				case PIGMENT -> floatToDouble(Mixbox.lerpFloat(doubleToFloat(self), doubleToFloat(anotherRGB), (float) ratio));
+				default -> self;
+			};
 		}
 
 		@Override
@@ -108,12 +107,12 @@ public enum Colorspace implements ColorStandard {
 
 		@Override
 		public double[] lighten(double[] color, double ratio) {
-			return interpolate(color, WHITE, ratio, RGB);
+			return mix(color, WHITE, ratio, RGB, MixMode.BLEND);
 		}
 
 		@Override
 		public double[] darken(double[] color, double ratio) {
-			return interpolate(color, BLACK, ratio, RGB);
+			return mix(color, BLACK, ratio, RGB, MixMode.BLEND);
 		}
 	},
 	HSV("HSV") {
@@ -177,19 +176,22 @@ public enum Colorspace implements ColorStandard {
 		}
 
 		@Override
-		public double[] interpolate(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherHSV = from(another, colorspace);
-			return new double[] {
-					Theory.lerp(self[0], anotherHSV[0], ratio),
-					Theory.lerp(self[1], anotherHSV[1], ratio),
-					Theory.lerp(self[2], anotherHSV[2], ratio)
+		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace, MixMode mixMode) {
+			return switch (mixMode) {
+				case BLEND -> {
+					double[] anotherHSV = from(another, colorspace);
+					yield new double[]{
+							Theory.lerp(self[0], anotherHSV[0], ratio),
+							Theory.lerp(self[1], anotherHSV[1], ratio),
+							Theory.lerp(self[2], anotherHSV[2], ratio)
+					};
+				}
+				case PIGMENT -> {
+					double[] anotherRGB = RGB.from(another, colorspace);
+					yield from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
+				}
+				default -> self;
 			};
-		}
-
-		@Override
-		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherRGB = RGB.from(another, colorspace);
-			return from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
 		}
 
 		@Override
@@ -203,12 +205,12 @@ public enum Colorspace implements ColorStandard {
 
 		@Override
 		public double[] lighten(double[] color, double ratio) {
-			return interpolate(color, WHITE, ratio, HSV);
+			return mix(color, WHITE, ratio, HSV, MixMode.BLEND);
 		}
 
 		@Override
 		public double[] darken(double[] color, double ratio) {
-			return interpolate(color, BLACK, ratio, HSV);
+			return mix(color, BLACK, ratio, HSV, MixMode.BLEND);
 		}
 	},
 	HSL("HSL") {
@@ -272,19 +274,22 @@ public enum Colorspace implements ColorStandard {
 		}
 
 		@Override
-		public double[] interpolate(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherHSL = from(another, colorspace);
-			return new double[] {
-					Theory.lerp(self[0], anotherHSL[0], ratio),
-					Theory.lerp(self[1], anotherHSL[1], ratio),
-					Theory.lerp(self[2], anotherHSL[2], ratio)
+		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace, MixMode mixMode) {
+			return switch (mixMode) {
+				case BLEND -> {
+					double[] anotherHSL = from(another, colorspace);
+					yield new double[] {
+							Theory.lerp(self[0], anotherHSL[0], ratio),
+							Theory.lerp(self[1], anotherHSL[1], ratio),
+							Theory.lerp(self[2], anotherHSL[2], ratio)
+					};
+				}
+				case PIGMENT -> {
+					double[] anotherRGB = RGB.from(another, colorspace);
+					yield from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
+				}
+				default -> self;
 			};
-		}
-
-		@Override
-		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherRGB = RGB.from(another, colorspace);
-			return from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
 		}
 
 		@Override
@@ -298,12 +303,12 @@ public enum Colorspace implements ColorStandard {
 
 		@Override
 		public double[] lighten(double[] color, double ratio) {
-			return interpolate(color, WHITE, ratio, HSL);
+			return mix(color, WHITE, ratio, HSL, MixMode.BLEND);
 		}
 
 		@Override
 		public double[] darken(double[] color, double ratio) {
-			return interpolate(color, BLACK, ratio, HSL);
+			return mix(color, BLACK, ratio, HSL, MixMode.BLEND);
 		}
 	},
 	CMYK("CMYK") {
@@ -367,20 +372,23 @@ public enum Colorspace implements ColorStandard {
 		}
 
 		@Override
-		public double[] interpolate(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherCMYK = from(another, colorspace);
-			return new double[] {
-					Theory.lerp(self[0], anotherCMYK[0], ratio),
-					Theory.lerp(self[1], anotherCMYK[1], ratio),
-					Theory.lerp(self[2], anotherCMYK[2], ratio),
-					Theory.lerp(self[3], anotherCMYK[3], ratio)
+		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace, MixMode mixMode) {
+			return switch (mixMode) {
+				case BLEND -> {
+					double[] anotherCMYK = from(another, colorspace);
+					yield new double[] {
+							Theory.lerp(self[0], anotherCMYK[0], ratio),
+							Theory.lerp(self[1], anotherCMYK[1], ratio),
+							Theory.lerp(self[2], anotherCMYK[2], ratio),
+							Theory.lerp(self[3], anotherCMYK[3], ratio)
+					};
+				}
+				case PIGMENT -> {
+					double[] anotherRGB = RGB.from(another, colorspace);
+					yield  from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
+				}
+				default -> self;
 			};
-		}
-
-		@Override
-		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherRGB = RGB.from(another, colorspace);
-			return from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
 		}
 
 		@Override
@@ -395,12 +403,12 @@ public enum Colorspace implements ColorStandard {
 
 		@Override
 		public double[] lighten(double[] color, double ratio) {
-			return interpolate(color, WHITE, ratio, CMYK);
+			return mix(color, WHITE, ratio, CMYK, MixMode.BLEND);
 		}
 
 		@Override
 		public double[] darken(double[] color, double ratio) {
-			return interpolate(color, BLACK, ratio, CMYK);
+			return mix(color, BLACK, ratio, CMYK, MixMode.BLEND);
 		}
 	},
 	XYZ("XYZ") {
@@ -464,19 +472,22 @@ public enum Colorspace implements ColorStandard {
 		}
 
 		@Override
-		public double[] interpolate(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherXYZ = from(another, colorspace);
-			return new double[] {
-					Theory.lerp(self[0], anotherXYZ[0], ratio),
-					Theory.lerp(self[1], anotherXYZ[1], ratio),
-					Theory.lerp(self[2], anotherXYZ[2], ratio)
+		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace, MixMode mixMode) {
+			return switch (mixMode) {
+				case BLEND -> {
+					double[] anotherXYZ = from(another, colorspace);
+					yield new double[] {
+							Theory.lerp(self[0], anotherXYZ[0], ratio),
+							Theory.lerp(self[1], anotherXYZ[1], ratio),
+							Theory.lerp(self[2], anotherXYZ[2], ratio)
+					};
+				}
+				case PIGMENT -> {
+					double[] anotherRGB = RGB.from(another, colorspace);
+					yield from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
+				}
+				default -> self;
 			};
-		}
-
-		@Override
-		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherRGB = RGB.from(another, colorspace);
-			return from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
 		}
 
 		@Override
@@ -490,12 +501,12 @@ public enum Colorspace implements ColorStandard {
 
 		@Override
 		public double[] lighten(double[] color, double ratio) {
-			return interpolate(color, WHITE, ratio, XYZ);
+			return mix(color, WHITE, ratio, XYZ, MixMode.BLEND);
 		}
 
 		@Override
 		public double[] darken(double[] color, double ratio) {
-			return interpolate(color, BLACK, ratio, XYZ);
+			return mix(color, BLACK, ratio, XYZ, MixMode.BLEND);
 		}
 	},
 	LAB("Lab") {
@@ -559,19 +570,22 @@ public enum Colorspace implements ColorStandard {
 		}
 
 		@Override
-		public double[] interpolate(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherLAB = from(another, colorspace);
-			return new double[] {
-					Theory.lerp(self[0], anotherLAB[0], ratio),
-					Theory.lerp(self[1], anotherLAB[1], ratio),
-					Theory.lerp(self[2], anotherLAB[2], ratio)
+		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace, MixMode mixMode) {
+			return switch (mixMode) {
+				case BLEND -> {
+					double[] anotherLAB = from(another, colorspace);
+					yield new double[] {
+							Theory.lerp(self[0], anotherLAB[0], ratio),
+							Theory.lerp(self[1], anotherLAB[1], ratio),
+							Theory.lerp(self[2], anotherLAB[2], ratio)
+					};
+				}
+				case PIGMENT -> {
+					double[] anotherRGB = RGB.from(another, colorspace);
+					yield from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
+				}
+				default -> self;
 			};
-		}
-
-		@Override
-		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherRGB = RGB.from(another, colorspace);
-			return from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
 		}
 
 		@Override
@@ -585,12 +599,12 @@ public enum Colorspace implements ColorStandard {
 
 		@Override
 		public double[] lighten(double[] color, double ratio) {
-			return interpolate(color, WHITE, ratio, LAB);
+			return mix(color, WHITE, ratio, LAB, MixMode.BLEND);
 		}
 
 		@Override
 		public double[] darken(double[] color, double ratio) {
-			return interpolate(color, BLACK, ratio, LAB);
+			return mix(color, BLACK, ratio, LAB, MixMode.BLEND);
 		}
 	},
 	LCH("LCH") {
@@ -654,19 +668,22 @@ public enum Colorspace implements ColorStandard {
 		}
 
 		@Override
-		public double[] interpolate(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherLCH = from(another, colorspace);
-			return new double[] {
-					Theory.lerp(self[0], anotherLCH[0], ratio),
-					Theory.lerp(self[1], anotherLCH[1], ratio),
-					Theory.lerp(self[2], anotherLCH[2], ratio)
+		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace, MixMode mixMode) {
+			return switch (mixMode) {
+				case BLEND -> {
+					double[] anotherLCH = from(another, colorspace);
+					yield  new double[] {
+							Theory.lerp(self[0], anotherLCH[0], ratio),
+							Theory.lerp(self[1], anotherLCH[1], ratio),
+							Theory.lerp(self[2], anotherLCH[2], ratio)
+					};
+				}
+				case PIGMENT -> {
+					double[] anotherRGB = RGB.from(another, colorspace);
+					yield  from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
+				}
+				default -> self;
 			};
-		}
-
-		@Override
-		public double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace) {
-			double[] anotherRGB = RGB.from(another, colorspace);
-			return from(floatToDouble(Mixbox.lerpFloat(doubleToFloat(to(self, RGB)), doubleToFloat(anotherRGB), (float) ratio)), RGB);
 		}
 
 		@Override
@@ -680,12 +697,12 @@ public enum Colorspace implements ColorStandard {
 
 		@Override
 		public double[] lighten(double[] color, double ratio) {
-			return interpolate(color, WHITE, ratio, LCH);
+			return mix(color, WHITE, ratio, LCH, MixMode.BLEND);
 		}
 
 		@Override
 		public double[] darken(double[] color, double ratio) {
-			return interpolate(color, BLACK, ratio, LCH);
+			return mix(color, BLACK, ratio, LCH, MixMode.BLEND);
 		}
 	};
 

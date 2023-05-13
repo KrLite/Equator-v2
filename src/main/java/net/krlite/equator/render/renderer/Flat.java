@@ -1,5 +1,6 @@
 package net.krlite.equator.render.renderer;
 
+import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.krlite.equator.base.Exceptions;
 import net.krlite.equator.math.algebra.Theory;
@@ -12,6 +13,7 @@ import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.render.renderer.base.Basic;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.color.Colorspace;
+import net.krlite.equator.visual.color.base.ColorStandard;
 import net.krlite.equator.visual.texture.Texture;
 import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.render.*;
@@ -20,6 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
+import java.util.AbstractMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -84,6 +89,18 @@ public class Flat extends Basic {
 
 		public Rectangle(@Nullable Texture texture, @Nullable AccurateColor color, RectangleMode rectangleMode) {
 			this(texture, color, color, color, color, rectangleMode);
+		}
+
+		public Rectangle(Texture texture) {
+			this(texture, null, RectangleMode.NORMAL);
+		}
+
+		public Rectangle(AccurateColor color) {
+			this(null, color, RectangleMode.NORMAL);
+		}
+
+		public Rectangle() {
+			this(null, null, RectangleMode.NORMAL);
 		}
 
 		// Fields
@@ -172,6 +189,22 @@ public class Flat extends Basic {
 
 		public Rectangle colorTopRight(@Nullable AccurateColor colorTopRight) {
 			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight, rectangleMode());
+		}
+
+		public Rectangle colorTop(@Nullable AccurateColor colorTop) {
+			return new Rectangle(texture(), colorTop, colorBottomLeft(), colorBottomRight(), colorTop, rectangleMode());
+		}
+
+		public Rectangle colorBottom(@Nullable AccurateColor colorBottom) {
+			return new Rectangle(texture(), colorTopLeft(), colorBottom, colorBottomRight(), colorTopRight(), rectangleMode());
+		}
+
+		public Rectangle colorLeft(@Nullable AccurateColor colorLeft) {
+			return new Rectangle(texture(), colorTopLeft(), colorLeft, colorBottomRight(), colorTopRight(), rectangleMode());
+		}
+
+		public Rectangle colorRight(@Nullable AccurateColor colorRight) {
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorRight, colorTopRight(), rectangleMode());
 		}
 
 		public Rectangle colors(@Nullable AccurateColor colorTopLeft, @Nullable AccurateColor colorBottomLeft, @Nullable AccurateColor colorBottomRight, @Nullable AccurateColor colorTopRight) {
@@ -386,6 +419,11 @@ public class Flat extends Basic {
 		// Interface Implementations
 
 		@Override
+		public boolean isRenderable() {
+			return Renderable.isLegal(box()) && (hasTexture() || hasColor());
+		}
+
+		@Override
 		public void render() {
 			if (!isRenderable()) return;
 
@@ -394,11 +432,6 @@ public class Flat extends Basic {
 				case TILING -> assertColors().renderTiling();
 				case FIXED_CORNERS -> assertColors().renderFixedCorners();
 			}
-		}
-
-		@Override
-		public boolean isRenderable() {
-			return Renderable.isBoxLegal(box()) && (hasTexture() || hasColor());
 		}
 
 		public class Repeated implements Renderable {
@@ -834,7 +867,7 @@ public class Flat extends Basic {
 
 				@Override
 				public boolean isRenderable() {
-					return outliningMode() == OutliningMode.NORMAL ? Rectangle.this.isRenderable() : (Renderable.isBoxLegal(box()) && hasColor());
+					return outliningMode() == OutliningMode.NORMAL ? Rectangle.this.isRenderable() : (Renderable.isLegal(box()) && hasColor());
 				}
 
 				@Override
@@ -975,5 +1008,287 @@ public class Flat extends Basic {
 		}
 
 		// 'Rectangle'
+	}
+
+	public class Oval implements Renderable {
+		// Constructors
+
+		public Oval(double offset, double radians, double innerRadiusFactor, AccurateColor colorCenter, Map<Double, AccurateColor> colorMap, ColorStandard.MixMode mixMode, OvalMode ovalMode) {
+			this.offset = offset;
+			this.radians = radians;
+			this.innerRadiusFactor = innerRadiusFactor;
+			this.colorCenter = colorCenter;
+			this.colorMap = ImmutableMap.copyOf(sortColorMap(colorMap));
+			this.mixMode = mixMode;
+			this.ovalMode = ovalMode;
+		}
+
+		public Oval(AccurateColor color) {
+			this(0, 2 * Math.PI, 0, color, ImmutableMap.of(), ColorStandard.MixMode.BLEND, OvalMode.GRADIANT_OUT);
+		}
+
+		public Oval() {
+			this(AccurateColor.TRANSPARENT);
+		}
+
+		// Fields
+
+		public enum OvalMode {
+			FILL((oval, offset, radiusFactor) -> oval.colorAt(offset)),
+			GRADIANT_OUT((oval, offset, radiusFactor) ->
+								 oval.colorCenter().mix(oval.colorAt(offset), radiusFactor, oval.mixMode())),
+			GRADIANT_IN((oval, offset, radiusFactor) ->
+								oval.colorAt(offset).mix(oval.colorCenter(), radiusFactor, oval.mixMode())),
+			FILL_GRADIANT_OUT((oval, offset, radiusFactor) -> Theory.looseEquals(radiusFactor, 1)
+																			  ? FILL.getColor(oval, offset, radiusFactor)
+																			  : oval.colorCenter()),
+			FILL_GRADIANT_IN((oval, offset, radiusFactor) -> !Theory.looseEquals(radiusFactor, 1)
+																			 ? FILL.getColor(oval, offset, radiusFactor)
+																			 : oval.colorCenter());
+
+			interface ColorFunction {
+				AccurateColor getColor(Oval oval, double offset, double radiusFactor);
+			}
+
+			private final ColorFunction colorFunction;
+
+			OvalMode(ColorFunction colorFunction) {
+				this.colorFunction = colorFunction;
+			}
+
+			public AccurateColor getColor(Oval oval, double offset, double radiusFactor) {
+				return colorFunction.getColor(oval, offset, radiusFactor);
+			}
+		}
+
+		private final double offset, radians, innerRadiusFactor;
+		private final AccurateColor colorCenter;
+		private final ImmutableMap<Double, AccurateColor> colorMap;
+		private final ColorStandard.MixMode mixMode;
+		private final OvalMode ovalMode;
+
+		// Accessors
+
+		public double offset() {
+			return offset;
+		}
+
+		public double radians() {
+			return radians;
+		}
+
+		public double innerRadiusFactor() {
+			return innerRadiusFactor;
+		}
+
+		public AccurateColor colorCenter() {
+			return colorCenter;
+		}
+
+		private static LinkedHashMap<Double, AccurateColor> sortColorMap(Map<Double, AccurateColor> colorMap) {
+			return new LinkedHashMap<>(colorMap.entrySet()
+											   .stream()
+											   .sorted(Map.Entry.comparingByKey())
+											   .collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, Map.Entry::getValue)));
+		}
+
+		public ImmutableMap<Double, AccurateColor> colorMap() {
+			return ImmutableMap.copyOf(colorMap);
+		}
+
+		public Map<Double, AccurateColor> colorMapMutableCopy() {
+			return sortColorMap(colorMap);
+		}
+
+		public AccurateColor firstColor() {
+			return !colorMap().isEmpty() ? colorMap().values().stream().findFirst().orElseThrow() : existsColor() ? colorCenter() : AccurateColor.TRANSPARENT;
+		}
+
+		public AccurateColor lastColor() {
+			return !colorMap().isEmpty() ? colorMap().values().stream().reduce((first, second) -> second).orElseThrow() : existsColor() ? colorCenter() : AccurateColor.TRANSPARENT;
+		}
+
+		public ImmutableMap<Double, AccurateColor> colorMapSafe() {
+			Map<Double, AccurateColor> originalMap = colorMapMutableCopy();
+
+			if (firstColor() != lastColor()) {
+				if (!colorMap().containsKey(0.0) && !colorMap().containsKey(2 * Math.PI)) {
+					AccurateColor color = firstColor();
+
+					double firstOffset = originalMap.keySet().stream().findFirst().orElse(0.0);
+					double offset = Math.abs(firstOffset - originalMap.keySet().stream().reduce((first, second) -> second).orElse(0.0));
+					double factor = Theory.isZero(offset) ? 0 : (firstOffset / offset);
+					color = color.mix(lastColor(), factor, mixMode());
+
+					originalMap.put(0.0, color);
+					originalMap.put(2 * Math.PI, color);
+				} else if (colorMap().containsKey(0.0)) {
+					originalMap.put(2 * Math.PI, colorMap().get(0.0));
+				} else if (colorMap().containsKey(2 * Math.PI)) {
+					originalMap.put(0.0, colorMap().get(2 * Math.PI));
+				}
+			}
+
+			return ImmutableMap.copyOf(sortColorMap(originalMap));
+		}
+
+		public ColorStandard.MixMode mixMode() {
+			return mixMode;
+		}
+
+		public OvalMode ovalMode() {
+			return ovalMode;
+		}
+
+		// Mutators
+
+		public Oval offset(double offset) {
+			return new Oval(offset, radians(), innerRadiusFactor(), colorCenter(), colorMap(), mixMode(), ovalMode());
+		}
+
+		public Oval radians(double radians) {
+			return new Oval(offset(), radians, innerRadiusFactor(), colorCenter(), colorMap(), mixMode(), ovalMode());
+		}
+
+		public Oval innerRadiusFactor(double innerRadiusFactor) {
+			return new Oval(offset(), radians(), innerRadiusFactor, colorCenter(), colorMap(), mixMode(), ovalMode());
+		}
+
+		public Oval colorCenter(AccurateColor colorCenter) {
+			return new Oval(offset(), radians(), innerRadiusFactor(), colorCenter, colorMap(), mixMode(), ovalMode());
+		}
+
+		public Oval colorMap(Map<Double, AccurateColor> colorMap) {
+			return new Oval(offset(), radians(), innerRadiusFactor(), colorCenter(), colorMap, mixMode(), ovalMode());
+		}
+
+		public Oval addColor(double at, AccurateColor color) {
+			return colorMap(ImmutableMap.<Double, AccurateColor>builder()
+									.putAll(colorMap())
+									.put(modOffset(at), color)
+									.build());
+		}
+
+		public Oval mixMode(ColorStandard.MixMode mixMode) {
+			return new Oval(offset(), radians(), innerRadiusFactor(), colorCenter(), colorMap(), mixMode, ovalMode());
+		}
+
+		public Oval ovalMode(OvalMode ovalMode) {
+			return new Oval(offset(), radians(), innerRadiusFactor(), colorCenter(), colorMap(), mixMode(), ovalMode);
+		}
+
+		// Properties
+
+		private static double modOffset(double offset) {
+			return Theory.mod(offset, 2 * Math.PI);
+		}
+
+		public Map.Entry<Double, AccurateColor> nearestPrevious(double offset) {
+			return !colorMapSafe().isEmpty() ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() <= modOffset(offset)).reduce((first, second) -> second).orElseThrow() : new AbstractMap.SimpleEntry<>(0.0, existsColor() ? colorCenter() : AccurateColor.TRANSPARENT);
+		}
+
+		public Map.Entry<Double, AccurateColor> nearestNext(double offset) {
+			return !colorMapSafe().isEmpty() ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() >= modOffset(offset)).findFirst().orElseThrow() : new AbstractMap.SimpleEntry<>(2 * Math.PI, existsColor() ? colorCenter() : AccurateColor.TRANSPARENT);
+		}
+
+		public AccurateColor colorAt(double offset) {
+			if (!existsColor()) {
+				return AccurateColor.TRANSPARENT;
+			}
+
+			if (colorMap().isEmpty()) {
+				return colorCenter();
+			}
+
+			if (colorMapSafe().containsKey(offset)) {
+				return colorMapSafe().get(offset);
+			}
+
+			offset = modOffset(offset);
+
+			final Map.Entry<Double, AccurateColor> prev = nearestPrevious(offset), next = nearestNext(offset);
+			if (prev.getValue().approximates(next.getValue())) {
+				return prev.getValue();
+			}
+
+			double weight = (offset - prev.getKey()) / Math.abs(next.getKey() - prev.getKey());
+
+			return prev.getValue().mix(next.getValue(), weight, mixMode());
+		}
+
+		private Vector vertexAt(double offset, double radiusFactor) {
+			offset = modOffset(offset);
+			return box().center().add(Vector.fromCartesian(
+					radiusFactor * box().w() / 2 * Math.cos(offset),
+					radiusFactor * box().h() / 2 * Math.sin(offset)
+			));
+		}
+
+		public boolean existsColor() {
+			return colorCenter().hasColor() || colorMap().values().stream().anyMatch(AccurateColor::hasColor);
+		}
+
+		public double eccentricity() {
+			return Math.sqrt(Math.abs(Math.pow(box().w(), 2) - Math.pow(box().h(), 2))) / Math.max(box().w(), box().h());
+		}
+
+		private void renderVertex(BufferBuilder builder, Matrix4f matrix, Vector vertex, AccurateColor color, float z) {
+			builder.vertex(matrix, (float) vertex.x(), (float) vertex.y(), z)
+					.color(color.redAsFloat(), color.greenAsFloat(), color.blueAsFloat(), color.opacityAsFloat())
+					.next();
+		}
+
+		private void renderVertex(BufferBuilder builder, Matrix4f matrix, double offset, double radiusFactor, AccurateColor color, float z) {
+			renderVertex(builder, matrix, vertexAt(offset, radiusFactor), color, z);
+		}
+
+		// Interface Implementations
+
+		private static final double delta = 0.01;
+
+		@Override
+		public boolean isRenderable() {
+			return Renderable.isLegal(box()) && Theory.looseGreater(radians(), 0) && existsColor();
+		}
+
+		@Override
+		public void render() {
+			if (!isRenderable()) return;
+
+			if (Theory.looseEquals(innerRadiusFactor(), 1)) return;
+
+			RenderSystem.enableBlend();
+			RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+			RenderSystem.disableCull(); // Prevents triangles from being culled
+
+			BufferBuilder builder = Tessellator.getInstance().getBuffer();
+			Matrix4f matrix = matrixStack().peek().getPositionMatrix();
+
+			builder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
+
+			for (double offset = offset(); offset < offset() + radians() + delta; offset += delta) {
+				double clampedOffset = Math.min(offset, offset() + radians()); // Prevents offset from exceeding the end of the arc
+				Vector vertex = vertexAt(clampedOffset, 1);
+
+				// Render the inner (center) vertex
+				if (Theory.isZero(innerRadiusFactor())) {
+					renderVertex(builder, matrix, box().center(), colorCenter(), z());
+				} else {
+					renderVertex(builder, matrix, vertexAt(clampedOffset, innerRadiusFactor()),
+							ovalMode().getColor(this, clampedOffset - offset(), innerRadiusFactor()), z());
+				}
+
+				// Render the outer vertex
+				renderVertex(builder, matrix, vertex,
+						ovalMode().getColor(this, clampedOffset - offset(), 1), z());
+			}
+
+			BufferRenderer.drawWithGlobalProgram(builder.end());
+
+			RenderSystem.disableBlend();
+			RenderSystem.enableCull();
+		}
+
+		// 'Oval'
 	}
 }

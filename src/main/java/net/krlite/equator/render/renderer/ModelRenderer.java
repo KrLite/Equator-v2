@@ -127,7 +127,7 @@ public record ModelRenderer(
 
 	@Override
 	public boolean isRenderable() {
-		return Renderable.isBoxLegal(box()) && (hasItem() || hasBlock()) && !(hasItem() && hasBlock());
+		return Renderable.isLegal(box()) && (hasItem() || hasBlock()) && !(hasItem() && hasBlock());
 	}
 
 	@SuppressWarnings("deprecation")

@@ -15,6 +15,7 @@ import java.util.AbstractMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/*
 public record OvalRenderer(
 		Box box, double offset, double radians,
 		AccurateColor centerColor, ImmutableMap<Double, AccurateColor> colorMap, boolean mixing
@@ -138,7 +139,7 @@ public record OvalRenderer(
 
 	@Override
 	public boolean isRenderable() {
-		return Renderable.isBoxLegal(box) && existsColor() && Theory.looseGreater(radians(), 0);
+		return Renderable.isLegal(box) && existsColor() && Theory.looseGreater(radians(), 0);
 	}
 
 	public AccurateColor firstColor() {
@@ -365,3 +366,5 @@ public record OvalRenderer(
 		renderOutline(matrixStack, thickness, 0);
 	}
 }
+
+ */

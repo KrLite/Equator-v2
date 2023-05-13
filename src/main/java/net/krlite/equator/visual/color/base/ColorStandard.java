@@ -24,13 +24,15 @@ public interface ColorStandard {
 
 	String toHexString(double[] color);
 
-	double[] interpolate(double[] self, double[] another, double ratio, Colorspace colorspace);
-
-	double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace);
+	double[] mix(double[] self, double[] another, double ratio, Colorspace colorspace, MixMode mixMode);
 
 	double[] invert(double[] color);
 
 	double[] lighten(double[] color, double ratio);
 
 	double[] darken(double[] color, double ratio);
+
+	enum MixMode {
+		BLEND, PIGMENT, OPACITY_ONLY
+	}
 }

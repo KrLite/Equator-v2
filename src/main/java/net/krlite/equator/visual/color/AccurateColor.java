@@ -1,6 +1,7 @@
 package net.krlite.equator.visual.color;
 
 import net.krlite.equator.math.algebra.Theory;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
@@ -31,16 +32,16 @@ public class AccurateColor {
 
 	// Static Constructors
 
-	public static AccurateColor fromRGBA(long rgba) {
-		return new AccurateColor(RGB.fromInt((int) (rgba >> 8)), ((rgba >> 24) & 0xFF) / 255.0);
+	public static AccurateColor fromARGB(long argb) {
+		return new AccurateColor(RGB.fromInt((int) argb), ((argb >> 24) & 0xFF) / 255.0);
 	}
 
-	public static AccurateColor fromRGBA(int red, int green, int blue, int alpha) {
+	public static AccurateColor fromRGB(int red, int green, int blue, int alpha) {
 		return new AccurateColor(red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0);
 	}
 
-	public static AccurateColor fromRGBA(int red, int green, int blue) {
-		return fromRGBA(red, green, blue, 255);
+	public static AccurateColor fromRGB(int red, int green, int blue) {
+		return fromRGB(red, green, blue, 255);
 	}
 
 	public static AccurateColor fromColor(Color color) {
@@ -49,7 +50,7 @@ public class AccurateColor {
 
 	public static AccurateColor fromHexString(String hexString) {
 		long hex = Long.decode(hexString);
-		return fromRGBA(hex | (hex > 0xFFFFFF ? 0x0 : 0xFF000000L));
+		return fromARGB(hex | (hex > 0xFFFFFF ? 0x0 : 0xFF000000L));
 	}
 
 	// Constructors
@@ -342,30 +343,32 @@ public class AccurateColor {
 		return !transparent;
 	}
 
-	// Operations
-
-	public AccurateColor interpolate(AccurateColor another, double ratio) {
-		return new AccurateColor(colorspace(), colorspace().interpolate(color(), another.color(), ratio, another.colorspace()), Theory.lerp(opacity(), another.opacity(), ratio));
+	public boolean approximates(@Nullable AccurateColor another, boolean ignoreOpacity) {
+		if (another == null) return false;
+		double[] rgb = colorspace(Colorspace.RGB).color(), anotherRGB = another.colorspace(RGB).color();
+		return Theory.looseEquals(rgb[0], anotherRGB[0]) && Theory.looseEquals(rgb[1], anotherRGB[1]) && Theory.looseEquals(rgb[2], anotherRGB[2]) && (ignoreOpacity || Theory.looseEquals(opacity(), another.opacity()));
 	}
 
-	public AccurateColor interpolate(AccurateColor another) {
-		return interpolate(another, 0.5);
+	public boolean approximates(@Nullable AccurateColor another) {
+		return approximates(another, false);
+	}
+
+	// Operations
+
+	public AccurateColor mix(AccurateColor another, double ratio, MixMode mixMode) {
+		return new AccurateColor(colorspace(), colorspace().mix(color(), another.color(), ratio, another.colorspace(), mixMode), Theory.lerp(opacity(), another.opacity(), ratio));
+	}
+
+	public AccurateColor mix(AccurateColor another, MixMode mixMode) {
+		return mix(another, 0.5, mixMode);
 	}
 
 	public AccurateColor mix(AccurateColor another, double ratio) {
-		return new AccurateColor(colorspace(), colorspace().mix(color(), another.color(), ratio, another.colorspace()), Theory.lerp(opacity(), another.opacity(), ratio));
+		return mix(another, ratio, MixMode.BLEND);
 	}
 
 	public AccurateColor mix(AccurateColor another) {
 		return mix(another, 0.5);
-	}
-
-	public AccurateColor blendOpacity(AccurateColor another, double ratio) {
-		return opacity(Theory.lerp(opacity(), another.opacity(), ratio));
-	}
-
-	public AccurateColor blendOpacity(AccurateColor another) {
-		return blendOpacity(another, 0.5);
 	}
 
 	public AccurateColor orElse(AccurateColor color) {

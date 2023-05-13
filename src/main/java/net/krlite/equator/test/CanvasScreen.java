@@ -3,7 +3,12 @@ package net.krlite.equator.test;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.input.Keyboard;
 import net.krlite.equator.input.Mouse;
+import net.krlite.equator.render.frame.FrameInfo;
+import net.krlite.equator.render.renderer.Flat;
+import net.krlite.equator.render.vanilla.VanillaWidgets;
 import net.krlite.equator.visual.animation.Interpolation;
+import net.krlite.equator.visual.color.AccurateColor;
+import net.krlite.equator.visual.color.Palette;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -53,5 +58,11 @@ public class CanvasScreen extends Screen {
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
 		renderBackground(matrixStack);
+
+		VanillaWidgets.Tooltip.render(matrixStack, box);
+
+		Box another = FrameInfo.scaled().topLeft(box.bottomRight());
+
+		new Flat(matrixStack, 0, another).new Rectangle(Palette.Minecraft.TOOLTIP_BACKGROUND).render();
 	}
 }
