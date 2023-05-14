@@ -9,6 +9,7 @@ import net.minecraft.text.Text;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 /**
@@ -26,25 +27,30 @@ public record Section(
 		double fontSize, double titleScalar, double subtitleScalar,
 		double lineSpacing, double paragraphSpacing, Paragraph... paragraphs
 ) {
-	interface AlignmentFunction {
-		Box apply(Box box, double height);
+	public enum Alignment implements Cyclic.Enum<Alignment> {
+		TOP((box, height) -> box),
+		CENTER((box, height) -> box.top(box.yCenter()).shift(0, -height / 2)),
+		BOTTOM((box, height) -> box.top(box.bottom()).shift(0, -height));
+
+		interface AlignmentFunction {
+			Box apply(Box box, double height);
+		}
+
+		private final AlignmentFunction function;
+
+		Alignment(AlignmentFunction function) {
+			this.function = function;
+		}
+
+		public Box apply(Box box, double height) {
+			return function.apply(box, height);
+		}
 	}
 
-	public enum Alignment implements AlignmentFunction, Cyclic.Enum<Alignment> {
-		TOP, CENTER, BOTTOM;
+	public static final Section DEFAULT = new Section();
 
-		AlignmentFunction function() {
-			return switch (this) {
-				case TOP -> (box, height) -> box;
-				case CENTER -> (box, height) -> box.top(box.yCenter()).shift(0, -height / 2);
-				case BOTTOM -> (box, height) -> box.top(box.bottom()).shift(0, -height);
-			};
-		}
-
-		@Override
-		public Box apply(Box box, double height) {
-			return function().apply(box, height);
-		}
+	public static Section build(UnaryOperator<Section> builder) {
+		return builder.apply(DEFAULT);
 	}
 
 	public Section(double fontSize, double titleScalar, double subtitleScalar, double lineSpacing, double paragraphSpacing) {

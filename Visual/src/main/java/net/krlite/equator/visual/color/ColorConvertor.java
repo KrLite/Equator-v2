@@ -201,7 +201,7 @@ public class ColorConvertor {
 			double a = Lab[1];
 			double b = Lab[2];
 
-			// Convert to LCH
+			// Convert to LCh
 			double C = Math.sqrt(a * a + b * b);
 			double H = Math.atan2(b, a);
 			H = H < 0 ? H + 2 * Math.PI : H;
@@ -357,12 +357,12 @@ public class ColorConvertor {
 			return fromXYZ(new double[] { x, y, z });
 		}
 
-		public static double[] fromLCH(double[] LCH) {
-			checkArrayLength("LCH", LCH, 3);
+		public static double[] fromLCH(double[] LCh) {
+			checkArrayLength("LCh", LCh, 3);
 
-			double L = LCH[0];
-			double C = LCH[1];
-			double H = LCH[2];
+			double L = LCh[0];
+			double C = LCh[1];
+			double H = LCh[2];
 
 			// Convert to LAB
 			double a = C * Math.cos(H * Math.PI / 180);

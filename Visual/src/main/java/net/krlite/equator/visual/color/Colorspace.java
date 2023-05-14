@@ -18,7 +18,7 @@ import static net.krlite.equator.visual.color.ColorConvertor.*;
  *     <li>{@link Colorspace#CMYK}	&ensp;<code>- cyan,			magenta,		yellow,			black</code></li>
  *     <li>{@link Colorspace#XYZ}	&emsp;<code>- x-axis,		y-axis,			z-axis			(CIE 1931 XYZ COLORSPACE)</code></li>
  *     <li>{@link Colorspace#LAB}	&emsp;<code>- Lightness*,	green-magenta*,	blue-yellow*	(CIELAB COLORSPACE)</code></li>
- *     <li>{@link Colorspace#LCH}	&emsp;<code>- Luminance*,	Chroma*,		hue*		(CLELCh COLORSPACE)</code></li>
+ *     <li>{@link Colorspace#LCh}	&emsp;<code>- Luminance*,	Chroma*,		hue*		(CLELCh COLORSPACE)</code></li>
  * </ul>
  */
 @Visual("2.3.0")
@@ -36,7 +36,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> ToRGB.fromCMYK(color);
 				case XYZ -> ToRGB.fromXYZ(color);
 				case LAB -> ToRGB.fromLAB(color);
-				case LCH -> ToRGB.fromLCH(color);
+				case LCh -> ToRGB.fromLCH(color);
 			};
 		}
 
@@ -64,7 +64,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> FromRGB.toCMYK(color);
 				case XYZ -> FromRGB.toXYZ(color);
 				case LAB -> FromRGB.toLAB(color);
-				case LCH -> FromRGB.toLCH(color);
+				case LCh -> FromRGB.toLCH(color);
 			};
 		}
 
@@ -130,7 +130,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> RGB.to(RGB.from(color, CMYK), HSV);
 				case XYZ -> RGB.to(RGB.from(color, XYZ), HSV);
 				case LAB -> RGB.to(RGB.from(color, LAB), HSV);
-				case LCH -> RGB.to(RGB.from(color, LCH), HSV);
+				case LCh -> RGB.to(RGB.from(color, LCh), HSV);
 			};
 		}
 
@@ -158,7 +158,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> RGB.to(RGB.from(color, HSV), CMYK);
 				case XYZ -> RGB.to(RGB.from(color, HSV), XYZ);
 				case LAB -> RGB.to(RGB.from(color, HSV), LAB);
-				case LCH -> RGB.to(RGB.from(color, HSV), LCH);
+				case LCh -> RGB.to(RGB.from(color, HSV), LCh);
 			};
 		}
 
@@ -228,7 +228,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> RGB.to(RGB.from(color, CMYK), HSL);
 				case XYZ -> RGB.to(RGB.from(color, XYZ), HSL);
 				case LAB -> RGB.to(RGB.from(color, LAB), HSL);
-				case LCH -> RGB.to(RGB.from(color, LCH), HSL);
+				case LCh -> RGB.to(RGB.from(color, LCh), HSL);
 			};
 		}
 
@@ -256,7 +256,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> RGB.to(RGB.from(color, HSL), CMYK);
 				case XYZ -> RGB.to(RGB.from(color, HSL), XYZ);
 				case LAB -> RGB.to(RGB.from(color, HSL), LAB);
-				case LCH -> RGB.to(RGB.from(color, HSL), LCH);
+				case LCh -> RGB.to(RGB.from(color, HSL), LCh);
 			};
 		}
 
@@ -326,7 +326,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> color;
 				case XYZ -> RGB.to(RGB.from(color, XYZ), CMYK);
 				case LAB -> RGB.to(RGB.from(color, LAB), CMYK);
-				case LCH -> RGB.to(RGB.from(color, LCH), CMYK);
+				case LCh -> RGB.to(RGB.from(color, LCh), CMYK);
 			};
 		}
 
@@ -354,7 +354,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> color;
 				case XYZ -> RGB.to(RGB.from(color, CMYK), XYZ);
 				case LAB -> RGB.to(RGB.from(color, CMYK), LAB);
-				case LCH -> RGB.to(RGB.from(color, CMYK), LCH);
+				case LCh -> RGB.to(RGB.from(color, CMYK), LCh);
 			};
 		}
 
@@ -426,7 +426,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> RGB.to(RGB.from(color, CMYK), XYZ);
 				case XYZ -> color;
 				case LAB -> RGB.to(RGB.from(color, LAB), XYZ);
-				case LCH -> RGB.to(RGB.from(color, LCH), XYZ);
+				case LCh -> RGB.to(RGB.from(color, LCh), XYZ);
 			};
 		}
 
@@ -454,7 +454,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> RGB.to(RGB.from(color, XYZ), CMYK);
 				case XYZ -> color;
 				case LAB -> RGB.to(RGB.from(color, XYZ), LAB);
-				case LCH -> RGB.to(RGB.from(color, XYZ), LCH);
+				case LCh -> RGB.to(RGB.from(color, XYZ), LCh);
 			};
 		}
 
@@ -524,7 +524,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> RGB.to(RGB.from(color, CMYK), LAB);
 				case XYZ -> RGB.to(RGB.from(color, XYZ), LAB);
 				case LAB -> color;
-				case LCH -> RGB.to(RGB.from(color, LCH), LAB);
+				case LCh -> RGB.to(RGB.from(color, LCh), LAB);
 			};
 		}
 
@@ -552,7 +552,7 @@ public enum Colorspace implements ColorStandard {
 				case CMYK -> RGB.to(RGB.from(color, LAB), CMYK);
 				case XYZ -> RGB.to(RGB.from(color, LAB), XYZ);
 				case LAB -> color;
-				case LCH -> RGB.to(RGB.from(color, LAB), LCH);
+				case LCh -> RGB.to(RGB.from(color, LAB), LCh);
 			};
 		}
 
@@ -609,64 +609,64 @@ public enum Colorspace implements ColorStandard {
 			return mix(color, BLACK, ratio, LAB, MixMode.BLEND);
 		}
 	},
-	LCH("LCh") {
+	LCh("LCh") {
 		public static final double[] WHITE = {100, 0, 0};
 		public static final double[] BLACK = {0, 0, 0};
 
 		@Override
 		public double[] from(double[] color, Colorspace colorspace) {
 			return switch (colorspace) {
-				case RGB -> RGB.to(RGB.from(color, RGB), LCH);
-				case HSV -> RGB.to(RGB.from(color, HSV), LCH);
-				case HSL -> RGB.to(RGB.from(color, HSL), LCH);
-				case CMYK -> RGB.to(RGB.from(color, CMYK), LCH);
-				case XYZ -> RGB.to(RGB.from(color, XYZ), LCH);
-				case LAB -> RGB.to(RGB.from(color, LAB), LCH);
-				case LCH -> color;
+				case RGB -> RGB.to(RGB.from(color, RGB), LCh);
+				case HSV -> RGB.to(RGB.from(color, HSV), LCh);
+				case HSL -> RGB.to(RGB.from(color, HSL), LCh);
+				case CMYK -> RGB.to(RGB.from(color, CMYK), LCh);
+				case XYZ -> RGB.to(RGB.from(color, XYZ), LCh);
+				case LAB -> RGB.to(RGB.from(color, LAB), LCh);
+				case LCh -> color;
 			};
 		}
 
 		@Override
 		public double[] fromInt(int color) {
-			return RGB.to(RGB.fromInt(color), LCH);
+			return RGB.to(RGB.fromInt(color), LCh);
 		}
 
 		@Override
 		public double[] fromColor(Color color) {
-			return RGB.to(RGB.fromColor(color), LCH);
+			return RGB.to(RGB.fromColor(color), LCh);
 		}
 
 		@Override
 		public double[] fromHexString(String color) {
-			return RGB.to(RGB.fromHexString(color), LCH);
+			return RGB.to(RGB.fromHexString(color), LCh);
 		}
 
 		@Override
 		public double[] to(double[] color, Colorspace colorspace) {
 			return switch (colorspace) {
-				case RGB -> RGB.from(color, LCH);
-				case HSV -> RGB.to(RGB.from(color, LCH), HSV);
-				case HSL -> RGB.to(RGB.from(color, LCH), HSL);
-				case CMYK -> RGB.to(RGB.from(color, LCH), CMYK);
-				case XYZ -> RGB.to(RGB.from(color, LCH), XYZ);
-				case LAB -> RGB.to(RGB.from(color, LCH), LAB);
-				case LCH -> color;
+				case RGB -> RGB.from(color, LCh);
+				case HSV -> RGB.to(RGB.from(color, LCh), HSV);
+				case HSL -> RGB.to(RGB.from(color, LCh), HSL);
+				case CMYK -> RGB.to(RGB.from(color, LCh), CMYK);
+				case XYZ -> RGB.to(RGB.from(color, LCh), XYZ);
+				case LAB -> RGB.to(RGB.from(color, LCh), LAB);
+				case LCh -> color;
 			};
 		}
 
 		@Override
 		public int toInt(double[] color) {
-			return RGB.toInt(RGB.from(color, LCH));
+			return RGB.toInt(RGB.from(color, LCh));
 		}
 
 		@Override
 		public Color toColor(double[] color) {
-			return RGB.toColor(RGB.from(color, LCH));
+			return RGB.toColor(RGB.from(color, LCh));
 		}
 
 		@Override
 		public String toHexString(double[] color) {
-			return RGB.toHexString(RGB.from(color, LCH));
+			return RGB.toHexString(RGB.from(color, LCh));
 		}
 
 		@Override
@@ -699,12 +699,12 @@ public enum Colorspace implements ColorStandard {
 
 		@Override
 		public double[] lighten(double[] color, double ratio) {
-			return mix(color, WHITE, ratio, LCH, MixMode.BLEND);
+			return mix(color, WHITE, ratio, LCh, MixMode.BLEND);
 		}
 
 		@Override
 		public double[] darken(double[] color, double ratio) {
-			return mix(color, BLACK, ratio, LCH, MixMode.BLEND);
+			return mix(color, BLACK, ratio, LCh, MixMode.BLEND);
 		}
 	};
 

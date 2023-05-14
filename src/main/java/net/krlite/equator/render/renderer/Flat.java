@@ -9,12 +9,18 @@ import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.math.logic.flat.FlatGate;
 import net.krlite.equator.math.logic.flat.FlatTransform;
 import net.krlite.equator.render.base.Renderable;
+import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.render.renderer.base.Basic;
+import net.krlite.equator.render.vanilla.VanillaWidgets;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.color.Colorspace;
 import net.krlite.equator.visual.color.base.ColorStandard;
+import net.krlite.equator.visual.text.Paragraph;
+import net.krlite.equator.visual.text.Section;
 import net.krlite.equator.visual.texture.Texture;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -1146,6 +1152,10 @@ public class Flat extends Basic {
 
 		// Mutators
 
+		public Oval parent(UnaryOperator<Flat> flat) {
+			return flat.apply(Flat.this).new Oval(offset(), radians(), innerRadiusFactor(), colorCenter(), colorMap(), mixMode(), ovalMode());
+		}
+
 		public Oval offset(double offset) {
 			return new Oval(offset, radians(), innerRadiusFactor(), colorCenter(), colorMap(), mixMode(), ovalMode());
 		}
@@ -1290,5 +1300,231 @@ public class Flat extends Basic {
 		}
 
 		// 'Oval'
+	}
+
+	public class Text implements Renderable {
+		// Constructors
+
+		public Text(Section section, @Nullable AccurateColor color, @Nullable TextRenderer textRenderer, Section.Alignment verticalAlignment, Paragraph.Alignment horizontalAlignment, boolean shadowed, boolean culled) {
+			this.section = section;
+			this.color = color;
+			this.textRenderer = textRenderer == null ? MinecraftClient.getInstance().textRenderer : textRenderer;
+			this.verticalAlignment = verticalAlignment;
+			this.horizontalAlignment = horizontalAlignment;
+			this.shadowed = shadowed;
+			this.culled = culled;
+		}
+
+		public Text(Section section, @Nullable AccurateColor color, Section.Alignment verticalAlignment, Paragraph.Alignment horizontalAlignment, boolean shadowed) {
+			this(section, color, null, verticalAlignment, horizontalAlignment, shadowed, false);
+		}
+
+		public Text(UnaryOperator<Section> builder) {
+			this(builder.apply(Section.DEFAULT), AccurateColor.WHITE, null, Section.Alignment.TOP, Paragraph.Alignment.LEFT, false, false);
+		}
+
+		// Fields
+
+		private final Section section;
+		@Nullable
+		private final AccurateColor color;
+		private final TextRenderer textRenderer;
+		private final Section.Alignment verticalAlignment;
+		private final Paragraph.Alignment horizontalAlignment;
+		private final boolean shadowed, culled;
+
+		// Accessors
+
+		public Section section() {
+			return section;
+		}
+
+		@Nullable
+		public AccurateColor color() {
+			return color;
+		}
+
+		public TextRenderer textRenderer() {
+			return textRenderer;
+		}
+
+		public Section.Alignment verticalAlignment() {
+			return verticalAlignment;
+		}
+
+		public Paragraph.Alignment horizontalAlignment() {
+			return horizontalAlignment;
+		}
+
+		public boolean shadowed() {
+			return shadowed;
+		}
+
+		public boolean culled() {
+			return culled;
+		}
+
+		// Mutators
+
+		public Text parent(UnaryOperator<Flat> flat) {
+			return flat.apply(Flat.this).new Text(section(), color(), textRenderer(), verticalAlignment(), horizontalAlignment(), shadowed(), culled());
+		}
+
+		protected Text preserve(Box box) {
+			return parent(flat -> flat.box(box));
+		}
+
+		public Text section(Section section) {
+			return new Text(section, color(), textRenderer(), verticalAlignment(), horizontalAlignment(), shadowed(), culled());
+		}
+
+		public Text section(UnaryOperator<Section> section) {
+			return section(section.apply(section()));
+		}
+
+		public Text textRenderer(@Nullable TextRenderer textRenderer) {
+			return new Text(section(), color(), textRenderer, verticalAlignment(), horizontalAlignment(), shadowed(), culled());
+		}
+
+		public Text color(@Nullable AccurateColor color) {
+			return new Text(section(), color, textRenderer(), verticalAlignment(), horizontalAlignment(), shadowed(), culled());
+		}
+
+		public Text verticalAlignment(Section.Alignment verticalAlignment) {
+			return new Text(section(), color(), textRenderer(), verticalAlignment, horizontalAlignment(), shadowed(), culled());
+		}
+
+		public Text horizontalAlignment(Paragraph.Alignment horizontalAlignment) {
+			return new Text(section(), color(), textRenderer(), verticalAlignment(), horizontalAlignment, shadowed(), culled());
+		}
+
+		public Text shadowed(boolean shadowed) {
+			return new Text(section(), color(), textRenderer(), verticalAlignment(), horizontalAlignment(), shadowed, culled());
+		}
+
+		public Text withShadow() {
+			return shadowed(true);
+		}
+
+		public Text withoutShadow() {
+			return shadowed(false);
+		}
+
+		public Text culled(boolean culled) {
+			return new Text(section(), color(), textRenderer(), verticalAlignment(), horizontalAlignment(), shadowed(), culled);
+		}
+
+		public Text enableCulling() {
+			return culled(true);
+		}
+
+		public Text disableCulling() {
+			return culled(false);
+		}
+
+		// Properties
+
+		public boolean hasColor() {
+			return color() != null;
+		}
+
+		public double actualHeight() {
+			return section().actualHeight(box().w());
+		}
+
+		// Interface Implementations
+
+		@Override
+		public boolean isRenderable() {
+			return Renderable.isLegal(box()) && !section().isEmpty() && hasColor();
+		}
+
+		@Override
+		public void render() {
+			if (!isRenderable()) return;
+
+			Scissor scissor = box().scissor();
+
+			if (culled()) {
+				scissor.snipOn();
+			}
+
+			matrixStack().push();
+			matrixStack().translate(box().x(), box().y(), 0);
+
+			section().render(box().alignTopLeft(Vector.ZERO), matrixStack(), textRenderer(), color(), verticalAlignment(), horizontalAlignment(), shadowed());
+
+			matrixStack().pop();
+
+			if (culled()) {
+				scissor.snipOff();
+			}
+		}
+
+		public class Tooltip implements Renderable {
+			// Constructors
+
+			public Tooltip(double bleeding, boolean ignoreVerticalAlignment) {
+				this.bleeding = bleeding;
+				this.ignoreVerticalAlignment = ignoreVerticalAlignment;
+			}
+
+			public Tooltip(boolean ignoreVerticalAlignment) {
+				this(3, ignoreVerticalAlignment);
+			}
+
+			public Tooltip() {
+				this(true);
+			}
+
+			// Fields
+			private final double bleeding;
+			private final boolean ignoreVerticalAlignment;
+
+			// Accessors
+
+			public double bleeding() {
+				return bleeding;
+			}
+
+			public boolean ignoreVerticalAlignment() {
+				return ignoreVerticalAlignment;
+			}
+
+			// Mutators
+
+			public Tooltip parent(UnaryOperator<Text> text) {
+				return text.apply(Text.this).new Tooltip(bleeding(), ignoreVerticalAlignment());
+			}
+
+			public Tooltip bleeding(double bleeding) {
+				return new Tooltip(bleeding, ignoreVerticalAlignment());
+			}
+
+			public Tooltip ignoreVerticalAlignment(boolean ignoreVerticalAlignment) {
+				return new Tooltip(bleeding(), ignoreVerticalAlignment);
+			}
+
+			// Interface Implementations
+
+			@Override
+			public boolean isRenderable() {
+				return Text.this.isRenderable();
+			}
+
+			@Override
+			public void render() {
+				Box preserved = box().expand(-bleeding());
+
+				double actualHeight = preserve(preserved).actualHeight();
+
+				VanillaWidgets.Tooltip.render(matrixStack(), !ignoreVerticalAlignment() ? box() : box().height(actualHeight + 2 * bleeding));
+				preserve(!ignoreVerticalAlignment() ? preserved : preserved.height(actualHeight)).render();
+			}
+
+			// 'Tooltip'
+		}
+
+		// 'Text'
 	}
 }

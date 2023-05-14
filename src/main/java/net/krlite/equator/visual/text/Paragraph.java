@@ -12,6 +12,7 @@ import org.davidmoten.text.utils.WordWrap;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,29 +23,33 @@ import java.util.regex.Pattern;
  * @param scalar	The scalar to multiply the font size by.
  */
 public record Paragraph(Text text, double scalar) {
-	interface AlignmentFunction {
-		Vector apply(Box box, Text text, TextRenderer textRenderer, double fontSize, double scalar);
-	}
+	public enum Alignment implements Cyclic.Enum<Alignment> {
+		LEFT((box, text, textRenderer, fontSize, scalar) -> box.topLeft()),
+		CENTER((box, text, textRenderer, fontSize, scalar) -> box.topCenter().add(-fontSize * scalar * textRenderer.getWidth(text) / 2.0, 0)),
+		RIGHT((box, text, textRenderer, fontSize, scalar) -> box.topRight().add(-fontSize * scalar * textRenderer.getWidth(text), 0));
 
-	public enum Alignment implements AlignmentFunction, Cyclic.Enum<Alignment> {
-		LEFT, CENTER, RIGHT;
-
-		AlignmentFunction function() {
-			return switch (this) {
-				case LEFT -> (box, text, textRenderer, fontSize, scalar) -> box.topLeft();
-				case CENTER -> (box, text, textRenderer, fontSize, scalar) -> box.topCenter().add(-fontSize * scalar * textRenderer.getWidth(text) / 2.0, 0);
-				case RIGHT -> (box, text, textRenderer, fontSize, scalar) -> box.topRight().add(-fontSize * scalar * textRenderer.getWidth(text), 0);
-			};
+		interface AlignmentFunction {
+			Vector apply(Box box, Text text, TextRenderer textRenderer, double fontSize, double scalar);
 		}
 
-		@Override
+		private final AlignmentFunction function;
+
+		Alignment(AlignmentFunction function) {
+			this.function = function;
+		}
+
 		public Vector apply(Box box, Text text, TextRenderer textRenderer, double fontSize, double scalar) {
-			return function().apply(box, text, textRenderer, fontSize, scalar);
+			return function.apply(box, text, textRenderer, fontSize, scalar);
 		}
 	}
 
-	public static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n"), FORMATTING_PATTERN = Pattern.compile("§(?{@code [0-9a-fk-or])");
+	public static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n"), FORMATTING_PATTERN = Pattern.compile("§(?<code>[0-9a-fk-or])");
 	public static final String NEWLINE = "\n";
+	public static final Paragraph EMPTY = new Paragraph("", 0);
+
+	public static Paragraph build(UnaryOperator<Paragraph> builder) {
+		return builder.apply(EMPTY);
+	}
 
 	public static Paragraph spacing(double scalar) {
 		return new Paragraph("", scalar);
