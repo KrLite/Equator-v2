@@ -4,6 +4,8 @@ import net.krlite.equator.base.Exceptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.BlockRenderView;
 import org.lwjgl.glfw.GLFWImage;
 
 import javax.imageio.ImageIO;

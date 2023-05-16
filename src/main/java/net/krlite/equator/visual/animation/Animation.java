@@ -3,6 +3,7 @@ package net.krlite.equator.visual.animation;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.krlite.equator.base.SelfMutable;
 import net.krlite.equator.math.algebra.Curves;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +17,7 @@ import java.util.function.UnaryOperator;
  * <h1>Animation</h1>
  * Handles the animation between two values.
  */
+@SelfMutable
 public class Animation implements Runnable {
 	public interface Callbacks {
 		interface Start {

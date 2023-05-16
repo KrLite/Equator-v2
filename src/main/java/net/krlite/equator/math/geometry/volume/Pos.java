@@ -275,4 +275,18 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 	public Pos interpolate(Pos another, double factor) {
 		return add(another.subtract(this).scale(factor));
 	}
+
+	// Object Methods
+
+	@Override
+	public String toString() {
+		return toString(false);
+	}
+
+	public String toString(boolean precisely) {
+		return isZero() ? "[zero]" : precisely
+											 ? String.format("[x=%f, y=%f, z=%f]", x(), y(), z())
+											 : String.format("[x=%.5f, y=%.5f, z=%.5f]", x(), y(), z())
+													   + (!hasDimension() ? "" : ("-(dimension=" + dimension() + ")"));
+	}
 }

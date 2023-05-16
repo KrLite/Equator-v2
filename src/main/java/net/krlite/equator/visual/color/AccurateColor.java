@@ -437,6 +437,6 @@ public class AccurateColor {
 		}
 
 		return !hasColor() ? (getClass().getSimpleName() + "(transparent)")
-					   : (colorspace().getName() + "(" + builder + ")" + "-opacity(" + (precisely ? opacity() : String.format("%.2f", opacity())) + ")");
+					   : (colorspace().getName() + "(" + builder + ")" + "-(opacity=" + (precisely ? opacity() : String.format("%.2f", opacity())) + ")");
 	}
 }

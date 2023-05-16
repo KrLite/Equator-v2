@@ -1,6 +1,5 @@
 package net.krlite.equator.base;
 
-import net.krlite.equator.visual.color.Colorspace;
 import net.minecraft.util.Identifier;
 
 import java.io.IOException;
