@@ -28,6 +28,7 @@ public record Paragraph(Text text, double scalar) {
 		CENTER((box, text, textRenderer, fontSize, scalar) -> box.topCenter().add(-fontSize * scalar * textRenderer.getWidth(text) / 2.0, 0)),
 		RIGHT((box, text, textRenderer, fontSize, scalar) -> box.topRight().add(-fontSize * scalar * textRenderer.getWidth(text), 0));
 
+		@FunctionalInterface
 		interface AlignmentFunction {
 			Vector apply(Box box, Text text, TextRenderer textRenderer, double fontSize, double scalar);
 		}
@@ -87,11 +88,15 @@ public record Paragraph(Text text, double scalar) {
 		return text().getString().isEmpty();
 	}
 
+	public double width(double fontSize) {
+		return fontSize * scalar() * MinecraftClient.getInstance().textRenderer.getWidth(text());
+	}
+
 	public double height(double fontSize, double lineSpacing) {
 		return fontSize * scalar() * MinecraftClient.getInstance().textRenderer.fontHeight * (isSpacing() ? 1 : (1 + lineSpacing));
 	}
 
-	public double actualHeight(double fontSize, double lineSpacing, double width) {
+	public double wrappedHeight(double fontSize, double lineSpacing, double width) {
 		return height(fontSize, lineSpacing) * countLines(fontSize, width);
 	}
 

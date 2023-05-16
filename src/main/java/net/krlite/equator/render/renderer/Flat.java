@@ -32,6 +32,7 @@ import java.util.AbstractMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -1056,6 +1057,7 @@ public class Flat extends Basic {
 																			 ? FILL.getColor(oval, offset, radiusFactor)
 																			 : oval.colorCenter());
 
+			@FunctionalInterface
 			interface ColorFunction {
 				AccurateColor getColor(Oval oval, double offset, double radiusFactor);
 			}
@@ -1428,8 +1430,12 @@ public class Flat extends Basic {
 			return color() != null;
 		}
 
-		public double actualHeight() {
-			return section().actualHeight(box().w());
+		public double width() {
+			return section().width() + Theory.EPSILON;
+		}
+
+		public double height() {
+			return section().wrappedHeight(box().w()) + Theory.EPSILON;
 		}
 
 		// Interface Implementations
@@ -1464,22 +1470,51 @@ public class Flat extends Basic {
 		public class Tooltip implements Renderable {
 			// Constructors
 
-			public Tooltip(double bleeding, boolean ignoreVerticalAlignment) {
+			public Tooltip(double bleeding, TooltipSnap tooltipSnap) {
 				this.bleeding = bleeding;
-				this.ignoreVerticalAlignment = ignoreVerticalAlignment;
+				this.tooltipSnap = tooltipSnap;
 			}
 
-			public Tooltip(boolean ignoreVerticalAlignment) {
-				this(3, ignoreVerticalAlignment);
+			public Tooltip(TooltipSnap tooltipSnap) {
+				this(3, tooltipSnap);
 			}
 
 			public Tooltip() {
-				this(true);
+				this(TooltipSnap.NONE);
 			}
 
 			// Fields
+			
+			public enum TooltipSnap {
+				NONE((box, width, height) -> box, (height, wrappedHeight) -> height),
+				HORIZONTAL((box, width, height) -> box.width(width), (height, wrappedHeight) -> wrappedHeight),
+				VERTICAL((box, width, height) -> box.height(height), (height, wrappedHeight) -> height),
+				BOTH((box, width, height) -> box.width(width).height(height), (height, wrappedHeight) -> wrappedHeight);
+				
+				@FunctionalInterface
+				interface SnapFunction {
+					Box snap(Box box, double width, double height);
+				}
+				
+				private final SnapFunction snapFunction;
+				private final BinaryOperator<Double> heightOperator;
+				
+				TooltipSnap(SnapFunction snapFunction, BinaryOperator<Double> heightOperator) {
+					this.snapFunction = snapFunction;
+					this.heightOperator = heightOperator;
+				}
+				
+				public Box snap(Box box, double width, double height) {
+					return snapFunction.snap(box, width, height);
+				}
+
+				public double snapHeight(double height, double wrappedHeight) {
+					return heightOperator.apply(height, wrappedHeight);
+				}
+			}
+			
 			private final double bleeding;
-			private final boolean ignoreVerticalAlignment;
+			private final TooltipSnap tooltipSnap;
 
 			// Accessors
 
@@ -1487,22 +1522,22 @@ public class Flat extends Basic {
 				return bleeding;
 			}
 
-			public boolean ignoreVerticalAlignment() {
-				return ignoreVerticalAlignment;
+			public TooltipSnap tooltipSnap() {
+				return tooltipSnap;
 			}
 
 			// Mutators
 
 			public Tooltip parent(UnaryOperator<Text> text) {
-				return text.apply(Text.this).new Tooltip(bleeding(), ignoreVerticalAlignment());
+				return text.apply(Text.this).new Tooltip(bleeding(), tooltipSnap());
 			}
 
 			public Tooltip bleeding(double bleeding) {
-				return new Tooltip(bleeding, ignoreVerticalAlignment());
+				return new Tooltip(bleeding, tooltipSnap());
 			}
 
-			public Tooltip ignoreVerticalAlignment(boolean ignoreVerticalAlignment) {
-				return new Tooltip(bleeding(), ignoreVerticalAlignment);
+			public Tooltip tooltipSnap(TooltipSnap tooltipSnap) {
+				return new Tooltip(bleeding(), tooltipSnap);
 			}
 
 			// Interface Implementations
@@ -1514,12 +1549,16 @@ public class Flat extends Basic {
 
 			@Override
 			public void render() {
-				Box preserved = box().expand(-bleeding());
+				Box
+						context = box().expand(-bleeding()),
+						raw = Box.fromCartesian(
+								width(),
+								tooltipSnap().snapHeight(section().height(), preserve(context).height())
+						).alignTopLeft(context),
+						snapped = tooltipSnap().snap(raw, context.w(), context.h());
 
-				double actualHeight = preserve(preserved).actualHeight();
-
-				VanillaWidgets.Tooltip.render(matrixStack(), !ignoreVerticalAlignment() ? box() : box().height(actualHeight + 2 * bleeding));
-				preserve(!ignoreVerticalAlignment() ? preserved : preserved.height(actualHeight)).render();
+				VanillaWidgets.Tooltip.render(matrixStack(), snapped.expand(bleeding()));
+				preserve(snapped).render();
 			}
 
 			// 'Tooltip'

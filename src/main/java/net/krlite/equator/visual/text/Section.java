@@ -32,6 +32,7 @@ public record Section(
 		CENTER((box, height) -> box.top(box.yCenter()).shift(0, -height / 2)),
 		BOTTOM((box, height) -> box.top(box.bottom()).shift(0, -height));
 
+		@FunctionalInterface
 		interface AlignmentFunction {
 			Box apply(Box box, double height);
 		}
@@ -104,12 +105,16 @@ public record Section(
 		return paragraphs().length == 0 || Arrays.stream(paragraphs()).allMatch(Paragraph::isSpacing);
 	}
 
+	public double width() {
+		return isEmpty() ? 0 : Arrays.stream(paragraphs()).mapToDouble(paragraph -> paragraph.width(fontSize())).max().orElse(0);
+	}
+
 	public double height() {
 		return isEmpty() ? 0 : Arrays.stream(paragraphs()).mapToDouble(paragraph -> paragraph.height(fontSize(), lineSpacing())).sum();
 	}
 
-	public double actualHeight(double width) {
-		return isEmpty() ? 0 : Arrays.stream(paragraphs()).mapToDouble(paragraph -> paragraph.actualHeight(fontSize(), lineSpacing(), width)).sum();
+	public double wrappedHeight(double width) {
+		return isEmpty() ? 0 : Arrays.stream(paragraphs()).mapToDouble(paragraph -> paragraph.wrappedHeight(fontSize(), lineSpacing(), width)).sum();
 	}
 
 	private Section appendParagraphRaw(Paragraph paragraph) {
@@ -228,7 +233,7 @@ public record Section(
 	}
 
 	public void render(Box box, MatrixStack matrixStack, TextRenderer textRenderer, AccurateColor color, Alignment vertical, Paragraph.Alignment horizontal, boolean shadow) {
-		render(new LinkedList<>(Arrays.stream(paragraphs()).toList()), vertical.apply(box, actualHeight(box.w())), matrixStack, textRenderer, color, vertical, horizontal, shadow);
+		render(new LinkedList<>(Arrays.stream(paragraphs()).toList()), vertical.apply(box, wrappedHeight(box.w())), matrixStack, textRenderer, color, vertical, horizontal, shadow);
 	}
 
 	private void render(LinkedList<Paragraph> paragraphs, Box box, MatrixStack matrixStack, TextRenderer textRenderer, AccurateColor color, Alignment vertical, Paragraph.Alignment horizontal, boolean shadow) {
@@ -237,7 +242,7 @@ public record Section(
 		if (paragraph == null) return;
 
 		if (paragraphs.peek() != null) {
-			render(paragraphs, box.shift(0, paragraph.actualHeight(fontSize(), lineSpacing(), box.w())),
+			render(paragraphs, box.shift(0, paragraph.wrappedHeight(fontSize(), lineSpacing(), box.w())),
 					matrixStack, textRenderer, color, vertical, horizontal, shadow);
 		}
 
