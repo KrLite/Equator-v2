@@ -1,7 +1,9 @@
 package net.krlite.equator.render.renderer;
 
 import com.google.common.collect.ImmutableMap;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.krlite.equator.Equator;
 import net.krlite.equator.base.Exceptions;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.flat.Box;
@@ -19,13 +21,20 @@ import net.krlite.equator.visual.color.base.ColorStandard;
 import net.krlite.equator.visual.text.Paragraph;
 import net.krlite.equator.visual.text.Section;
 import net.krlite.equator.visual.texture.Texture;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Quaternionfc;
 import org.lwjgl.opengl.GL11;
 
 import java.util.AbstractMap;
@@ -486,6 +495,8 @@ public class Flat extends Basic {
 
 			@Override
 			public void render() {
+				if (!isRenderable()) return;
+
 				if (!hasTexture()) {
 					Rectangle.this.render();
 					return;
@@ -588,6 +599,8 @@ public class Flat extends Basic {
 
 			@Override
 			public void render() {
+				if (!isRenderable()) return;
+
 				if (!hasTexture() || (Theory.looseEquals(box().w(), width()) && Theory.looseEquals(box().h(), height()))) {
 					Rectangle.this.render();
 					return;
@@ -1549,6 +1562,8 @@ public class Flat extends Basic {
 
 			@Override
 			public void render() {
+				if (!isRenderable()) return;
+
 				Box
 						context = box().expand(-bleeding()),
 						raw = Box.fromCartesian(
@@ -1565,5 +1580,184 @@ public class Flat extends Basic {
 		}
 
 		// 'Text'
+	}
+
+	public class Model implements Renderable {
+		// Constructors
+
+		protected Model(@Nullable ItemStack itemStack, @Nullable BlockState blockState, @Nullable Quaternionfc modifier, boolean leftHanded) {
+			if (itemStack != null && blockState != null) {
+				Equator.LOGGER.error("Cannot render a flat model with both an item stack and a block state! Using nothing.");
+				this.itemStack = null;
+				this.blockState = null;
+			}
+			else {
+				this.itemStack = itemStack;
+				this.blockState = blockState;
+			}
+
+			this.modifier = modifier == null ? new Quaternionf() : modifier;
+			this.leftHanded = leftHanded;
+		}
+
+		public Model(@Nullable ItemStack itemStack, @Nullable Quaternionfc modifier, boolean leftHanded) {
+			this(itemStack, null, modifier, leftHanded);
+		}
+
+		public Model(@Nullable ItemStack itemStack, @Nullable Quaternionfc modifier) {
+			this(itemStack, modifier, false);
+		}
+
+		public Model(@Nullable BlockState blockState, @Nullable Quaternionfc modifier, boolean leftHanded) {
+			this(null, blockState, modifier, leftHanded);
+		}
+
+		public Model(@Nullable BlockState blockState, @Nullable Quaternionfc modifier) {
+			this(blockState, modifier, false);
+		}
+
+		// Fields
+
+		@Nullable
+		private final ItemStack itemStack;
+		@Nullable
+		private final BlockState blockState;
+		private final Quaternionfc modifier;
+		private final boolean leftHanded;
+
+		// Accessors
+
+		@Nullable
+		public ItemStack itemStack() {
+			return itemStack;
+		}
+
+		@Nullable
+		public BlockState blockState() {
+			return blockState;
+		}
+
+		public Quaternionfc modifier() {
+			return modifier;
+		}
+
+		public boolean leftHanded() {
+			return leftHanded;
+		}
+
+		// Mutators
+
+		public Model parent(UnaryOperator<Flat> flat) {
+			return flat.apply(Flat.this).new Model(itemStack(), blockState(), modifier(), leftHanded());
+		}
+
+		public Model model(@Nullable ItemStack itemStack) {
+			return new Model(itemStack, blockState(), modifier(), leftHanded());
+		}
+
+		public Model model(@Nullable BlockState blockState) {
+			return new Model(itemStack(), blockState, modifier(), leftHanded());
+		}
+
+		public Model modifier(Quaternionfc modifier) {
+			return new Model(itemStack(), blockState(), modifier, leftHanded());
+		}
+
+		public Model modifier(UnaryOperator<Quaternionf> modifier) {
+			return modifier(modifier.apply(new Quaternionf(modifier())));
+		}
+
+		public Model leftHanded(boolean leftHanded) {
+			return new Model(itemStack(), blockState(), modifier(), leftHanded);
+		}
+
+		public Model leftHand() {
+			return leftHanded(true);
+		}
+
+		public Model rightHand() {
+			return leftHanded(false);
+		}
+
+		// Properties
+
+		public boolean hasItemStack() {
+			return itemStack() != null;
+		}
+
+		public boolean hasBlockState() {
+			return blockState() != null;
+		}
+
+		public boolean hasModel() {
+			return hasItemStack() || hasBlockState();
+		}
+
+		// Interface Implementations
+
+		@Override
+		public boolean isRenderable() {
+			return Renderable.isLegal(box()) && hasModel();
+		}
+
+		@SuppressWarnings("deprecation")
+		private void prepareModel() {
+			MinecraftClient.getInstance().getTextureManager().getTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).setFilter(false, false);
+			RenderSystem.setShaderTexture(0, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+
+			RenderSystem.enableBlend();
+			RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
+			RenderSystem.setShaderColor(1, 1, 1, 1);
+		}
+
+		private void applyModelView(MatrixStack matrixStack) {
+			matrixStack.scale(1, -1, 1);
+			matrixStack.scale((float) box().w(), (float) box().h(), 1);
+			matrixStack.multiply(new Quaternionf(modifier()));
+
+			RenderSystem.applyModelViewMatrix();
+		}
+
+		@Override
+		public void render() {
+			if (!isRenderable()) return;
+
+			BakedModel bakedModel = null;
+			if (hasItemStack()) // Item: bake model
+				bakedModel = MinecraftClient.getInstance().getItemRenderer().getModel(itemStack(), null, null, 0);
+
+			prepareModel();
+
+			matrixStack().push();
+			matrixStack().translate(box().center().x(), box().center().y(), z);
+			applyModelView(matrixStack());
+			MatrixStack modelMatrixStack = new MatrixStack();
+
+			if (bakedModel == null) // Block: translate to center
+				modelMatrixStack.translate(-0.5, -0.5, -0.5);
+
+			VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+
+			if (bakedModel != null && !bakedModel.isSideLit()) // Item: disable lighting
+				DiffuseLighting.disableGuiDepthLighting();
+
+			if (bakedModel != null) // Item: render item model
+				MinecraftClient.getInstance().getItemRenderer().renderItem(itemStack(), ModelTransformationMode.GUI,
+						leftHanded(), modelMatrixStack, immediate, 0xF000F0, OverlayTexture.DEFAULT_UV, bakedModel);
+			else // Block: render block model
+				MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(blockState(), modelMatrixStack,
+						immediate, 0xF000F0, OverlayTexture.DEFAULT_UV);
+
+			immediate.draw();
+			RenderSystem.enableDepthTest();
+
+			if (bakedModel != null && !bakedModel.isSideLit()) // Item: re-enable lighting
+				DiffuseLighting.enableGuiDepthLighting();
+
+			matrixStack().pop();
+			RenderSystem.applyModelViewMatrix();
+		}
+
+		// 'Model'
 	}
 }
