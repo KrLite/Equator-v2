@@ -19,7 +19,6 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.krlite.equator.EquatorVisual"
     ]
   },
   "mixins": [
