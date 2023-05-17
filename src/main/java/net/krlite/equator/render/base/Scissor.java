@@ -57,21 +57,9 @@ public record Scissor(Box box) {
 		RenderSystem.disableScissor();
 	}
 
-	/**
-	 * Snips and renders the given renderable. Equivalent to:
-	 * <pre>
-	 *     snipOn();
-	 *     // Renders the renderable
-	 *     snipOff();
-	 * </pre>
-	 * @param renderable	The renderable to render. For example, a {@link BoxRenderer BoxRenderer}.
-	 * @param consumer		The consumer to render the renderable. For example, <code>(renderable) -> ((BoxRenderer)
-	 *                      renderable).render(...)</code>, which is a consumer that calls
-	 *                      {@link BoxRenderer#render(MatrixStack) BoxRenderer.render(MatrixStack)}.
-	 */
-	public void snipWith(Renderable renderable, Consumer<Renderable> consumer) {
+	public void snipWith(Renderable renderable) {
 		snipOn();
-		consumer.accept(renderable);
+		renderable.render();
 		snipOff();
 	}
 }
