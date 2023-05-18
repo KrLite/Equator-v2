@@ -5,7 +5,7 @@ import net.krlite.equator.base.Exceptions;
 public class ColorConvertor {
 	public static void checkArrayLength(String colorspaceName, double[] color, int expectedLength) {
 		if (color.length != expectedLength) {
-			throw Exceptions.Visual.colorArrayLength(colorspaceName, expectedLength, color.length, null);
+			throw new Exceptions.ColorArrayLengthException(colorspaceName, expectedLength, color.length);
 		}
 	}
 

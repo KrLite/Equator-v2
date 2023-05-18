@@ -1,5 +1,6 @@
 package net.krlite.equator.math.geometry.flat;
 
+import net.krlite.equator.base.Exceptions;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.render.frame.Convertible;
@@ -442,7 +443,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Mutates the top edge.
-	 * @param y	The y-coordinate of the top edge.
+	 * @param y	{@code y} of the top edge.
 	 * @return	A new box with the given top edge.
 	 */
 	public Box top(double y) {
@@ -451,7 +452,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Mutates the bottom edge.
-	 * @param y	The y-coordinate of the bottom edge.
+	 * @param y	{@code y} of the bottom edge.
 	 * @return	A new box with the given bottom edge.
 	 */
 	public Box bottom(double y) {
@@ -460,7 +461,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Mutates the left edge.
-	 * @param x	The x-coordinate of the left edge.
+	 * @param x	{@code x} of the left edge.
 	 * @return	A new box with the given left edge.
 	 */
 	public Box left(double x) {
@@ -469,7 +470,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Mutates the right edge.
-	 * @param x	The x-coordinate of the right edge.
+	 * @param x	{@code x} of the right edge.
 	 * @return	A new box with the given right edge.
 	 */
 	public Box right(double x) {
@@ -903,8 +904,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the top edge to the given y-coordinate without modifying the size.
-	 * @param y	The y-coordinate to which to align the top edge to.
-	 * @return	A new box whose top edge is aligned with the given y-coordinate.
+	 * @param y	{@code y} to which to align the top edge to.
+	 * @return	A new box whose top edge is aligned with the given {@code y}.
 	 */
 	public Box alignTop(double y) {
 		return alignTopLeft(Vector.fromCartesian(topLeft().x(), y));
@@ -912,8 +913,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the bottom edge to the given y-coordinate without modifying the size.
-	 * @param y	The y-coordinate to which to align the bottom edge to.
-	 * @return	A new box whose bottom edge is aligned with the given y-coordinate.
+	 * @param y	{@code y} to which to align the bottom edge to.
+	 * @return	A new box whose bottom edge is aligned with the given {@code y}.
 	 */
 	public Box alignBottom(double y) {
 		return alignBottomLeft(Vector.fromCartesian(bottomLeft().x(), y));
@@ -921,8 +922,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the left edge to the given x-coordinate without modifying the size.
-	 * @param x	The x-coordinate to which to align the left edge to.
-	 * @return	A new box whose left edge is aligned with the given x-coordinate.
+	 * @param x	{@code x} to which to align the left edge to.
+	 * @return	A new box whose left edge is aligned with the given {@code x}.
 	 */
 	public Box alignLeft(double x) {
 		return alignTopLeft(Vector.fromCartesian(x, topLeft().y()));
@@ -930,8 +931,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the right edge to the given x-coordinate without modifying the size.
-	 * @param x	The x-coordinate to which to align the right edge to.
-	 * @return	A new box whose right edge is aligned with the given x-coordinate.
+	 * @param x	{@code x} to which to align the right edge to.
+	 * @return	A new box whose right edge is aligned with the given {@code x}.
 	 */
 	public Box alignRight(double x) {
 		return alignTopRight(Vector.fromCartesian(x, topRight().y()));
@@ -1021,9 +1022,9 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 
 	/**
-	 * Rotates the box by the given amount of right angles (90 degrees).
+	 * Rotates the box by the given number of right angles (90 degrees).
 	 * @param rotationCount	The number of right angles by which to rotate the box.
-	 * @return	A new box rotated by the given amount of right angles.
+	 * @return	A new box rotated by the given number of right angles.
 	 */
 	public Box rotateByRightAngle(int rotationCount) {
 		if (rotationCount % 2 == 0) {
@@ -1123,7 +1124,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * {@code [(2, 2, 4, 4)}, the result is {@code [(-1, -1, 2, 2)}. That is, the box is scaled as how the given
 	 * box is scaled to the unit box, and moved so that the relative position of this box to the given box is preserved
 	 * between the scaled box and the unit box.
-	 * @param another	The box to normalize by.
+	 * @param another	The box to normal by.
 	 * @return	A new box normalized by the given box.
 	 */
 	public Box normalizeBy(Box another) {
@@ -1147,8 +1148,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * <h1>{@code a ∪ b}</h1>
-	 * Gets a box which is the union of this box and the given box. If the boxes do not intersect, the result is the
-	 * smallest box which contains both boxes.
+	 * Gets a box which is the minimum box which contains both this box and the given box.
 	 * @param another	The box to union with.
 	 * @return	A new box which is the union of this box and the given box.
 	 */
@@ -1156,26 +1156,10 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		return Box.fromVector(topLeft().min(another.topLeft()), bottomRight().max(another.bottomRight()));
 	}
 
-	/**
-	 * Interpolates between this box and the given vector by the given factor. That is, the corners is
-	 * interpolated towards the given vector by the given factor.
-	 * @param vector	The vector to interpolate towards.
-	 * @param factor	The factor to interpolate by.
-	 * @return	A new box interpolated towards the given vector by the given factor.
-	 * @see Vector#interpolate(Vector, double)
-	 */
 	public Box interpolate(Vector vector, double factor) {
 		return new Box(topLeft().interpolate(vector, factor), size().interpolate(vector, factor));
 	}
 
-	/**
-	 * Interpolates between this box and the given box by the given factor. That is, the corners is
-	 * interpolated towards the corresponding corners of the given box by the given factor.
-	 * @param another	The box to interpolate towards.
-	 * @param factor	The factor to interpolate by.
-	 * @return	A new box interpolated towards the given box by the given factor.
-	 * @see Vector#interpolate(Vector, double)
-	 */
 	public Box interpolate(Box another, double factor) {
 		return new Box(topLeft().interpolate(another.topLeft(), factor), size().interpolate(another.size(), factor));
 	}
@@ -1222,7 +1206,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 */
 	public Box[][] grid(int xStep, int yStep) {
 		if (xStep <= 0 || yStep <= 0) {
-			throw new IllegalArgumentException("Step must be positive");
+			throw new Exceptions.StepMustBePositiveException(xStep, yStep);
 		}
 
 		Box[][] grid = new Box[xStep][yStep];
@@ -1262,42 +1246,38 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @see #grid(int, int)
 	 */
 	public Box[][] grid(int step) {
+		if (step <= 0) {
+			throw new Exceptions.StepMustBePositiveException(step);
+		}
+
 		return grid(step, step);
 	}
 
 	// Interface Implementations
 
 	/**
-	 * Fits the box to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
-	 * @return	A new box fitted to the screen coordinate.
-	 * @see Convertible#fitToScreen()
+	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Box fitToScreen() {
 		return FrameInfo.Convertor.scaledToScreen(this);
 	}
 
 	/**
-	 * Fits the box to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
-	 * @return	A new box fitted to the OpenGL coordinate.
-	 * @see Convertible#fitToOpenGL()
+	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Box fitToOpenGL() {
 		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
 
 	/**
-	 * Fits the box to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
-	 * @return	A new box fitted to the screen coordinate.
-	 * @see Convertible#fitFromScreen()
+	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Box fitFromScreen() {
 		return FrameInfo.Convertor.screenToScaled(this);
 	}
 
 	/**
-	 * Fits the box to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
-	 * @return	A new box fitted to the OpenGL coordinate.
-	 * @see Convertible#fitFromOpenGL()
+	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Box fitFromOpenGL() {
 		return FrameInfo.Convertor.openGLToScaled(this);
@@ -1307,7 +1287,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Creates a {@link Scissor} from this {@link Box}.
-	 * @return	A {@link Scissor} with the same dimensions as this {@link Box}.
+	 * @return	A {@link Scissor} with the same dimension.
 	 * @see Scissor
 	 */
 	public Scissor scissor() {
@@ -1339,38 +1319,19 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	// Object Methods
 
-	/**
-	 * Gets the string representation as cartesian coordinates. For example, {@code [(0, 0), (1 , 1)]}.
-	 * @return	The string representation as cartesian coordinates.
-	 * @see #toStringAsCartesian(boolean)
-	 */
 	public String toStringAsCartesian() {
 		return toStringAsCartesian(false);
 	}
 
-	/**
-	 * Gets the string representation as cartesian coordinates. For example, {@code [(0, 0), (1 , 1)]}.
-	 * @param precisely	Whether to use precise formatting. That is, whether to not limit the decimal places to 5.
-	 * @return	The string representation as cartesian coordinates.
-	 */
 	public String toStringAsCartesian(boolean precisely) {
 		return String.format("[%s, %s]", topLeft().toStringAsCartesian(precisely), bottomRight().toStringAsCartesian(precisely));
 	}
 
-	/**
-	 * Gets the string representation as polar coordinates. For example, {@code [origin=(zero), size=(θ=45°, mag=1)]}.
-	 * @return	The string representation as polar coordinates.
-	 */
 	@Override
 	public String toString() {
 		return toString(false);
 	}
 
-	/**
-	 * Gets the string representation as polar coordinates. For example, {@code [origin=(zero), size=(θ=45°, mag=1)]}.
-	 * @param precisely	Whether to use precise formatting. That is, whether to not limit the decimal places to 5.
-	 * @return	The string representation as polar coordinates.
-	 */
 	public String toString(boolean precisely) {
 		return String.format("[origin=%s, size=%s]", origin().toString(precisely), size().toString(precisely));
 	}

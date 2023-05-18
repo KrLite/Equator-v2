@@ -21,7 +21,7 @@ public class RenderManager {
 	public static int[] getSize(Identifier identifier) {
 		Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
 		if (resource.isEmpty()) {
-			throw new RuntimeException(Exceptions.Render.identifierNotFound(identifier, null));
+			throw new RuntimeException(new Exceptions.IdentifierNotFoundException(identifier));
 		}
 
 		try {
@@ -29,7 +29,7 @@ public class RenderManager {
 			BufferedImage textureImage = ImageIO.read(stream);
 			return new int[] { textureImage.getWidth(), textureImage.getHeight() };
 		} catch (IOException ioException) {
-			throw new RuntimeException(Exceptions.Render.identifierFailedToLoad(identifier, ioException));
+			throw new RuntimeException(new Exceptions.IdentifierFailedToLoadException(identifier, ioException));
 		}
 	}
 
@@ -44,7 +44,7 @@ public class RenderManager {
 	public static ByteBuffer getByteBuffer(Identifier identifier) {
 		Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
 		if (resource.isEmpty()) {
-			throw new RuntimeException(Exceptions.Render.identifierNotFound(identifier, null));
+			throw new RuntimeException(new Exceptions.IdentifierNotFoundException(identifier));
 		}
 
 		try {
@@ -69,7 +69,7 @@ public class RenderManager {
 			buffer.flip();
 			return buffer;
 		} catch (IOException ioException) {
-			throw new RuntimeException(Exceptions.Render.identifierFailedToLoad(identifier, ioException));
+			throw new RuntimeException(new Exceptions.IdentifierFailedToLoadException(identifier, ioException));
 		}
 	}
 

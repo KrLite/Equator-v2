@@ -301,7 +301,7 @@ public class Flat extends Basic {
 		private AccurateColor assertColor(int index) {
 			AccurateColor[] colors = colors();
 			if (index < 0 || index >= colors.length /* normally it would be 4 */ ) {
-				throw new RuntimeException(Exceptions.Visual.colorIndexOutOfBounds(index, colors.length));
+				throw new Exceptions.ColorIndexOutOfBoundsException(index, colors.length);
 			}
 
 			AccurateColor color = colors[index];
