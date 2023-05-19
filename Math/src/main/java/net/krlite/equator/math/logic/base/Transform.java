@@ -1,7 +1,7 @@
 package net.krlite.equator.math.logic.base;
 
-@net.krlite.equator.base.Math("2.3.0")
 @FunctionalInterface
+@net.krlite.equator.base.Math("2.4.0")
 public interface Transform extends Transformative<Transform> {
 	Transform NONE = origin -> origin, NEGATE = origin -> -origin;
 

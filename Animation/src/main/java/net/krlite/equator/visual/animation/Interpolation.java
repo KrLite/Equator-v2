@@ -3,7 +3,7 @@ package net.krlite.equator.visual.animation;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.krlite.equator.base.Animation;
+import net.krlite.equator.base.SelfMutable;
 import net.krlite.equator.math.algebra.Theory;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +15,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * <h1>Interpolation</h1>
  * Handles the interpolation between two values.
  */
-@Animation("2.3.0")
+@SelfMutable
+@net.krlite.equator.base.Animation("2.4.0")
 public class Interpolation implements Runnable {
 	public interface Callbacks {
 		interface Start {

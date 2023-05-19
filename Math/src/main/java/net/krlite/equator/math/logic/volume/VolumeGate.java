@@ -3,7 +3,7 @@ package net.krlite.equator.math.logic.volume;
 import net.krlite.equator.math.logic.base.Gate;
 import net.krlite.equator.math.logic.base.Gated;
 
-@net.krlite.equator.base.Math("2.3.0")
+@net.krlite.equator.base.Math("2.4.0")
 public record VolumeGate(Gate x, Gate y, Gate z) implements Gated<VolumeGate> {
 	// Constants
 

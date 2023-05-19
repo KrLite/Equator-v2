@@ -4,7 +4,7 @@ package net.krlite.equator.math.algebra;
  * <h1>Theory</h1>
  * A collection of mathematical functions that are used in the library.
  */
-@net.krlite.equator.base.Math("2.3.0")
+@net.krlite.equator.base.Math("2.4.0")
 public class Theory {
 	/**
 	 * A small margin of error for comparing doubles. The value is {@code 1e-6}, which equals to {@code 0.000001}.

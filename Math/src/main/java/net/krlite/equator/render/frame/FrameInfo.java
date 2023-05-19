@@ -9,7 +9,7 @@ import org.lwjgl.glfw.GLFW;
  * <h1>FrameInfo</h1>
  * Provides access to the screen and window properties.
  */
-@net.krlite.equator.base.Math("2.3.0")
+@net.krlite.equator.base.Math("2.4.0")
 public class FrameInfo {
 	public static float tickDelta() {
 		return MinecraftClient.getInstance().getTickDelta();

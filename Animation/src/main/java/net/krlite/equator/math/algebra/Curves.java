@@ -1,6 +1,5 @@
 package net.krlite.equator.math.algebra;
 
-import net.krlite.equator.base.Animation;
 import net.krlite.equator.visual.animation.Slice;
 
 /**
@@ -8,7 +7,7 @@ import net.krlite.equator.visual.animation.Slice;
  * Contains <b>curves</b> that can be used to <b>animate</b> values.
  * @see Slice
  */
-@Animation("2.3.0")
+@net.krlite.equator.base.Animation("2.4.0")
 public class Curves {
 	/**
 	 * <b>Zero</b>

@@ -1,6 +1,5 @@
 package net.krlite.equator.visual.color.base;
 
-import net.krlite.equator.base.Visual;
 import net.krlite.equator.visual.color.Colorspace;
 
 import java.awt.*;
@@ -8,7 +7,7 @@ import java.awt.*;
 /**
  * Standard color conversion methods, without opacity.
  */
-@Visual("2.3.0")
+@net.krlite.equator.base.Visual("2.4.0")
 public interface ColorStandard {
 	double[] from(double[] color, Colorspace colorspace);
 
@@ -35,6 +34,17 @@ public interface ColorStandard {
 	double[] darken(double[] color, double ratio);
 
 	enum MixMode {
-		BLEND, PIGMENT, OPACITY_ONLY
+		/**
+		 * Value channels blending.
+		 */
+		BLEND,
+		/**
+		 * Real-world pigment mixing.
+		 */
+		PIGMENT,
+		/**
+		 * Opacity channel blending.
+		 */
+		OPACITY_ONLY
 	}
 }

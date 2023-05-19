@@ -33,6 +33,17 @@ public interface ColorStandard {
 	double[] darken(double[] color, double ratio);
 
 	enum MixMode {
-		BLEND, PIGMENT, OPACITY_ONLY
+		/**
+		 * Value channels blending.
+		 */
+		BLEND,
+		/**
+		 * Real-world pigment mixing.
+		 */
+		PIGMENT,
+		/**
+		 * Opacity channel blending.
+		 */
+		OPACITY_ONLY
 	}
 }

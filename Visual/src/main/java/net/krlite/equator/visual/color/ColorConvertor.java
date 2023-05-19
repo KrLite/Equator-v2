@@ -1,13 +1,12 @@
 package net.krlite.equator.visual.color;
 
 import net.krlite.equator.base.Exceptions;
-import net.krlite.equator.base.Visual;
 
-@Visual("2.3.0")
+@net.krlite.equator.base.Visual("2.4.0")
 public class ColorConvertor {
 	public static void checkArrayLength(String colorspaceName, double[] color, int expectedLength) {
 		if (color.length != expectedLength) {
-			throw Exceptions.Visual.colorArrayLength(colorspaceName, expectedLength, color.length, null);
+			throw new Exceptions.ColorArrayLengthException(colorspaceName, expectedLength, color.length);
 		}
 	}
 
@@ -45,7 +44,7 @@ public class ColorConvertor {
 
 	public static class FromRGB {
 		public static int toInt(double[] rgb) {
-			checkArrayLength("RGB", rgb, 3);
+			checkArrayLength(Colorspace.RGB.getName(), rgb, 3);
 
 			int red = (int) (rgb[0] * 255);
 			int green = (int) (rgb[1] * 255);
@@ -54,7 +53,7 @@ public class ColorConvertor {
 		}
 
 		public static double[] toHSV(double[] rgb) {
-			checkArrayLength("RGB", rgb, 3);
+			checkArrayLength(Colorspace.RGB.getName(), rgb, 3);
 
 			double red = rgb[0];
 			double green = rgb[1];
@@ -85,7 +84,7 @@ public class ColorConvertor {
 		}
 
 		public static double[] toHSL(double[] rgb) {
-			checkArrayLength("RGB", rgb, 3);
+			checkArrayLength(Colorspace.RGB.getName(), rgb, 3);
 
 			double red = rgb[0];
 			double green = rgb[1];
@@ -121,7 +120,7 @@ public class ColorConvertor {
 		}
 
 		public static double[] toCMYK(double[] rgb) {
-			checkArrayLength("RGB", rgb, 3);
+			checkArrayLength(Colorspace.RGB.getName(), rgb, 3);
 
 			double red = rgb[0];
 			double green = rgb[1];
@@ -147,7 +146,7 @@ public class ColorConvertor {
 		}
 
 		public static double[] toXYZ(double[] rgb) {
-			checkArrayLength("RGB", rgb, 3);
+			checkArrayLength(Colorspace.RGB.getName(), rgb, 3);
 
 			double red = rgb[0];
 			double green = rgb[1];
@@ -161,7 +160,7 @@ public class ColorConvertor {
 		}
 
 		public static double[] toLAB(double[] rgb) {
-			checkArrayLength("RGB", rgb, 3);
+			checkArrayLength(Colorspace.RGB.getName(), rgb, 3);
 
 			// Convert to XYZ
 			double[] xyz = toXYZ(rgb);
@@ -193,7 +192,7 @@ public class ColorConvertor {
 		}
 
 		public static double[] toLCH(double[] rgb) {
-			checkArrayLength("RGB", rgb, 3);
+			checkArrayLength(Colorspace.RGB.getName(), rgb, 3);
 
 			// Convert to LAB
 			double[] Lab = toLAB(rgb);
@@ -220,7 +219,7 @@ public class ColorConvertor {
 		}
 
 		public static double[] fromHSV(double[] hsv) {
-			checkArrayLength("HSV", hsv, 3);
+			checkArrayLength(Colorspace.HSV.getName(), hsv, 3);
 
 			double hue = hsv[0];
 			double saturation = hsv[1];
@@ -260,7 +259,7 @@ public class ColorConvertor {
 		}
 
 		public static double[] fromHSL(double[] hsl) {
-			checkArrayLength("HSL", hsl, 3);
+			checkArrayLength(Colorspace.HSL.getName(), hsl, 3);
 
 			double hue = hsl[0];
 			double saturation = hsl[1];
@@ -300,7 +299,7 @@ public class ColorConvertor {
 		}
 
 		public static double[] fromCMYK(double[] cmyk) {
-			checkArrayLength("CMYK", cmyk, 4);
+			checkArrayLength(Colorspace.CMYK.getName(), cmyk, 4);
 
 			double cyan = cmyk[0];
 			double magenta = cmyk[1];
@@ -315,7 +314,7 @@ public class ColorConvertor {
 		}
 
 		public static double[] fromXYZ(double[] xyz) {
-			checkArrayLength("XYZ", xyz, 3);
+			checkArrayLength(Colorspace.XYZ.getName(), xyz, 3);
 
 			double x = xyz[0];
 			double y = xyz[1];
@@ -334,7 +333,7 @@ public class ColorConvertor {
 		}
 
 		public static double[] fromLAB(double[] Lab) {
-			checkArrayLength("Lab", Lab, 3);
+			checkArrayLength(Colorspace.LAB.getName(), Lab, 3);
 
 			// Convert to XYZ
 			double l = Lab[0];
@@ -358,15 +357,15 @@ public class ColorConvertor {
 		}
 
 		public static double[] fromLCH(double[] LCh) {
-			checkArrayLength("LCh", LCh, 3);
+			checkArrayLength(Colorspace.LCH.getName(), LCh, 3);
 
 			double L = LCh[0];
 			double C = LCh[1];
-			double H = LCh[2];
+			double h = LCh[2];
 
 			// Convert to LAB
-			double a = C * Math.cos(H * Math.PI / 180);
-			double b = C * Math.sin(H * Math.PI / 180);
+			double a = C * Math.cos(h * Math.PI / 180);
+			double b = C * Math.sin(h * Math.PI / 180);
 			double[] Lab = new double[] { L, a, b };
 
 			// Convert to RGB

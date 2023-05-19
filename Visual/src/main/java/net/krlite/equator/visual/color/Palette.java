@@ -1,13 +1,11 @@
 package net.krlite.equator.visual.color;
 
-import net.krlite.equator.base.Visual;
-
 /**
  * <h1>Palette</h1>
  * Contains <b>coloring utilities</b> along with <b>sets of colors</b> that can be used in a variety of contexts.
  * @see AccurateColor
  */
-@Visual("2.3.0")
+@net.krlite.equator.base.Visual("2.4.0")
 public class Palette {
 	public static AccurateColor rainbow(double radians) {
 		return new AccurateColor(Colorspace.HSV, new double[] { Math.toDegrees(radians), 1, 0.72 }, 1);

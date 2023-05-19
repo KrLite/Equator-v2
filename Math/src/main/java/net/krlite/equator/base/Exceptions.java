@@ -4,6 +4,7 @@ import net.minecraft.util.Identifier;
 
 import java.io.IOException;
 
+@net.krlite.equator.base.Math("2.4.0")
 public class Exceptions {
 	public static class ColorArrayLengthException extends IllegalArgumentException {
 		public ColorArrayLengthException(String colorspaceName, int expectedLength, int length, Throwable cause) {

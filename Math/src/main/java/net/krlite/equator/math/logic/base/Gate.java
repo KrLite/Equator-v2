@@ -1,7 +1,7 @@
 package net.krlite.equator.math.logic.base;
 
-@net.krlite.equator.base.Math("2.3.0")
 @FunctionalInterface
+@net.krlite.equator.base.Math("2.4.0")
 public interface Gate extends Gated<Gate> {
 	Gate TRUE = value -> true, FALSE = value -> false,
 			ZERO = value -> value == 0, POSITIVE = value -> value > 0, NEGATIVE = value -> value < 0,

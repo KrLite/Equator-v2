@@ -1,7 +1,5 @@
 package net.krlite.equator.visual.animation;
 
-import net.krlite.equator.base.Animation;
-
 import java.util.function.UnaryOperator;
 
 /**
@@ -23,8 +21,8 @@ import java.util.function.UnaryOperator;
  * value of the progress mapped by the slice. Basically, different slices map the progress to different
  * values, thus changing the formula behaviour.
  */
-@Animation("2.3.0")
 @FunctionalInterface
+@net.krlite.equator.base.Animation("2.4.0")
 public interface Slice {
 	/**
 	 * Accepts the start and end values and the progress of the animation and returns the current value.

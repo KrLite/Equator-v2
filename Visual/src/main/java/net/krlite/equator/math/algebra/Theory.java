@@ -1,12 +1,10 @@
 package net.krlite.equator.math.algebra;
 
-import net.krlite.equator.base.Visual;
-
 /**
  * <h1>Theory</h1>
  * A collection of mathematical functions that are used in the library.
  */
-@Visual("2.3.0")
+@net.krlite.equator.base.Visual("2.3.0")
 public class Theory {
 	/**
 	 * A small margin of error for comparing doubles. The value is {@code 1e-6}, which equals to {@code 0.000001}.

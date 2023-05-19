@@ -4,33 +4,51 @@ import net.minecraft.util.Identifier;
 
 import java.io.IOException;
 
-@Visual("2.3.0")
+@Visual("2.4.0")
 public class Exceptions {
-	public static class Visual {
-		public static IllegalArgumentException colorArrayLength(String colorspaceName, int expectedLength, int length, Throwable cause) {
-			return new IllegalArgumentException("Color array in colorspace " + colorspaceName + " must be of length " + expectedLength + ", but was" + length, cause);
+	public static class ColorArrayLengthException extends IllegalArgumentException {
+		public ColorArrayLengthException(String colorspaceName, int expectedLength, int length, Throwable cause) {
+			super("Color array in colorspace " + colorspaceName + " must be of length " + expectedLength + ", but was" + length, cause);
 		}
 
-		public static IllegalArgumentException colorspaceNotSame(Throwable cause) {
-			return new IllegalArgumentException("Colorspaces must be the same", cause);
-		}
-
-		public static IllegalStateException modeUnexpected(String mode, Throwable cause) {
-			return new IllegalStateException("Unexpected mode '" + mode + "'", cause);
-		}
-
-		public static IndexOutOfBoundsException colorIndexOutOfBounds(int index, int length) {
-			return new IndexOutOfBoundsException("Color index " + index + " out of bounds " + length);
+		public ColorArrayLengthException(String colorspaceName, int expectedLength, int length) {
+			this(colorspaceName, expectedLength, length, null);
 		}
 	}
 
-	public static class Render {
-		public static IOException identifierNotFound(Identifier identifier, Throwable cause) {
-			return new IOException("Resource %s not found" + identifier.toString(), cause);
+	public static class ColorIndexOutOfBoundsException extends IndexOutOfBoundsException {
+		public ColorIndexOutOfBoundsException(int index, int length) {
+			super("Color index " + index + " out of bounds " + length);
+		}
+	}
+
+	public static class IdentifierNotFoundException extends IOException {
+		public IdentifierNotFoundException(Identifier identifier, Throwable cause) {
+			super("Resource " + identifier.toString() + " not found", cause);
 		}
 
-		public static IOException identifierFailedToLoad(Identifier identifier, Throwable cause) {
-			return new IOException("Resource %s failed to load" + identifier.toString(), cause);
+		public IdentifierNotFoundException(Identifier identifier) {
+			this(identifier, null);
+		}
+	}
+
+	public static class IdentifierFailedToLoadException extends IOException {
+		public IdentifierFailedToLoadException(Identifier identifier, Throwable cause) {
+			super("Resource " + identifier.toString() + " failed to load", cause);
+		}
+
+		public IdentifierFailedToLoadException(Identifier identifier) {
+			this(identifier, null);
+		}
+	}
+
+	public static class StepMustBePositiveException extends IllegalArgumentException {
+		public StepMustBePositiveException(long xStep, long yStep) {
+			super("Step must be positive, but was: xStep=" + xStep + ", yStep=" + yStep);
+		}
+
+		public StepMustBePositiveException(long step) {
+			super("Step must be positive, but was " + step);
 		}
 	}
 }

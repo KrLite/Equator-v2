@@ -3,7 +3,7 @@ package net.krlite.equator.math.logic.flat;
 import net.krlite.equator.math.logic.base.Gate;
 import net.krlite.equator.math.logic.base.Gated;
 
-@net.krlite.equator.base.Math("2.3.0")
+@net.krlite.equator.base.Math("2.4.0")
 public record FlatGate(Gate x, Gate y) implements Gated<FlatGate> {
 	// Constants
 

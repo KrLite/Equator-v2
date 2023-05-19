@@ -8,10 +8,10 @@ import net.krlite.equator.render.frame.FrameInfo;
  * <h1>Vector</h1>
  * Represents a vector in the {@link FrameInfo.Convertor Scaled Coordinate} and is
  * stored in polar form.
- * @param theta		The angle of the vector <b>in radians.</b>
- * @param magnitude	The magnitude of the vector, always positive.
+ * @param theta		The angle <b>in radians.</b>
+ * @param magnitude	The magnitude, which is always positive.
  */
-@net.krlite.equator.base.Math("2.3.0")
+@net.krlite.equator.base.Math("2.4.0")
 public record Vector(double theta, double magnitude) implements Convertible.Scaled<Vector> {
 	// Constants
 
@@ -47,10 +47,10 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	// Static Constructors
 
 	/**
-	 * Creates a vector from the given cartesian coordinate in the
-	 * {@link FrameInfo.Convertor Scaled Coordinate}.
-	 * @param x	The x-coordinate of the vector.
-	 * @param y	The y-coordinate of the vector.
+	 * Creates a vector in the {@link FrameInfo.Convertor Scaled Coordinate} from the
+	 * given cartesian coordinate.
+	 * @param x	{@code x} component.
+	 * @param y	{@code y} component.
 	 */
 	public static Vector fromCartesian(double x, double y) {
 		return new Vector(Math.atan2(y, x), Math.sqrt(x * x + y * y));
@@ -58,8 +58,8 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 
 	/**
 	 * Creates a vector from the given polar coordinate <b>in degrees.</b>
-	 * @param thetaDegrees	The angle of the vector <b>in degrees,</b> and is normalized to the range {@code [0, 360)}.
-	 * @param magnitude		The magnitude of the vector.
+	 * @param thetaDegrees	The angle <b>in degrees,</b> and is normalized to the range {@code [0, 360)}.
+	 * @param magnitude		The magnitude.
 	 * @return	A new vector with the given polar coordinate.
 	 */
 	public static Vector fromDegrees(double thetaDegrees, double magnitude) {
@@ -70,8 +70,8 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 
 	/**
 	 * Creates a vector from the given polar coordinate <b>in radians.</b>
-	 * @param theta		The angle of the vector <b>in radians,</b> and is normalized to the range {@code [0, 2π)}.
-	 * @param magnitude	The magnitude of the vector.
+	 * @param theta		The angle <b>in radians,</b> and is normalized to the range {@code [0, 2π)}.
+	 * @param magnitude	The magnitude.
 	 */
 	public Vector(double theta, double magnitude) {
 		this.theta = theta % (Math.PI * 2) + (magnitude < 0 ? Math.PI : 0);
@@ -81,8 +81,7 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	// Accessors
 
 	/**
-	 * Gets the angle of the vector <b>in radians.</b>
-	 * @return	The angle of the vector <b>in radians,</b> and is normalized to the range {@code [0, 2π)}.
+	 * @return	The angle <b>in radians,</b> and is normalized to the range {@code [0, 2π)}.
 	 */
 	@Override
 	public double theta() {
@@ -90,16 +89,14 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	}
 
 	/**
-	 * Gets the angle of the vector <b>in degrees.</b>
-	 * @return	The angle of the vector <b>in degrees,</b> and is normalized to the range {@code [0, 360)}.
+	 * @return	The angle <b>in degrees,</b> and is normalized to the range {@code [0, 360)}.
 	 */
 	public double thetaDegrees() {
 		return Math.toDegrees(theta());
 	}
 
 	/**
-	 * Gets the magnitude of the vector.
-	 * @return	The magnitude of the vector, always positive.
+	 * @return	The magnitude, which is always positive.
 	 */
 	@Override
 	public double magnitude() {
@@ -107,16 +104,14 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	}
 
 	/**
-	 * Gets the x-coordinate of the vector in the {@link FrameInfo.Convertor Scaled Coordinate}.
-	 * @return	The x-coordinate of the vector.
+	 * @return	{@code x} component.
 	 */
 	public double x() {
 		return Math.cos(theta()) * magnitude();
 	}
 
 	/**
-	 * Gets the y-coordinate of the vector in the {@link FrameInfo.Convertor Scaled Coordinate}.
-	 * @return	The y-coordinate of the vector.
+	 * @return	{@code y} component.
 	 */
 	public double y() {
 		return Math.sin(theta()) * magnitude();
@@ -125,8 +120,8 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	// Mutators
 
 	/**
-	 * Mutates the angle of the vector.
-	 * @param theta	The angle of the vector <b>in radians,</b> and is normalized to the range {@code [0, 2π)}.
+	 * Mutates the angle.
+	 * @param theta	The angle <b>in radians,</b> and is normalized to the range {@code [0, 2π)}.
 	 * @return	A new vector with the given angle.
 	 */
 	public Vector theta(double theta) {
@@ -134,8 +129,8 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	}
 
 	/**
-	 * Mutates the angle of the vector.
-	 * @param thetaDegrees	The angle of the vector <b>in degrees,</b> and is normalized to the range {@code [0, 360)}.
+	 * Mutates the angle.
+	 * @param thetaDegrees	The angle <b>in degrees,</b> and is normalized to the range {@code [0, 360)}.
 	 * @return	A new vector with the given angle.
 	 */
 	public Vector thetaDegrees(double thetaDegrees) {
@@ -143,8 +138,8 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	}
 
 	/**
-	 * Mutates the magnitude of the vector.
-	 * @param magnitude	The magnitude of the vector.
+	 * Mutates the magnitude.
+	 * @param magnitude	The magnitude.
 	 * @return	A new vector with the given magnitude.
 	 */
 	public Vector magnitude(double magnitude) {
@@ -152,18 +147,18 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	}
 
 	/**
-	 * Mutates the x-coordinate of the vector.
-	 * @param x	The x-coordinate of the vector in the {@link FrameInfo.Convertor Scaled Coordinate}.
-	 * @return	A new vector with the given x-coordinate.
+	 * Mutates the {@code x} component.
+	 * @param x	{@code x} component.
+	 * @return	A new vector with the given {@code x} component.
 	 */
 	public Vector x(double x) {
 		return fromCartesian(x, y());
 	}
 
 	/**
-	 * Mutates the y-coordinate of the vector.
-	 * @param y	The y-coordinate of the vector in the {@link FrameInfo.Convertor Scaled Coordinate}.
-	 * @return	A new vector with the given y-coordinate.
+	 * Mutates the {@code y} component.
+	 * @param y	{@code y} component.
+	 * @return	A new vector with the given {@code y} component.
 	 */
 	public Vector y(double y) {
 		return fromCartesian(x(), y);
@@ -171,34 +166,73 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 
 	// Properties
 
+	/**
+	 * @return	{@code true -} if the vector is normalized.
+	 * That is, its magnitude is {@code 1}.
+	 * <br />	{@code false -} otherwise.
+	 */
 	public boolean isNormalized() {
 		return Theory.looseEquals(magnitude(), 1);
 	}
 
+	/**
+	 * @return	{@code true -} if the vector is a zero vector.
+	 * That is, its magnitude is {@code 0}.
+	 * <br />	{@code false -} otherwise.
+	 */
 	public boolean isZero() {
 		return Theory.isZero(magnitude());
 	}
 
+	/**
+	 * @param another	The other vector.
+	 * @return	{@code true -} if the two vectors are parallel.
+	 * <br />	{@code false -} otherwise.
+	 */
 	public boolean isParallelTo(Vector another) {
 		return isZero() || another.isZero() || Theory.looseEquals(theta(), another.theta());
 	}
 
+	/**
+	 * @param another	The other vector.
+	 * @return	{@code true -} if the two vectors are perpendicular.
+	 * <br />	{@code false -} otherwise.
+	 */
 	public boolean isPerpendicularTo(Vector another) {
 		return isZero() || another.isZero() || Theory.looseEquals(theta(), another.theta() + Math.PI / 2);
 	}
 
+	/**
+	 * @param another	The other vector.
+	 * @return	The angle between the two vectors <b>in radians.</b>
+	 */
 	public double between(Vector another) {
 		return Math.acos(normalize().dot(another.normalize()));
 	}
 
+	/**
+	 * @param another	The other vector.
+	 * @return	The angle between the two vectors <b>in degrees.</b>
+	 * @see #between(Vector)
+	 */
 	public double betweenDegrees(Vector another) {
 		return Math.toDegrees(between(another));
 	}
 
+	/**
+	 * <h1>{@code a · b}</h1>
+	 * @param another	The other vector.
+	 * @return	The dot-product of the two vectors.
+	 */
 	public double dot(Vector another) {
 		return x() * another.x() + y() * another.y();
 	}
 
+	/**
+	 * <h1>{@code a × b}</h1>
+	 * @param another	The other vector.
+	 * @return	The cross-product of the two vectors.
+	 */
 	public double cross(Vector another) {
 		return x() * another.y() - y() * another.x();
 	}
@@ -207,24 +241,49 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 		return subtract(another).magnitude();
 	}
 
+	/**
+	 * @param another	The other vector.
+	 * @return	The Manhattan distance between the two vectors. That is, the sum of the absolute differences of their
+	 * 			{@code x} and {@code y} components.
+	 */
 	public double manhattanDistanceTo(Vector another) {
 		return Math.abs(x() - another.x()) + Math.abs(y() - another.y());
 	}
 
+	/**
+	 * @param another	The other vector.
+	 * @return	The minimum of the two vectors' magnitudes.
+	 */
 	public double magnitudeMin(Vector another) {
 		return Math.min(magnitude(), another.magnitude());
 	}
 
+	/**
+	 * @param another	The other vector.
+	 * @return	The maximum of the two vectors' magnitudes.
+	 */
 	public double magnitudeMax(Vector another) {
 		return Math.max(magnitude(), another.magnitude());
 	}
 
 	// Operations
 
+	/**
+	 * Scales the vector by the given scalars.
+	 * @param xScalar	The scalar by which to scale the {@code x} component.
+	 * @param yScalar	The scalar by which to scale the {@code y} component.
+	 * @return	A new vector scaled by the given scalars.
+	 */
 	public Vector scale(double xScalar, double yScalar) {
 		return x(x() * xScalar).y(y() * yScalar);
 	}
 
+	/**
+	 * Scales the vector by the given scalar.
+	 * @param scalar	The scalar by which to scale the {@code x} and {@code y} components.
+	 * @return	A new vector scaled by the given scalar.
+	 * @see #scale(double, double)
+	 */
 	public Vector scale(double scalar) {
 		return scale(scalar, scalar);
 	}
@@ -346,36 +405,28 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	// Interface Implementations
 
 	/**
-	 * Fits the vector to the {@link FrameInfo.Convertor Screen Coordinate}.
-	 * @return	A new vector fitted to the screen coordinate.
-	 * @see Convertible#fitToScreen()
+	 * @return	A new vector fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Vector fitToScreen() {
 		return FrameInfo.Convertor.scaledToScreen(this);
 	}
 
 	/**
-	 * Fits the vector to the {@link FrameInfo.Convertor OpenGL Coordinate}.
-	 * @return	A new vector fitted to the OpenGL coordinate.
-	 * @see Convertible#fitToOpenGL()
+	 * @return	A new vector fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Vector fitToOpenGL() {
 		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
 
 	/**
-	 * Fits the vector from the {@link FrameInfo.Convertor Screen Coordinate}.
-	 * @return	A new vector fitted from the screen coordinate.
-	 * @see Convertible#fitFromScreen()
+	 * @return	A new vector fitted from the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Vector fitFromScreen() {
 		return FrameInfo.Convertor.screenToScaled(this);
 	}
 
 	/**
-	 * Fits the vector from the {@link FrameInfo.Convertor OpenGL Coordinate}.
-	 * @return	A new vector fitted from the OpenGL coordinate.
-	 * @see Convertible#fitFromOpenGL()
+	 * @return	A new vector fitted from the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Vector fitFromOpenGL() {
 		return FrameInfo.Convertor.openGLToScaled(this);
