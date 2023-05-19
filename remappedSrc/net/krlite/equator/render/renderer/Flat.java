@@ -27,7 +27,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -387,7 +387,7 @@ public class Flat extends Basic {
 			renderVertex(builder, matrix, box().bottomRight(), hasTexture() ? Objects.requireNonNull(texture()).uvBottomRight() : Vector.UNIT_SQUARE, colorAtCenter(), z());
 			renderVertex(builder, matrix, box().topRight(), hasTexture() ? Objects.requireNonNull(texture()).uvTopRight() : Vector.UNIT_X, colorAtCenter(), z());
 
-			BufferRenderer.drawWithGlobalProgram(builder.end());
+			BufferRenderer.drawWithShader(builder.end());
 
 			if (hasColor() && !blend) {
 				RenderSystem.disableBlend();
@@ -821,7 +821,7 @@ public class Flat extends Basic {
 					}
 				}
 
-				BufferRenderer.drawWithGlobalProgram(builder.end());
+				BufferRenderer.drawWithShader(builder.end());
 
 				if (hasColor() && !blend) {
 					RenderSystem.disableBlend();
@@ -1308,7 +1308,7 @@ public class Flat extends Basic {
 						ovalMode().getColor(this, clampedOffset - offset(), 1), z());
 			}
 
-			BufferRenderer.drawWithGlobalProgram(builder.end());
+			BufferRenderer.drawWithShader(builder.end());
 
 			RenderSystem.disableBlend();
 			RenderSystem.enableCull();
@@ -1742,7 +1742,7 @@ public class Flat extends Basic {
 				DiffuseLighting.disableGuiDepthLighting();
 
 			if (bakedModel != null) // Item: render item model
-				MinecraftClient.getInstance().getItemRenderer().renderItem(itemStack(), ModelTransformationMode.GUI,
+				MinecraftClient.getInstance().getItemRenderer().renderItem(itemStack(), ModelTransformation.Mode.GUI,
 						leftHanded(), modelMatrixStack, immediate, 0xF000F0, OverlayTexture.DEFAULT_UV, bakedModel);
 			else // Block: render block model
 				MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(blockState(), modelMatrixStack,

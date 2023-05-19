@@ -2,11 +2,11 @@ package net.krlite.equator.math.geometry.volume;
 
 import net.krlite.equator.math.algebra.Theory;
 import net.minecraft.entity.Entity;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaterniondc;
 
 public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, double z) {
 	// Constants
@@ -237,8 +237,8 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return negateByXZ().negateByYZ();
 	}
 
-	public Pos rotate(Quaterniondc quaternion) {
-		double x = x(), y = y(), z = z(), w = quaternion.w(), i = quaternion.x(), j = quaternion.y(), k = quaternion.z(),
+	public Pos rotate(Quaternion quaternion) {
+		double x = x(), y = y(), z = z(), w = quaternion.getW(), i = quaternion.getX(), j = quaternion.getY(), k = quaternion.getZ(),
 				w2 = w * w, i2 = i * i, j2 = j * j, k2 = k * k;
 
 		double xRotated = x * (w2 + i2 - j2 - k2) + y * 2 * (i * j - w * k) + z * 2 * (i * k + w * j);
@@ -248,7 +248,7 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return new Pos(dimension(), xRotated, yRotated, zRotated);
 	}
 
-	public Pos rotateAround(Pos pivot, Quaterniondc quaternion) {
+	public Pos rotateAround(Pos pivot, Quaternion quaternion) {
 		return subtract(pivot).rotate(quaternion).add(pivot);
 	}
 

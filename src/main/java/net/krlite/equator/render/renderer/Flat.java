@@ -24,17 +24,15 @@ import net.krlite.equator.visual.texture.Texture;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Quaternion;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Quaternionfc;
 import org.lwjgl.opengl.GL11;
 
 import java.util.AbstractMap;
@@ -243,19 +241,19 @@ public class Flat extends Basic {
 
 		private enum State {
 			UNABLE(null, null),
-			COLOR(VertexFormats.POSITION_COLOR, GameRenderer::getPositionColorProgram),
-			TEXTURE(VertexFormats.POSITION_TEXTURE, GameRenderer::getPositionTexProgram),
-			COLOR_TEXTURE(VertexFormats.POSITION_COLOR_TEXTURE, GameRenderer::getPositionColorTexProgram);
+			COLOR(VertexFormats.POSITION_COLOR, GameRenderer::getPositionColorShader),
+			TEXTURE(VertexFormats.POSITION_TEXTURE, GameRenderer::getPositionTexShader),
+			COLOR_TEXTURE(VertexFormats.POSITION_COLOR_TEXTURE, GameRenderer::getPositionColorTexShader);
 
 			@Nullable
 			private final VertexFormat vertexFormat;
 
 			@Nullable
-			private final Supplier<ShaderProgram> shaderProgram;
+			private final Supplier<Shader> shader;
 
-			State(@Nullable VertexFormat vertexFormat, @Nullable Supplier<ShaderProgram> shaderProgram) {
+			State(@Nullable VertexFormat vertexFormat, @Nullable Supplier<Shader> shader) {
 				this.vertexFormat = vertexFormat;
-				this.shaderProgram = shaderProgram;
+				this.shader = shader;
 			}
 
 			@Nullable
@@ -264,8 +262,8 @@ public class Flat extends Basic {
 			}
 
 			@Nullable
-			public Supplier<ShaderProgram> shaderProgram() {
-				return shaderProgram;
+			public Supplier<Shader> shader() {
+				return shader;
 			}
 		}
 
@@ -371,7 +369,7 @@ public class Flat extends Basic {
 				RenderSystem.enableBlend();
 			}
 
-			RenderSystem.setShader(Objects.requireNonNull(state().shaderProgram()));
+			RenderSystem.setShader(Objects.requireNonNull(state().shader()));
 
 			if (hasTexture()) {
 				RenderSystem.setShaderTexture(0, Objects.requireNonNull(texture()).identifier());
@@ -387,7 +385,7 @@ public class Flat extends Basic {
 			renderVertex(builder, matrix, box().bottomRight(), hasTexture() ? Objects.requireNonNull(texture()).uvBottomRight() : Vector.UNIT_SQUARE, colorAtCenter(), z());
 			renderVertex(builder, matrix, box().topRight(), hasTexture() ? Objects.requireNonNull(texture()).uvTopRight() : Vector.UNIT_X, colorAtCenter(), z());
 
-			BufferRenderer.drawWithGlobalProgram(builder.end());
+			BufferRenderer.drawWithShader(builder.end());
 
 			if (hasColor() && !blend) {
 				RenderSystem.disableBlend();
@@ -798,7 +796,7 @@ public class Flat extends Basic {
 					RenderSystem.enableBlend();
 				}
 
-				RenderSystem.setShader(Objects.requireNonNull(state().shaderProgram()));
+				RenderSystem.setShader(Objects.requireNonNull(state().shader()));
 
 				if (hasTexture()) {
 					RenderSystem.setShaderTexture(0, Objects.requireNonNull(texture()).identifier());
@@ -821,7 +819,7 @@ public class Flat extends Basic {
 					}
 				}
 
-				BufferRenderer.drawWithGlobalProgram(builder.end());
+				BufferRenderer.drawWithShader(builder.end());
 
 				if (hasColor() && !blend) {
 					RenderSystem.disableBlend();
@@ -1287,7 +1285,7 @@ public class Flat extends Basic {
 			if (Theory.looseEquals(innerRadiusFactor(), 1)) return;
 
 			RenderSystem.enableBlend();
-			RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 			RenderSystem.disableCull(); // Prevents triangles from being culled
 
 			BufferBuilder builder = Tessellator.getInstance().getBuffer();
@@ -1308,7 +1306,7 @@ public class Flat extends Basic {
 						ovalMode().getColor(this, clampedOffset - offset(), 1), z());
 			}
 
-			BufferRenderer.drawWithGlobalProgram(builder.end());
+			BufferRenderer.drawWithShader(builder.end());
 
 			RenderSystem.disableBlend();
 			RenderSystem.enableCull();
@@ -1585,7 +1583,7 @@ public class Flat extends Basic {
 	public class Model implements Renderable {
 		// Constructors
 
-		protected Model(@Nullable ItemStack itemStack, @Nullable BlockState blockState, @Nullable Quaternionfc modifier, boolean leftHanded) {
+		protected Model(@Nullable ItemStack itemStack, @Nullable BlockState blockState, @Nullable Quaternion modifier, boolean leftHanded) {
 			if (itemStack != null && blockState != null) {
 				Equator.LOGGER.error("Cannot render a flat model with both an item stack and a block state! Using nothing.");
 				this.itemStack = null;
@@ -1596,23 +1594,23 @@ public class Flat extends Basic {
 				this.blockState = blockState;
 			}
 
-			this.modifier = modifier == null ? new Quaternionf() : modifier;
+			this.modifier = modifier == null ? Quaternion.IDENTITY : modifier;
 			this.leftHanded = leftHanded;
 		}
 
-		public Model(@Nullable ItemStack itemStack, @Nullable Quaternionfc modifier, boolean leftHanded) {
+		public Model(@Nullable ItemStack itemStack, @Nullable Quaternion modifier, boolean leftHanded) {
 			this(itemStack, null, modifier, leftHanded);
 		}
 
-		public Model(@Nullable ItemStack itemStack, @Nullable Quaternionfc modifier) {
+		public Model(@Nullable ItemStack itemStack, @Nullable Quaternion modifier) {
 			this(itemStack, modifier, false);
 		}
 
-		public Model(@Nullable BlockState blockState, @Nullable Quaternionfc modifier, boolean leftHanded) {
+		public Model(@Nullable BlockState blockState, @Nullable Quaternion modifier, boolean leftHanded) {
 			this(null, blockState, modifier, leftHanded);
 		}
 
-		public Model(@Nullable BlockState blockState, @Nullable Quaternionfc modifier) {
+		public Model(@Nullable BlockState blockState, @Nullable Quaternion modifier) {
 			this(blockState, modifier, false);
 		}
 
@@ -1622,7 +1620,7 @@ public class Flat extends Basic {
 		private final ItemStack itemStack;
 		@Nullable
 		private final BlockState blockState;
-		private final Quaternionfc modifier;
+		private final Quaternion modifier;
 		private final boolean leftHanded;
 
 		// Accessors
@@ -1637,7 +1635,7 @@ public class Flat extends Basic {
 			return blockState;
 		}
 
-		public Quaternionfc modifier() {
+		public Quaternion modifier() {
 			return modifier;
 		}
 
@@ -1659,12 +1657,12 @@ public class Flat extends Basic {
 			return new Model(itemStack(), blockState, modifier(), leftHanded());
 		}
 
-		public Model modifier(Quaternionfc modifier) {
+		public Model modifier(Quaternion modifier) {
 			return new Model(itemStack(), blockState(), modifier, leftHanded());
 		}
 
-		public Model modifier(UnaryOperator<Quaternionf> modifier) {
-			return modifier(modifier.apply(new Quaternionf(modifier())));
+		public Model modifier(UnaryOperator<Quaternion> modifier) {
+			return modifier(modifier.apply(new Quaternion(modifier())));
 		}
 
 		public Model leftHanded(boolean leftHanded) {
@@ -1713,7 +1711,7 @@ public class Flat extends Basic {
 		private void applyModelView(MatrixStack matrixStack) {
 			matrixStack.scale(1, -1, 1);
 			matrixStack.scale((float) box().w(), (float) box().h(), 1);
-			matrixStack.multiply(new Quaternionf(modifier()));
+			matrixStack.multiply(new Quaternion(modifier()));
 
 			RenderSystem.applyModelViewMatrix();
 		}

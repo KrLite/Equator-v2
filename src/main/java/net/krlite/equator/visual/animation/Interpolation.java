@@ -179,7 +179,7 @@ public class Interpolation implements Runnable {
 		}
 		else {
 			lastValue.set(value.get());
-			value.accumulateAndGet(targetValue(), (current, target) -> Theory.lerp(current, target, speed()));
+			value.set(Theory.lerp(value.get(), targetValue(), speed()));
 		}
 
 		Callbacks.FrameEnd.EVENT.invoker().onFrameEnd(this);
