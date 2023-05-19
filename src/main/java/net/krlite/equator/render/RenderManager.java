@@ -4,8 +4,6 @@ import net.krlite.equator.base.Exceptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockRenderView;
 import org.lwjgl.glfw.GLFWImage;
 
 import javax.imageio.ImageIO;
@@ -14,8 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Optional;
-
-import static net.krlite.equator.base.Exceptions.Render.*;
 
 public class RenderManager {
 	public static int[] getSize(Identifier identifier) {
