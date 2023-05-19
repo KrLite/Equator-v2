@@ -11,21 +11,25 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.Optional;
 
 public class RenderManager {
 	public static int[] getSize(Identifier identifier) {
-		Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
-		if (resource.isEmpty()) {
-			throw new RuntimeException(new Exceptions.IdentifierNotFoundException(identifier));
-		}
-
 		try {
-			InputStream stream = resource.get().getInputStream();
-			BufferedImage textureImage = ImageIO.read(stream);
-			return new int[] { textureImage.getWidth(), textureImage.getHeight() };
+			Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
+
+			if (resource == null) {
+				throw new RuntimeException(new Exceptions.IdentifierNotFoundException(identifier));
+			}
+
+			try {
+				InputStream stream = resource.getInputStream();
+				BufferedImage textureImage = ImageIO.read(stream);
+				return new int[] { textureImage.getWidth(), textureImage.getHeight() };
+			} catch (IOException ioException) {
+				throw new RuntimeException(new Exceptions.IdentifierFailedToLoadException(identifier, ioException));
+			}
 		} catch (IOException ioException) {
-			throw new RuntimeException(new Exceptions.IdentifierFailedToLoadException(identifier, ioException));
+			throw new RuntimeException(new Exceptions.IdentifierNotFoundException(identifier, ioException));
 		}
 	}
 
@@ -38,34 +42,39 @@ public class RenderManager {
 	}
 
 	public static ByteBuffer getByteBuffer(Identifier identifier) {
-		Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
-		if (resource.isEmpty()) {
-			throw new RuntimeException(new Exceptions.IdentifierNotFoundException(identifier));
-		}
-
 		try {
-			InputStream stream = resource.get().getInputStream();
-			BufferedImage textureImage = ImageIO.read(stream);
+			Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
 
-			int width = textureImage.getWidth();
-			int height = textureImage.getHeight();
-			int[] pixels = textureImage.getRGB(0, 0, width, height, null, 0, width);
-			ByteBuffer buffer = ByteBuffer.allocateDirect(width * height * 4);
-
-			for (int y = height - 1; y >= 0; y--) {
-				for (int x = 0; x < width; x++) {
-					int pixel = pixels[y * width + x];
-					buffer.put((byte) ((pixel >> 16) & 0xFF)); // Red component
-					buffer.put((byte) ((pixel >> 8) & 0xFF));  // Green component
-					buffer.put((byte) (pixel & 0xFF));         // Blue component
-					buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha component
-				}
+			if (resource == null) {
+				throw new RuntimeException(new Exceptions.IdentifierNotFoundException(identifier));
 			}
 
-			buffer.flip();
-			return buffer;
+			try {
+				InputStream stream = resource.getInputStream();
+				BufferedImage textureImage = ImageIO.read(stream);
+
+				int width = textureImage.getWidth();
+				int height = textureImage.getHeight();
+				int[] pixels = textureImage.getRGB(0, 0, width, height, null, 0, width);
+				ByteBuffer buffer = ByteBuffer.allocateDirect(width * height * 4);
+
+				for (int y = height - 1; y >= 0; y--) {
+					for (int x = 0; x < width; x++) {
+						int pixel = pixels[y * width + x];
+						buffer.put((byte) ((pixel >> 16) & 0xFF)); // Red component
+						buffer.put((byte) ((pixel >> 8) & 0xFF));  // Green component
+						buffer.put((byte) (pixel & 0xFF));         // Blue component
+						buffer.put((byte) ((pixel >> 24) & 0xFF)); // Alpha component
+					}
+				}
+
+				buffer.flip();
+				return buffer;
+			} catch (IOException ioException) {
+				throw new RuntimeException(new Exceptions.IdentifierFailedToLoadException(identifier, ioException));
+			}
 		} catch (IOException ioException) {
-			throw new RuntimeException(new Exceptions.IdentifierFailedToLoadException(identifier, ioException));
+			throw new RuntimeException(new Exceptions.IdentifierNotFoundException(identifier, ioException));
 		}
 	}
 

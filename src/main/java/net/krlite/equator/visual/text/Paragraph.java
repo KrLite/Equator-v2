@@ -7,6 +7,7 @@ import net.krlite.equator.visual.color.AccurateColor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.davidmoten.text.utils.WordWrap;
 
@@ -110,9 +111,9 @@ public record Paragraph(Text text, double scalar) {
 						.includeExtraWordChars("0123456789")
 						.includeExtraWordChars("§")
 						.stringWidth(charSequence -> fontSize * scalar() * MinecraftClient.getInstance().textRenderer.getWidth(
-								Text.literal(FORMATTING_PATTERN.matcher(charSequence).replaceAll("")).setStyle(text().getStyle()))
+								new LiteralText(FORMATTING_PATTERN.matcher(charSequence).replaceAll("")).setStyle(text().getStyle()))
 						).wrap()
-		).replaceAll(NEWLINE).split(NEWLINE))).map(s -> Text.literal(s).setStyle(text().getStyle())).toArray(Text[]::new);
+		).replaceAll(NEWLINE).split(NEWLINE))).map(s -> new LiteralText(s).setStyle(text().getStyle())).toArray(Text[]::new);
 	}
 
 	private String[] concatFormatting(String[] lines) {

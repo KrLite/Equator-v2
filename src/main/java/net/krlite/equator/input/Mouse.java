@@ -92,37 +92,17 @@ public enum Mouse {
 		 * <h1>{@code ☝️}</h1>
 		 * The pointing hand shape.
 		 */
-		HAND(GLFW.GLFW_POINTING_HAND_CURSOR),
+		HAND(GLFW.GLFW_HAND_CURSOR),
 		/**
 		 * <h1>{@code ↕}</h1>
 		 * The horizontal resize/move arrow shape.
 		 */
-		RESIZE_HORIZONTAL(GLFW.GLFW_RESIZE_EW_CURSOR),
+		RESIZE_HORIZONTAL(GLFW.GLFW_HRESIZE_CURSOR),
 		/**
 		 * <h1>{@code ↔}</h1>
 		 * The vertical resize/move arrow shape.
 		 */
-		RESIZE_VERTICAL(GLFW.GLFW_RESIZE_NS_CURSOR),
-		/**
-		 * <h1>{@code ↖↘}</h1>
-		 * The top-left to bottom-right diagonal resize/move arrow shape.
-		 */
-		RESIZE_NW_SE(GLFW.GLFW_RESIZE_NWSE_CURSOR),
-		/**
-		 * <h1>{@code ↙↗}</h1>
-		 * The top-right to bottom-left diagonal resize/move arrow shape.
-		 */
-		RESIZE_NE_SW(GLFW.GLFW_RESIZE_NESW_CURSOR),
-		/**
-		 * <h1>{@code ↕↔}</h1>
-		 * The top-left and bottom-right diagonal resize/move arrow shape.
-		 */
-		RESIZE_ALL(GLFW.GLFW_RESIZE_ALL_CURSOR),
-		/**
-		 * <h1>{@code ⌀}</h1>
-		 * The not allowed shape.
-		 */
-		NOT_ALLOWED(GLFW.GLFW_NOT_ALLOWED_CURSOR);
+		RESIZE_VERTICAL(GLFW.GLFW_VRESIZE_CURSOR);
 
 		private final int value;
 

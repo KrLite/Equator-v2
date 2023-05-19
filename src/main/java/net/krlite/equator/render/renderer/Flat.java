@@ -385,7 +385,8 @@ public class Flat extends Basic {
 			renderVertex(builder, matrix, box().bottomRight(), hasTexture() ? Objects.requireNonNull(texture()).uvBottomRight() : Vector.UNIT_SQUARE, colorAtCenter(), z());
 			renderVertex(builder, matrix, box().topRight(), hasTexture() ? Objects.requireNonNull(texture()).uvTopRight() : Vector.UNIT_X, colorAtCenter(), z());
 
-			BufferRenderer.drawWithShader(builder.end());
+			builder.end();
+			BufferRenderer.draw(builder);
 
 			if (hasColor() && !blend) {
 				RenderSystem.disableBlend();
@@ -819,7 +820,8 @@ public class Flat extends Basic {
 					}
 				}
 
-				BufferRenderer.drawWithShader(builder.end());
+				builder.end();
+				BufferRenderer.draw(builder);
 
 				if (hasColor() && !blend) {
 					RenderSystem.disableBlend();
@@ -1306,7 +1308,8 @@ public class Flat extends Basic {
 						ovalMode().getColor(this, clampedOffset - offset(), 1), z());
 			}
 
-			BufferRenderer.drawWithShader(builder.end());
+			builder.end();
+			BufferRenderer.draw(builder);
 
 			RenderSystem.disableBlend();
 			RenderSystem.enableCull();
