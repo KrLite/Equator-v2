@@ -26,8 +26,8 @@
 
   "depends": {
     "fabricloader": "*",
-    "fabric-api": "*",
-    "minecraft": "~1.19.4"
+    "fabric": "*",
+    "minecraft": ["~1.19", "~1.19.1", "~1.19.2"]
   },
   "suggests": {
   }
