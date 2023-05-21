@@ -33,7 +33,7 @@ public class AccurateColor {
 	// Static Constructors
 
 	public static AccurateColor fromARGB(long argb) {
-		return new AccurateColor(RGB.fromInt((int) argb), ((argb >> 24) & 0xFF) / 255.0);
+		return new AccurateColor(RGB.fromInt((int) argb), argb > 0xFFFFFF ? ((argb >> 24) & 0xFF) / 255.0 : 1);
 	}
 
 	public static AccurateColor fromRGB(int red, int green, int blue, int alpha) {
