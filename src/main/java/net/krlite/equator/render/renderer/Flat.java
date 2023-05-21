@@ -719,6 +719,10 @@ public class Flat extends Basic {
 				this(FlatTransform.NONE, gate);
 			}
 
+			public Transformed() {
+				this(FlatTransform.NONE, FlatGate.TRUE);
+			}
+
 			// Fields
 
 			private final FlatTransform transform;
@@ -893,6 +897,10 @@ public class Flat extends Basic {
 				@Override
 				public void render() {
 					if (!isRenderable()) return;
+
+					if (outliningMode() == OutliningMode.NORMAL) {
+						Rectangle.this.render();
+					}
 
 					Box corner 			= Box.fromVectorCentered(box().center(), expansion);
 					Box gapHorizontal 	= Box.fromVectorCentered(box().center(), Vector.fromCartesian(box().w(), expansion.y()));
