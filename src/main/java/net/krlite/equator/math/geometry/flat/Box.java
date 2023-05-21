@@ -225,6 +225,10 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		return Vector.fromCartesian(right(), center().y());
 	}
 
+	public Vector at(double xOffset, double yOffset) {
+		return origin().add(size().scale(xOffset, yOffset));
+	}
+
 
 	/**
 	 * @return	{@code y} of the top edge.
@@ -1305,6 +1309,10 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		function.apply(new Flat(matrixStack, z, this)).render();
 	}
 
+	public void render(MatrixStack matrixStack, Function<Flat, Renderable> function) {
+		render(matrixStack, 0, function);
+	}
+
 	/**
 	 * Starts rendering from a {@link Flat}, whose parameters are pre-set, in a snipped {@link Scissor}.
 	 * @param scissor		The {@link Scissor} to snip with.
@@ -1315,6 +1323,10 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 */
 	public void renderSnipped(Box scissor, MatrixStack matrixStack, float z, Function<Flat, Renderable> function) {
 		scissor.scissor().snipWith(function.apply(new Flat(matrixStack, z, this)));
+	}
+
+	public void renderSnipped(Box scissor, MatrixStack matrixStack, Function<Flat, Renderable> function) {
+		renderSnipped(scissor, matrixStack, 0, function);
 	}
 
 	// Object Methods
