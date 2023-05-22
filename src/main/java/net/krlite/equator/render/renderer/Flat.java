@@ -352,7 +352,19 @@ public class Flat extends Basic {
 
 			builder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, state().vertexFormat());
 
-			double xDelta = box().w() / 10, yDelta = box().h() / 10;
+			double xDelta, yDelta;
+
+			// Width optimization
+			if (box().w() < 1) xDelta = box().w() / 2;
+			else if (box().w() < 10) xDelta = box().w() / 4;
+			else if (box().w() < 100) xDelta = box().w() / 8;
+			else xDelta = Math.min(25, box().w() / 16);
+
+			// Height optimization
+			if (box().h() < 1) yDelta = box().h() / 2;
+			else if (box().h() < 10) yDelta = box().h() / 4;
+			else if (box().h() < 100) yDelta = box().h() / 8;
+			else yDelta = Math.min(25, box().h() / 16);
 
 			for (double yr = 0; yr < box().h(); yr += yDelta) {
 				double y = Math.min(box().h(), yr);

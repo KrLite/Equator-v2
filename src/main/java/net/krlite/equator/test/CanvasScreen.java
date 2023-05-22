@@ -136,12 +136,12 @@ public class CanvasScreen extends Screen {
 
 		Box box = Box.fromCartesian(50, 50).center(FrameInfo.scaled());
 
-		box.shift(0, 3).scaleCenter(0.95).render(matrixStack,
+		box.render(matrixStack,
 				flat -> flat.new Rectangle()
-								.colors(AccurateColor.BLACK.opacity(0.7))
-								.new Outlined(Vector.fromCartesian(7, 7), Flat.Rectangle.Outlined.OutliningMode.NORMAL, Flat.Rectangle.Outlined.OutliningStyle.EDGE_FADED)
+								.colors(AccurateColor.MAGENTA.opacity(0.5))
+								.new Outlined(Vector.fromCartesian(240, 240).scale(interpolation.value()), Flat.Rectangle.Outlined.OutliningMode.NORMAL, Flat.Rectangle.Outlined.OutliningStyle.EDGE_FADED)
 		);
 
-		box.render(matrixStack, flat -> flat.new Rectangle().colors(AccurateColor.GREEN));
+		box.render(matrixStack, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
 	}
 }
