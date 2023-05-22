@@ -4,9 +4,6 @@ import net.krlite.equator.base.Exceptions;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.render.frame.Convertible;
 import net.krlite.equator.render.frame.FrameInfo;
-import net.minecraft.client.util.math.MatrixStack;
-
-import java.util.function.Function;
 
 /**
  * <h1>Box</h1>
