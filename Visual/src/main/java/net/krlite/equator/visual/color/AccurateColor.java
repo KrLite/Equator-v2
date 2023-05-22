@@ -212,7 +212,7 @@ public class AccurateColor {
 		return new AccurateColor(this, XYZ).color()[2];
 	}
 
-	// Accessors: L*a*b*/LCh Components
+	// Accessors: LAB/LCH Components
 
 	public double L() {
 		return new AccurateColor(this, LAB).color()[0];
@@ -316,7 +316,7 @@ public class AccurateColor {
 		return color(new double[] { x(), y(), z }, XYZ);
 	}
 
-	// Mutators: L*a*b*/LCh Components
+	// Mutators: LAB/LCH Components
 
 	public AccurateColor L(double L) {
 		return color(new double[] { L, a(), b() }, LAB);
