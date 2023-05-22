@@ -137,6 +137,10 @@ public class Texture {
 		return flippedX() ? uvBox().left() : uvBox().right();
 	}
 
+	public Vector uvAt(double uOffset, double vOffset) {
+		return flippedX() ? flippedY() ? uvBox().at(1 - uOffset, 1 - vOffset) : uvBox().at(1 - uOffset, vOffset) : flippedY() ? uvBox().at(uOffset, 1 - vOffset) : uvBox().at(uOffset, vOffset);
+	}
+
 	public boolean flippedX() {
 		return flippedX;
 	}
