@@ -344,6 +344,10 @@ public class AccurateColor {
 		return !transparent;
 	}
 
+	public boolean hasOpacity() {
+		return Theory.looseGreater(opacity(), 0);
+	}
+
 	public boolean approximates(@Nullable AccurateColor another, boolean ignoreOpacity) {
 		if (another == null) return false;
 		double[] rgb = colorspace(Colorspace.RGB).color(), anotherRGB = another.colorspace(RGB).color();
@@ -357,10 +361,13 @@ public class AccurateColor {
 	// Operations
 
 	public AccurateColor mix(AccurateColor another, double ratio, MixMode mixMode) {
-		return switch (mixMode) {
-			case OPACITY_ONLY -> opacity(Theory.lerp(opacity(), another.opacity(), ratio));
-			default -> new AccurateColor(colorspace(), colorspace().mix(color(), another.color(), ratio, another.colorspace(), mixMode), Theory.lerp(opacity(), another.opacity(), ratio));
-		};
+		if (!hasColor() && !another.hasColor()) return TRANSPARENT;
+		if (!hasColor()) return another.mix(this, 1 - ratio, MixMode.OPACITY_ONLY);
+
+		if (!another.hasColor()) mixMode = MixMode.OPACITY_ONLY;
+		if (mixMode == MixMode.OPACITY_ONLY) return opacity(Theory.lerp(opacity(), another.opacity(), ratio));
+
+		return new AccurateColor(colorspace(), colorspace().mix(color(), another.color(), ratio, another.colorspace(), mixMode), Theory.lerp(opacity(), another.opacity(), ratio));
 	}
 
 	public AccurateColor mix(AccurateColor another, MixMode mixMode) {
