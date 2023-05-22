@@ -22,7 +22,7 @@ import java.util.function.UnaryOperator;
  * values, thus changing the formula behaviour.
  */
 @FunctionalInterface
-@net.krlite.equator.base.Animation("2.4.0")
+@net.krlite.equator.base.Animation("2.4.2")
 public interface Slice {
 	/**
 	 * Accepts the start and end values and the progress of the animation and returns the current value.

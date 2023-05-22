@@ -7,7 +7,7 @@ import java.awt.*;
 
 import static net.krlite.equator.visual.color.Colorspace.*;
 
-@net.krlite.equator.base.Visual("2.4.0")
+@net.krlite.equator.base.Visual("2.4.2")
 public class AccurateColor {
 	// Constants
 

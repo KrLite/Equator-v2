@@ -2,7 +2,7 @@ package net.krlite.equator.visual.color;
 
 import net.krlite.equator.base.Exceptions;
 
-@net.krlite.equator.base.Visual("2.4.0")
+@net.krlite.equator.base.Visual("2.4.2")
 public class ColorConvertor {
 	public static void checkArrayLength(String colorspaceName, double[] color, int expectedLength) {
 		if (color.length != expectedLength) {

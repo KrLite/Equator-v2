@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  * A {@link ScheduledThreadPoolExecutor} which is used to schedule {@link Animation} and {@link Interpolation}
  * tasks. Basically, this executor handles the timing of the animations and interpolations.
  */
-@net.krlite.equator.base.Animation("2.4.0")
+@net.krlite.equator.base.Animation("2.4.2")
 public class AnimationThreadPoolExecutor {
 	/**
 	 * The {@link ScheduledThreadPoolExecutor} instance which is used to schedule {@link Animation} and

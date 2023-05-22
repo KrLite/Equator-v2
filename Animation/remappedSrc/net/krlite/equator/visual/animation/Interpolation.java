@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Handles the interpolation between two values.
  */
 @SelfMutable
-@net.krlite.equator.base.Animation("2.4.0")
+@net.krlite.equator.base.Animation("2.4.2")
 public class Interpolation implements Runnable {
 	public interface Callbacks {
 		interface Start {

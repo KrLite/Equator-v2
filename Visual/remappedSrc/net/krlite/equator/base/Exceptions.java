@@ -4,7 +4,7 @@ import net.minecraft.util.Identifier;
 
 import java.io.IOException;
 
-@Visual("2.4.0")
+@Visual("2.4.2")
 public class Exceptions {
 	public static class ColorArrayLengthException extends IllegalArgumentException {
 		public ColorArrayLengthException(String colorspaceName, int expectedLength, int length, Throwable cause) {
