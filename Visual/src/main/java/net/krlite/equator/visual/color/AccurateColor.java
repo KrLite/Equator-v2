@@ -212,7 +212,7 @@ public class AccurateColor {
 		return new AccurateColor(this, XYZ).color()[2];
 	}
 
-	// Accessors: LAB/LCh Components
+	// Accessors: L*a*b*/LCh Components
 
 	public double L() {
 		return new AccurateColor(this, LAB).color()[0];
@@ -230,7 +230,7 @@ public class AccurateColor {
 		return new AccurateColor(this, LCH).color()[1];
 	}
 
-	public double H() {
+	public double h() {
 		return new AccurateColor(this, LCH).color()[2];
 	}
 
@@ -316,7 +316,7 @@ public class AccurateColor {
 		return color(new double[] { x(), y(), z }, XYZ);
 	}
 
-	// Mutators: LAB/LCh Components
+	// Mutators: L*a*b*/LCh Components
 
 	public AccurateColor L(double L) {
 		return color(new double[] { L, a(), b() }, LAB);
@@ -331,11 +331,11 @@ public class AccurateColor {
 	}
 
 	public AccurateColor C(double C) {
-		return color(new double[] { L(), C, H() }, LCH);
+		return color(new double[] { L(), C, h() }, LCH);
 	}
 
-	public AccurateColor H(double H) {
-		return color(new double[] { L(), C(), H }, LCH);
+	public AccurateColor h(double h) {
+		return color(new double[] { L(), C(), h }, LCH);
 	}
 
 	// Properties
