@@ -3,7 +3,7 @@ package net.krlite.equator.math.logic.flat;
 import net.krlite.equator.math.logic.base.Transform;
 import net.krlite.equator.math.logic.base.Transformative;
 
-@net.krlite.equator.base.Math("2.4.0")
+@net.krlite.equator.base.Math("2.4.2")
 public record FlatTransform(Transform x, Transform y) implements Transformative<FlatTransform> {
 	// Constants
 

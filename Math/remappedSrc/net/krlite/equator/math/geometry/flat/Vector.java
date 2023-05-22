@@ -11,7 +11,7 @@ import net.krlite.equator.render.frame.FrameInfo;
  * @param theta		The angle <b>in radians.</b>
  * @param magnitude	The magnitude, which is always positive.
  */
-@net.krlite.equator.base.Math("2.4.0")
+@net.krlite.equator.base.Math("2.4.2")
 public record Vector(double theta, double magnitude) implements Convertible.Scaled<Vector> {
 	// Constants
 

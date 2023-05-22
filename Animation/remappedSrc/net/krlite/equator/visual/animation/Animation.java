@@ -18,7 +18,7 @@ import java.util.function.UnaryOperator;
  * Handles the animation between two values.
  */
 @SelfMutable
-@net.krlite.equator.base.Animation("2.4.0")
+@net.krlite.equator.base.Animation("2.4.2")
 public class Animation implements Runnable {
 	public interface Callbacks {
 		interface Start {

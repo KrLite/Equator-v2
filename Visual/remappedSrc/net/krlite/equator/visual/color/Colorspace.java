@@ -22,7 +22,7 @@ import static net.krlite.equator.visual.color.ColorConvertor.*;
  *     <li>{@link Colorspace#LCH}	&emsp;<code>- Luminance*,	Chroma*,		hue*		(CLELCh COLORSPACE)</code></li>
  * </ul>
  */
-@net.krlite.equator.base.Visual("2.4.0")
+@net.krlite.equator.base.Visual("2.4.2")
 public enum Colorspace implements ColorStandard {
 	RGB("RGB") {
 		public static final double[] WHITE = {1, 1, 1};

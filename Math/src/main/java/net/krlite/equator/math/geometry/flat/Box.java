@@ -13,7 +13,7 @@ import net.krlite.equator.render.frame.FrameInfo;
  * @param origin	The top left corner.
  * @param size		The size.
  */
-@net.krlite.equator.base.Math("2.4.0")
+@net.krlite.equator.base.Math("2.4.2")
 public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box> {
 	// Constants
 
@@ -432,6 +432,10 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 */
 	public Box rightCenter(Vector rightCenter) {
 		return Box.fromVector(rightCenter.subtract(height().scale(0.5)), rightCenter.add(height().scale(0.5)));
+	}
+
+	public Vector at(double xOffset, double yOffset) {
+		return origin().add(size().scale(xOffset, yOffset));
 	}
 
 

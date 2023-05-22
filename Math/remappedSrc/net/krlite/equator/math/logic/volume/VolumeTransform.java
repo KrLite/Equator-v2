@@ -3,7 +3,7 @@ package net.krlite.equator.math.logic.volume;
 import net.krlite.equator.math.logic.base.Transform;
 import net.krlite.equator.math.logic.base.Transformative;
 
-@net.krlite.equator.base.Math("2.4.0")
+@net.krlite.equator.base.Math("2.4.2")
 public record VolumeTransform(Transform x, Transform y, Transform z) implements Transformative<VolumeTransform> {
 	// Constants
 
