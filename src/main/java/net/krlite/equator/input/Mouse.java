@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.krlite.equator.Equator;
 import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.render.RenderManager;
+import net.krlite.equator.render.frame.FrameInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.*;
@@ -259,6 +260,10 @@ public enum Mouse {
 		double[] x = new double[1], y = new double[1];
 		GLFW.glfwGetCursorPos(MinecraftClient.getInstance().getWindow().getHandle(), x, y);
 		return Vector.fromCartesian(x[0], y[0]).fitFromScreen();
+	}
+
+	public static Vector positionFromCenter() {
+		return position().subtract(FrameInfo.scaled().center());
 	}
 
 	public static long createCursor(Identifier identifier, int xHot, int yHot) {

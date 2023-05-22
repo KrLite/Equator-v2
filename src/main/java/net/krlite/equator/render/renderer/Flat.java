@@ -262,7 +262,7 @@ public class Flat extends Basic {
 			}
 
 			@Nullable
-			public Supplier<Shader> shader() {
+			public Supplier<Shader> shaderProgram() {
 				return shader;
 			}
 		}
@@ -369,7 +369,7 @@ public class Flat extends Basic {
 				RenderSystem.enableBlend();
 			}
 
-			RenderSystem.setShader(Objects.requireNonNull(state().shader()));
+			RenderSystem.setShader(Objects.requireNonNull(state().shaderProgram()));
 
 			if (hasTexture()) {
 				RenderSystem.setShaderTexture(0, Objects.requireNonNull(texture()).identifier());
@@ -801,7 +801,7 @@ public class Flat extends Basic {
 					RenderSystem.enableBlend();
 				}
 
-				RenderSystem.setShader(Objects.requireNonNull(state().shader()));
+				RenderSystem.setShader(Objects.requireNonNull(state().shaderProgram()));
 
 				if (hasTexture()) {
 					RenderSystem.setShaderTexture(0, Objects.requireNonNull(texture()).identifier());

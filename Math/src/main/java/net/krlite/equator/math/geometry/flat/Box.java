@@ -434,6 +434,10 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		return Box.fromVector(rightCenter.subtract(height().scale(0.5)), rightCenter.add(height().scale(0.5)));
 	}
 
+	public Vector at(double xOffset, double yOffset) {
+		return origin().add(size().scale(xOffset, yOffset));
+	}
+
 
 
 	/**
