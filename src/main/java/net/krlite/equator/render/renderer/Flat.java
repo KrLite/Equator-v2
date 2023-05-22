@@ -4,12 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.krlite.equator.Equator;
-import net.krlite.equator.base.Exceptions;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.math.geometry.flat.Vector;
-import net.krlite.equator.math.logic.flat.FlatGate;
-import net.krlite.equator.math.logic.flat.FlatTransform;
 import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.render.frame.FrameInfo;
@@ -86,10 +83,11 @@ public class Flat extends Basic {
 				Colorspace colorspace, RectangleMode rectangleMode
 		) {
 			this.texture = texture;
-			this.colorTopLeft = colorTopLeft == null ? AccurateColor.TRANSPARENT : colorTopLeft.colorspace(colorspace);
-			this.colorBottomLeft = colorBottomLeft == null ? AccurateColor.TRANSPARENT : colorBottomLeft.colorspace(colorspace);
-			this.colorBottomRight = colorBottomRight == null ? AccurateColor.TRANSPARENT : colorBottomRight.colorspace(colorspace);
-			this.colorTopRight = colorTopRight == null ? AccurateColor.TRANSPARENT : colorTopRight.colorspace(colorspace);
+			this.colorTopLeft = 		(colorTopLeft == null ? 	AccurateColor.TRANSPARENT : colorTopLeft)		.colorspace(colorspace);
+			this.colorBottomLeft = 		(colorBottomLeft == null ? 	AccurateColor.TRANSPARENT : colorBottomLeft)	.colorspace(colorspace);
+			this.colorBottomRight = 	(colorBottomRight == null ? AccurateColor.TRANSPARENT : colorBottomRight)	.colorspace(colorspace);
+			this.colorTopRight = 		(colorTopRight == null ? 	AccurateColor.TRANSPARENT : colorTopRight)		.colorspace(colorspace);
+			this.colorspace = colorspace;
 			this.rectangleMode = rectangleMode;
 		}
 
@@ -101,8 +99,16 @@ public class Flat extends Basic {
 			this(texture, colorTopLeft, colorBottomLeft, colorBottomRight, colorTopRight, Colorspace.RGB, rectangleMode);
 		}
 
+		public Rectangle(@Nullable Texture texture, @Nullable AccurateColor color, Colorspace colorspace, RectangleMode rectangleMode) {
+			this(texture, color, color, color, color, colorspace, rectangleMode);
+		}
+
 		public Rectangle(@Nullable Texture texture, @Nullable AccurateColor color, RectangleMode rectangleMode) {
-			this(texture, color, color, color, color, rectangleMode);
+			this(texture, color, color, color, color, Colorspace.RGB, rectangleMode);
+		}
+
+		public Rectangle(Colorspace colorspace) {
+			this(null, null, colorspace, RectangleMode.NORMAL);
 		}
 
 		public Rectangle(Texture texture) {
@@ -126,6 +132,7 @@ public class Flat extends Basic {
 		@Nullable
 		private final Texture texture;
 		private final AccurateColor colorTopLeft, colorBottomLeft, colorBottomRight, colorTopRight;
+		private final Colorspace colorspace;
 		private final RectangleMode rectangleMode;
 
 		// Accessors
@@ -168,7 +175,7 @@ public class Flat extends Basic {
 		}
 
 		public Colorspace colorspace() {
-			return colorTopLeft().colorspace();
+			return colorspace;
 		}
 
 		// Mutators
@@ -190,47 +197,47 @@ public class Flat extends Basic {
 		}
 
 		public Rectangle colorTopLeft(@Nullable AccurateColor colorTopLeft) {
-			return new Rectangle(texture(), colorTopLeft, colorBottomLeft(), colorBottomRight(), colorTopRight(), rectangleMode());
+			return new Rectangle(texture(), colorTopLeft, colorBottomLeft(), colorBottomRight(), colorTopRight(), colorspace(), rectangleMode());
 		}
 
 		public Rectangle colorBottomLeft(@Nullable AccurateColor colorBottomLeft) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft, colorBottomRight(), colorTopRight(), rectangleMode());
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft, colorBottomRight(), colorTopRight(), colorspace(), rectangleMode());
 		}
 
 		public Rectangle colorBottomRight(@Nullable AccurateColor colorBottomRight) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight, colorTopRight(), rectangleMode());
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight, colorTopRight(), colorspace(), rectangleMode());
 		}
 
 		public Rectangle colorTopRight(@Nullable AccurateColor colorTopRight) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight, rectangleMode());
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight, colorspace(), rectangleMode());
 		}
 
 		public Rectangle colorTop(@Nullable AccurateColor colorTop) {
-			return new Rectangle(texture(), colorTop, colorBottomLeft(), colorBottomRight(), colorTop, rectangleMode());
+			return new Rectangle(texture(), colorTop, colorBottomLeft(), colorBottomRight(), colorTop, colorspace(), rectangleMode());
 		}
 
 		public Rectangle colorBottom(@Nullable AccurateColor colorBottom) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottom, colorBottomRight(), colorTopRight(), rectangleMode());
+			return new Rectangle(texture(), colorTopLeft(), colorBottom, colorBottom, colorTopRight(), colorspace(), rectangleMode());
 		}
 
 		public Rectangle colorLeft(@Nullable AccurateColor colorLeft) {
-			return new Rectangle(texture(), colorTopLeft(), colorLeft, colorBottomRight(), colorTopRight(), rectangleMode());
+			return new Rectangle(texture(), colorLeft, colorLeft, colorLeft, colorTopRight(), colorspace(), rectangleMode());
 		}
 
 		public Rectangle colorRight(@Nullable AccurateColor colorRight) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorRight, colorTopRight(), rectangleMode());
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorRight, colorRight, colorspace(), rectangleMode());
 		}
 
 		public Rectangle colors(@Nullable AccurateColor colorTopLeft, @Nullable AccurateColor colorBottomLeft, @Nullable AccurateColor colorBottomRight, @Nullable AccurateColor colorTopRight) {
-			return new Rectangle(texture(), colorTopLeft, colorBottomLeft, colorBottomRight, colorTopRight, rectangleMode());
+			return new Rectangle(texture(), colorTopLeft, colorBottomLeft, colorBottomRight, colorTopRight, colorspace(), rectangleMode());
 		}
 
 		public Rectangle colors(@Nullable AccurateColor color) {
-			return new Rectangle(texture(), color, color, color, color, rectangleMode());
+			return new Rectangle(texture(), color, color, color, color, colorspace(), rectangleMode());
 		}
 
 		public Rectangle rectangleMode(RectangleMode rectangleMode) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight(), rectangleMode);
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight(), colorspace(), rectangleMode);
 		}
 
 		public Rectangle colorspace(Colorspace colorspace) {
@@ -262,7 +269,7 @@ public class Flat extends Basic {
 			}
 
 			@Nullable
-			public Supplier<Shader> shaderProgram() {
+			public Supplier<Shader> shader() {
 				return shader;
 			}
 		}
@@ -272,63 +279,20 @@ public class Flat extends Basic {
 		}
 
 		public boolean hasColor() {
-			return colorTopLeft().hasColor() || colorBottomLeft().hasColor() || colorBottomRight().hasColor() || colorTopRight().hasColor();
+			return
+					(colorTopLeft().hasColor() || colorBottomLeft().hasColor() || colorBottomRight().hasColor() || colorTopRight().hasColor())
+							&& (colorTopLeft().hasOpacity() || colorBottomLeft().hasOpacity() || colorBottomRight().hasOpacity() || colorTopRight().hasOpacity());
 		}
 
 		public AccurateColor colorAt(double xOffset, double yOffset) {
-			return new AccurateColor(
-					colorTopLeft().red() 				* (1 - xOffset) * (1 - yOffset)
-							+ colorBottomLeft().red() 		* (1 - xOffset) * yOffset
-							+ colorBottomRight().red() 		* xOffset 		* yOffset
-							+ colorTopRight().red() 		* xOffset 		* (1 - yOffset),
-					colorTopLeft().green() 			* (1 - xOffset) * (1 - yOffset)
-							+ colorBottomLeft().green() 	* (1 - xOffset) * yOffset
-							+ colorBottomRight().green() 	* xOffset 		* yOffset
-							+ colorTopRight().green() 		* xOffset 		* (1 - yOffset),
-					colorTopLeft().blue() 				* (1 - xOffset) * (1 - yOffset)
-							+ colorBottomLeft().blue() 		* (1 - xOffset) * yOffset
-							+ colorBottomRight().blue() 	* xOffset 		* yOffset
-							+ colorTopRight().blue() 		* xOffset 		* (1 - yOffset),
-					colorTopLeft().opacity() 		* (1 - xOffset) * (1 - yOffset)
-							+ colorBottomLeft().opacity() 	* (1 - xOffset) * yOffset
-							+ colorBottomRight().opacity() 	* xOffset 		* yOffset
-							+ colorTopRight().opacity() 	* xOffset 		* (1 - yOffset)
-			);
+			AccurateColor leftSide = colorTopLeft().mix(colorBottomLeft(), yOffset);
+			AccurateColor rightSide = colorTopRight().mix(colorBottomRight(), yOffset);
+
+			return leftSide.mix(rightSide, xOffset);
 		}
 
-		private AccurateColor assertColor(int index) {
-			AccurateColor[] colors = colors();
-			if (index < 0 || index >= colors.length /* normally it would be 4 */ ) {
-				throw new Exceptions.ColorIndexOutOfBoundsException(index, colors.length);
-			}
-
-			AccurateColor color = colors[index];
-
-			if (color.hasColor()) {
-				return color;
-			}
-
-			AccurateColor fallbackFirst = colors[(index + 1) % colors.length];
-			AccurateColor fallbackSecond = colors[(index + colors.length - 1) % colors.length];
-
-			if (fallbackFirst.hasColor() || fallbackSecond.hasColor()) {
-				if (fallbackFirst.hasColor() && fallbackSecond.hasColor()) {
-					return fallbackFirst.mix(fallbackSecond).transparent();
-				}
-				else if (fallbackFirst.hasColor()) {
-					return fallbackFirst.transparent();
-				}
-				else {
-					return fallbackSecond.transparent();
-				}
-			}
-			else {
-				return color;
-			}
-		}
-
-		private Rectangle assertColors() {
-			return new Rectangle(texture(), assertColor(0), assertColor(1), assertColor(2), assertColor(3), colorspace(), rectangleMode());
+		private AccurateColor assertColor(AccurateColor color) {
+			return color.hasColor() ? color : colorAtCenter().transparent();
 		}
 
 		private State state() {
@@ -346,6 +310,8 @@ public class Flat extends Basic {
 				}
 			}
 		}
+
+		// Interface Implementations
 
 		private void renderVertex(BufferBuilder builder, Matrix4f matrix, Vector vertex, Vector uv, AccurateColor color, float z) {
 			switch (state()) {
@@ -369,7 +335,7 @@ public class Flat extends Basic {
 				RenderSystem.enableBlend();
 			}
 
-			RenderSystem.setShader(Objects.requireNonNull(state().shaderProgram()));
+			RenderSystem.setShader(Objects.requireNonNull(state().shader()));
 
 			if (hasTexture()) {
 				RenderSystem.setShaderTexture(0, Objects.requireNonNull(texture()).identifier());
@@ -378,12 +344,39 @@ public class Flat extends Basic {
 			BufferBuilder builder = Tessellator.getInstance().getBuffer();
 			Matrix4f matrix = matrixStack().peek().getPositionMatrix();
 
-			builder.begin(VertexFormat.DrawMode.QUADS, state().vertexFormat());
 
-			renderVertex(builder, matrix, box().topLeft(), hasTexture() ? Objects.requireNonNull(texture()).uvTopLeft() : Vector.ZERO, colorAtCenter(), z());
-			renderVertex(builder, matrix, box().bottomLeft(), hasTexture() ? Objects.requireNonNull(texture()).uvBottomLeft() : Vector.UNIT_Y, colorAtCenter(), z());
-			renderVertex(builder, matrix, box().bottomRight(), hasTexture() ? Objects.requireNonNull(texture()).uvBottomRight() : Vector.UNIT_SQUARE, colorAtCenter(), z());
-			renderVertex(builder, matrix, box().topRight(), hasTexture() ? Objects.requireNonNull(texture()).uvTopRight() : Vector.UNIT_X, colorAtCenter(), z());
+			builder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, state().vertexFormat());
+
+			double xDelta, yDelta;
+
+			// Width optimization
+			if (box().w() < 1) xDelta = box().w() / 2;
+			else if (box().w() < 10) xDelta = box().w() / 4;
+			else if (box().w() < 100) xDelta = box().w() / 8;
+			else xDelta = Math.min(25, box().w() / 16);
+
+			// Height optimization
+			if (box().h() < 1) yDelta = box().h() / 2;
+			else if (box().h() < 10) yDelta = box().h() / 4;
+			else if (box().h() < 100) yDelta = box().h() / 8;
+			else yDelta = Math.min(25, box().h() / 16);
+
+			for (double yr = 0; yr < box().h(); yr += yDelta) {
+				double y = Math.min(box().h(), yr);
+				for (double xr = 0; xr < box().w() + xDelta; xr += xDelta) {
+					double x = Math.min(box().w(), xr);
+					renderVertex(
+							builder, matrix, box().topLeft().add(x, y),
+							hasTexture() ? Objects.requireNonNull(texture()).uvAt(x / box().w(), y / box().h()) : Vector.ZERO,
+							assertColor(colorAt(x / box().w(), y / box().h())), z()
+					);
+					renderVertex(
+							builder, matrix, box().topLeft().add(x, Math.min(box().h(), y + yDelta)),
+							hasTexture() ? Objects.requireNonNull(texture()).uvAt(x / box().w(), Math.min(box().h(), y + yDelta) / box().h()) : Vector.ZERO,
+							assertColor(colorAt(x / box().w(), Math.min(box().h(), y + yDelta) / box().h())), z()
+					);
+				}
+			}
 
 			builder.end();
 			BufferRenderer.draw(builder);
@@ -431,8 +424,6 @@ public class Flat extends Basic {
 			}
 		}
 
-		// Interface Implementations
-
 		@Override
 		public boolean isRenderable() {
 			return Renderable.isLegal(box()) && (hasTexture() || hasColor());
@@ -443,9 +434,9 @@ public class Flat extends Basic {
 			if (!isRenderable()) return;
 
 			switch (rectangleMode()) {
-				case NORMAL -> assertColors().renderNormal();
-				case TILING -> assertColors().renderTiling();
-				case FIXED_CORNERS -> assertColors().renderFixedCorners();
+				case NORMAL -> renderNormal();
+				case TILING -> renderTiling();
+				case FIXED_CORNERS -> renderFixedCorners();
 			}
 		}
 
@@ -703,336 +694,222 @@ public class Flat extends Basic {
 			// 'NineSlicing'
 		}
 
-		public class Transformed implements Renderable {
+		public class Outlined implements Renderable {
 			// Constructors
 
-			public Transformed(FlatTransform transform, FlatGate gate) {
-				this.transform = transform;
-				this.gate = gate;
+			public Outlined(Vector expansion, OutliningMode outliningMode, OutliningStyle outliningStyle) {
+				this.expansion = expansion;
+				this.outliningMode = outliningMode;
+				this.outliningStyle = outliningStyle;
 			}
 
-			public Transformed(FlatTransform transform) {
-				this(transform, FlatGate.TRUE);
-			}
-
-			public Transformed(FlatGate gate) {
-				this(FlatTransform.NONE, gate);
-			}
-
-			public Transformed() {
-				this(FlatTransform.NONE, FlatGate.TRUE);
+			public Outlined(Vector expansion) {
+				this(expansion, OutliningMode.NORMAL, OutliningStyle.CLAMPED);
 			}
 
 			// Fields
 
-			private final FlatTransform transform;
-			private final FlatGate gate;
+			public enum OutliningMode {
+				NORMAL, SCISSORED
+			}
+
+			public enum OutliningStyle {
+				CLAMPED, EDGE, EDGE_FADED
+			}
+
+			private final Vector expansion;
+			private final OutliningMode outliningMode;
+			private final OutliningStyle outliningStyle;
 
 			// Accessors
 
-			public FlatTransform transform() {
-				return transform;
+			public Vector expansion() {
+				return expansion;
 			}
 
-			public FlatGate gate() {
-				return gate;
+			public OutliningMode outliningMode() {
+				return outliningMode;
+			}
+
+			public OutliningStyle outliningStyle() {
+				return outliningStyle;
 			}
 
 			// Mutators
 
-			public Transformed parent(UnaryOperator<Rectangle> rectangle) {
-				return rectangle.apply(Rectangle.this).new Transformed(transform(), gate());
+			public Outlined parent(UnaryOperator<Rectangle> rectangle) {
+				return rectangle.apply(Rectangle.this).new Outlined(expansion(), outliningMode(), outliningStyle());
 			}
 
-			public Transformed transform(FlatTransform transform) {
-				return new Transformed(transform, gate());
+			public Outlined expansion(Vector expansion) {
+				return new Outlined(expansion, outliningMode(), outliningStyle());
 			}
 
-			public Transformed andThen(FlatTransform transform) {
-				return new Transformed(transform().andThen(transform), gate());
+			public Outlined outliningMode(OutliningMode outliningMode) {
+				return new Outlined(expansion(), outliningMode, outliningStyle());
 			}
 
-			public Transformed gate(FlatGate gate) {
-				return new Transformed(transform(), gate);
-			}
-
-			public Transformed not() {
-				return new Transformed(transform(), gate().not());
-			}
-
-			public Transformed and(FlatGate gate) {
-				return new Transformed(transform(), gate().and(gate));
-			}
-
-			public Transformed or(FlatGate gate) {
-				return new Transformed(transform(), gate().or(gate));
-			}
-
-			public Transformed nand(FlatGate gate) {
-				return new Transformed(transform(), gate().nand(gate));
-			}
-
-			public Transformed xor(FlatGate gate) {
-				return new Transformed(transform(), gate().xor(gate));
-			}
-
-			public Transformed nor(FlatGate gate) {
-				return new Transformed(transform(), gate().nor(gate));
-			}
-
-			public Transformed xnor(FlatGate gate) {
-				return new Transformed(transform(), gate().xnor(gate));
+			public Outlined outliningStyle(OutliningStyle outliningStyle) {
+				return new Outlined(expansion(), outliningMode(), outliningStyle);
 			}
 
 			// Interface Implementations
 
 			@Override
 			public boolean isRenderable() {
-				return Rectangle.this.isRenderable();
+				return outliningMode() == OutliningMode.NORMAL ? Rectangle.this.isRenderable() : (Renderable.isLegal(box()) && hasColor());
 			}
 
 			@Override
 			public void render() {
 				if (!isRenderable()) return;
 
-				boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
-
-				if (hasColor() && !blend) {
-					RenderSystem.enableBlend();
+				if (outliningMode() == OutliningMode.NORMAL) {
+					Rectangle.this.render();
 				}
 
-				RenderSystem.setShader(Objects.requireNonNull(state().shaderProgram()));
+				Box corner 			= Box.fromVectorCentered(box().center(), expansion);
+				Box gapHorizontal 	= Box.fromVectorCentered(box().center(), Vector.fromCartesian(box().w(), expansion.y()));
+				Box gapVertical 	= Box.fromVectorCentered(box().center(), Vector.fromCartesian(expansion.x(), box().h()));
 
-				if (hasTexture()) {
-					RenderSystem.setShaderTexture(0, Objects.requireNonNull(texture()).identifier());
-				}
+				double width = box().w() + expansion.x() * 2, height = box().h() + expansion.y() * 2;
+				double xCornerScalar = expansion.x() / width, yCornerScalar = expansion.y() / height;
 
-				BufferBuilder builder = Tessellator.getInstance().getBuffer();
-				Matrix4f matrix = matrixStack().peek().getPositionMatrix();
+				AccurateColor topLeft, 		topLeftBottom, 		topLeftTop, 	topLeftDiagonal;
+				AccurateColor bottomLeft, 	bottomLeftBottom, 	bottomLeftTop, 	bottomLeftDiagonal;
+				AccurateColor bottomRight, 	bottomRightBottom, 	bottomRightTop, bottomRightDiagonal;
+				AccurateColor topRight, 	topRightBottom, 	topRightTop, 	topRightDiagonal;
 
-				builder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, state().vertexFormat());
+				switch (outliningStyle) {
+					case CLAMPED -> {
+						topLeft 				= colorTopLeft();
+						topLeftTop 				= colorAt(xCornerScalar, 0);
+						topLeftBottom 			= colorAt(0, yCornerScalar);
+						topLeftDiagonal 		= colorAt(xCornerScalar, yCornerScalar);
 
-				for (double xr = 0; xr - 1 <= box().w(); xr++) {
-					for (double yr = 0; yr - 1 <= box().h(); yr++) {
-						double x = xr + box().x(), y = yr + box().y();
-						if (!gate().pass(x, y)) continue;
+						bottomLeft 				= colorBottomLeft();
+						bottomLeftTop 			= colorAt(0, 1 - yCornerScalar);
+						bottomLeftBottom 		= colorAt(xCornerScalar, 1);
+						bottomLeftDiagonal 		= colorAt(xCornerScalar, 1 - yCornerScalar);
 
-						double u = xr / box().w(), v = yr / box().h();
-						AccurateColor color = colorAt(xr / box().w(), yr / box().h());
+						bottomRight 			= colorBottomRight();
+						bottomRightTop 			= colorAt(1, 1 - yCornerScalar);
+						bottomRightBottom 		= colorAt(1 - xCornerScalar, 1);
+						bottomRightDiagonal 	= colorAt(1 - xCornerScalar, 1 - yCornerScalar);
 
-						renderVertex(builder, matrix, Vector.fromCartesian(x, y), Vector.fromCartesian(u, v), color, z());
+						topRight 				= colorTopRight();
+						topRightTop 			= colorAt(1 - xCornerScalar, 0);
+						topRightBottom 			= colorAt(1, yCornerScalar);
+						topRightDiagonal 		= colorAt(1 - xCornerScalar, yCornerScalar);
+					}
+					case EDGE -> {
+						topLeft 				= colorTopLeft();
+						topLeftTop 				= colorAt(xCornerScalar, 0);
+						topLeftBottom 			= colorAt(0, yCornerScalar);
+						topLeftDiagonal 		= colorAtCenter();
+
+						bottomLeft 				= colorBottomLeft();
+						bottomLeftTop 			= colorAt(0, 1 - yCornerScalar);
+						bottomLeftBottom 		= colorAt(xCornerScalar, 1);
+						bottomLeftDiagonal 		= colorAtCenter();
+
+						bottomRight 			= colorBottomRight();
+						bottomRightTop 			= colorAt(1, 1 - yCornerScalar);
+						bottomRightBottom 		= colorAt(1 - xCornerScalar, 1);
+						bottomRightDiagonal 	= colorAtCenter();
+
+						topRight 				= colorTopRight();
+						topRightTop 			= colorAt(1 - xCornerScalar, 0);
+						topRightBottom 			= colorAt(1, yCornerScalar);
+						topRightDiagonal 		= colorAtCenter();
+					}
+					case EDGE_FADED -> {
+						topLeftDiagonal = colorTopLeft();
+						topLeft = topLeftTop = topLeftBottom = AccurateColor.TRANSPARENT;
+
+						bottomLeftDiagonal = colorBottomLeft();
+						bottomLeft = bottomLeftTop = bottomLeftBottom = AccurateColor.TRANSPARENT;
+
+						bottomRightDiagonal = colorBottomRight();
+						bottomRight = bottomRightTop = bottomRightBottom = AccurateColor.TRANSPARENT;
+
+						topRightDiagonal = colorTopRight();
+						topRight = topRightTop = topRightBottom = AccurateColor.TRANSPARENT;
+					}
+					default -> {
+						topLeft = 		topLeftBottom = 		topLeftTop =	 	topLeftDiagonal = 		AccurateColor.TRANSPARENT;
+						bottomLeft = 	bottomLeftBottom = 		bottomLeftTop = 	bottomLeftDiagonal = 	AccurateColor.TRANSPARENT;
+						bottomRight = 	bottomRightBottom = 	bottomRightTop = 	bottomRightDiagonal = 	AccurateColor.TRANSPARENT;
+						topRight = 		topRightBottom = 		topRightTop = 		topRightDiagonal = 		AccurateColor.TRANSPARENT;
 					}
 				}
 
-				builder.end();
-				BufferRenderer.draw(builder);
+				// Top left
+				preserve(corner.alignBottomRight(box().topLeft()))
+						.colorTopLeft(topLeft)
+						.colorBottomLeft(topLeftBottom)
+						.colorBottomRight(topLeftDiagonal)
+						.colorTopRight(topLeftTop)
+						.render();
 
-				if (hasColor() && !blend) {
-					RenderSystem.disableBlend();
-				}
+				// Bottom left
+				preserve(corner.alignTopRight(box().bottomLeft()))
+						.colorTopLeft(bottomLeftTop)
+						.colorBottomLeft(bottomLeft)
+						.colorBottomRight(bottomLeftBottom)
+						.colorTopRight(bottomLeftDiagonal)
+						.render();
+
+				// Bottom right
+				preserve(corner.alignTopLeft(box().bottomRight()))
+						.colorTopLeft(bottomRightDiagonal)
+						.colorBottomLeft(bottomRightBottom)
+						.colorBottomRight(bottomRight)
+						.colorTopRight(bottomRightTop)
+						.render();
+
+				// Top right
+				preserve(corner.alignBottomLeft(box().topRight()))
+						.colorTopLeft(topRightTop)
+						.colorBottomLeft(topRightDiagonal)
+						.colorBottomRight(topRightBottom)
+						.colorTopRight(topRight)
+						.render();
+
+				// Top
+				preserve(gapHorizontal.alignBottomLeft(box().topLeft()))
+						.colorTopLeft(topLeftTop)
+						.colorBottomLeft(topLeftDiagonal)
+						.colorBottomRight(topRightDiagonal)
+						.colorTopRight(topRightTop)
+						.render();
+
+				// Bottom
+				preserve(gapHorizontal.alignTopLeft(box().bottomLeft()))
+						.colorTopLeft(bottomLeftDiagonal)
+						.colorBottomLeft(bottomLeftBottom)
+						.colorBottomRight(bottomRightBottom)
+						.colorTopRight(bottomRightDiagonal)
+						.render();
+
+				// Left
+				preserve(gapVertical.alignTopRight(box().topLeft()))
+						.colorTopLeft(topLeftBottom)
+						.colorBottomLeft(bottomLeftTop)
+						.colorBottomRight(bottomLeftDiagonal)
+						.colorTopRight(topLeftDiagonal)
+						.render();
+
+				// Right
+				preserve(gapVertical.alignTopLeft(box().topRight()))
+						.colorTopLeft(topRightDiagonal)
+						.colorBottomLeft(bottomRightDiagonal)
+						.colorBottomRight(bottomRightTop)
+						.colorTopRight(topRightBottom)
+						.render();
 			}
 
-			public class Outlined implements Renderable {
-				// Constructors
-
-				public Outlined(Vector expansion, OutliningMode outliningMode, OutliningStyle outliningStyle) {
-					this.expansion = expansion;
-					this.outliningMode = outliningMode;
-					this.outliningStyle = outliningStyle;
-				}
-
-				// Fields
-
-				public enum OutliningMode {
-					NORMAL, SCISSORED
-				}
-
-				public enum OutliningStyle {
-					CLAMPED, EDGE, EDGE_FADED
-				}
-
-				private final Vector expansion;
-				private final OutliningMode outliningMode;
-				private final OutliningStyle outliningStyle;
-
-				// Accessors
-
-				public Vector expansion() {
-					return expansion;
-				}
-
-				public OutliningMode outliningMode() {
-					return outliningMode;
-				}
-
-				public OutliningStyle outliningStyle() {
-					return outliningStyle;
-				}
-
-				// Mutators
-
-				public Outlined parent(UnaryOperator<Transformed> transformed) {
-					return transformed.apply(Transformed.this).new Outlined(expansion(), outliningMode(), outliningStyle());
-				}
-
-				public Outlined expansion(Vector expansion) {
-					return new Outlined(expansion, outliningMode(), outliningStyle());
-				}
-
-				public Outlined outliningMode(OutliningMode outliningMode) {
-					return new Outlined(expansion(), outliningMode, outliningStyle());
-				}
-
-				public Outlined outliningStyle(OutliningStyle outliningStyle) {
-					return new Outlined(expansion(), outliningMode(), outliningStyle);
-				}
-
-				// Interface Implementations
-
-				@Override
-				public boolean isRenderable() {
-					return outliningMode() == OutliningMode.NORMAL ? Rectangle.this.isRenderable() : (Renderable.isLegal(box()) && hasColor());
-				}
-
-				@Override
-				public void render() {
-					if (!isRenderable()) return;
-
-					if (outliningMode() == OutliningMode.NORMAL) {
-						Rectangle.this.render();
-					}
-
-					Box corner 			= Box.fromVectorCentered(box().center(), expansion);
-					Box gapHorizontal 	= Box.fromVectorCentered(box().center(), Vector.fromCartesian(box().w(), expansion.y()));
-					Box gapVertical 	= Box.fromVectorCentered(box().center(), Vector.fromCartesian(expansion.x(), box().h()));
-
-					double width = box().w() + expansion.x() * 2, height = box().h() + expansion.y() * 2;
-					double xCornerScalar = expansion.x() / width, yCornerScalar = expansion.y() / height;
-
-					AccurateColor topLeft 		= colorTopLeft(), 		topLeftBottom 		= AccurateColor.TRANSPARENT, 	topLeftTop 		= AccurateColor.TRANSPARENT, 	topLeftDiagonal 		= AccurateColor.TRANSPARENT;
-					AccurateColor bottomLeft 	= colorBottomLeft(), 	bottomLeftBottom 	= AccurateColor.TRANSPARENT, 	bottomLeftTop 	= AccurateColor.TRANSPARENT, 	bottomLeftDiagonal 		= AccurateColor.TRANSPARENT;
-					AccurateColor bottomRight 	= colorBottomRight(), 	bottomRightBottom 	= AccurateColor.TRANSPARENT, 	bottomRightTop 	= AccurateColor.TRANSPARENT, 	bottomRightDiagonal 	= AccurateColor.TRANSPARENT;
-					AccurateColor topRight 		= colorTopRight(), 		topRightBottom 		= AccurateColor.TRANSPARENT, 	topRightTop 	= AccurateColor.TRANSPARENT, 	topRightDiagonal 		= AccurateColor.TRANSPARENT;
-
-					switch (outliningStyle) {
-						case CLAMPED -> {
-							topLeftTop 				= colorAt(xCornerScalar, 0);
-							topLeftBottom 			= colorAt(0, yCornerScalar);
-							topLeftDiagonal 		= colorAt(xCornerScalar, yCornerScalar);
-
-							bottomLeftTop 			= colorAt(0, 1 - yCornerScalar);
-							bottomLeftBottom 		= colorAt(xCornerScalar, 1);
-							bottomLeftDiagonal 		= colorAt(xCornerScalar, 1 - yCornerScalar);
-
-							bottomRightTop 			= colorAt(1, 1 - yCornerScalar);
-							bottomRightBottom 		= colorAt(1 - xCornerScalar, 1);
-							bottomRightDiagonal 	= colorAt(1 - xCornerScalar, 1 - yCornerScalar);
-
-							topRightTop 			= colorAt(1 - xCornerScalar, 0);
-							topRightBottom 			= colorAt(1, yCornerScalar);
-							topRightDiagonal 		= colorAt(1 - xCornerScalar, yCornerScalar);
-						}
-						case EDGE -> {
-							topLeftTop 				= colorAt(xCornerScalar, 0);
-							topLeftBottom 			= colorAt(0, yCornerScalar);
-							topLeftDiagonal 		= colorAtCenter();
-
-							bottomLeftTop 			= colorAt(0, 1 - yCornerScalar);
-							bottomLeftBottom 		= colorAt(xCornerScalar, 1);
-							bottomLeftDiagonal 		= colorAtCenter();
-
-							bottomRightTop 			= colorAt(1, 1 - yCornerScalar);
-							bottomRightBottom 		= colorAt(1 - xCornerScalar, 1);
-							bottomRightDiagonal 	= colorAtCenter();
-
-							topRightTop 			= colorAt(1 - xCornerScalar, 0);
-							topRightBottom 			= colorAt(1, yCornerScalar);
-							topRightDiagonal 		= colorAtCenter();
-						}
-						case EDGE_FADED -> {
-							topLeftDiagonal = topLeft;
-							topLeft = topLeftTop = topLeftBottom = AccurateColor.TRANSPARENT;
-
-							bottomLeftDiagonal = bottomLeft;
-							bottomLeft = bottomLeftTop = bottomLeftBottom = AccurateColor.TRANSPARENT;
-
-							bottomRightDiagonal = bottomRight;
-							bottomRight = bottomRightTop = bottomRightBottom = AccurateColor.TRANSPARENT;
-
-							topRightDiagonal = topRight;
-							topRight = topRightTop = topRightBottom = AccurateColor.TRANSPARENT;
-						}
-					}
-
-					// Top left
-					preserve(corner.alignBottomRight(box().topLeft()))
-							.colorTopLeft(topLeft)
-							.colorBottomLeft(topLeftBottom)
-							.colorBottomRight(topLeftDiagonal)
-							.colorTopRight(topLeftTop)
-							.render();
-
-					// Bottom left
-					preserve(corner.alignTopRight(box().bottomLeft()))
-							.colorTopLeft(bottomLeftTop)
-							.colorBottomLeft(bottomLeft)
-							.colorBottomRight(bottomLeftBottom)
-							.colorTopRight(bottomLeftDiagonal)
-							.render();
-
-					// Bottom right
-					preserve(corner.alignTopLeft(box().bottomRight()))
-							.colorTopLeft(bottomRightDiagonal)
-							.colorBottomLeft(bottomRightBottom)
-							.colorBottomRight(bottomRight)
-							.colorTopRight(bottomRightTop)
-							.render();
-
-					// Top right
-					preserve(corner.alignBottomLeft(box().topRight()))
-							.colorTopLeft(topRightTop)
-							.colorBottomLeft(topRightDiagonal)
-							.colorBottomRight(topRightBottom)
-							.colorTopRight(topRight)
-							.render();
-
-					// Top
-					preserve(gapHorizontal.alignBottomLeft(box().topLeft()))
-							.colorTopLeft(topLeftTop)
-							.colorBottomLeft(topLeftDiagonal)
-							.colorBottomRight(topRightDiagonal)
-							.colorTopRight(topRightTop)
-							.render();
-
-					// Bottom
-					preserve(gapHorizontal.alignTopLeft(box().bottomLeft()))
-							.colorTopLeft(bottomLeftDiagonal)
-							.colorBottomLeft(bottomLeftBottom)
-							.colorBottomRight(bottomRightBottom)
-							.colorTopRight(bottomRightDiagonal)
-							.render();
-
-					// Left
-					preserve(gapVertical.alignTopRight(box().topLeft()))
-							.colorTopLeft(topLeftBottom)
-							.colorBottomLeft(bottomLeftTop)
-							.colorBottomRight(bottomLeftDiagonal)
-							.colorTopRight(topLeftDiagonal)
-							.render();
-
-					// Right
-					preserve(gapVertical.alignTopLeft(box().topRight()))
-							.colorTopLeft(topRightDiagonal)
-							.colorBottomLeft(bottomRightDiagonal)
-							.colorBottomRight(bottomRightTop)
-							.colorTopRight(topRightBottom)
-							.render();
-				}
-
-				// 'Outlined'
-			}
-
-			// 'Transformative'
+			// 'Outlined'
 		}
 
 		// 'Rectangle'
