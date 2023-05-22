@@ -7,7 +7,7 @@ import java.awt.*;
 /**
  * Standard color conversion methods, without opacity.
  */
-@net.krlite.equator.base.Visual("2.4.0")
+@net.krlite.equator.base.Visual("2.4.2")
 public interface ColorStandard {
 	double[] from(double[] color, Colorspace colorspace);
 
