@@ -5,6 +5,7 @@ import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.render.renderer.Flat;
 import net.krlite.equator.visual.color.Palette;
 import net.krlite.equator.visual.texture.Texture;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -26,8 +27,8 @@ public class VanillaWidgets {
 			}
 		}
 
-		public static void render(MatrixStack matrixStack, Box box, State state) {
-			new Flat(matrixStack, 0, box)
+		public static void render(DrawContext context, Box box, State state) {
+			new Flat(context, 0, box)
 					.new Rectangle(Texture.fromIdentifier(ClickableWidget.WIDGETS_TEXTURE).uvBox(256, 256, 0, state.y(), 200, 20))
 					.new NineSliced(20, 20, 4, 4, 200, 20)
 					.render();
@@ -35,9 +36,9 @@ public class VanillaWidgets {
 	}
 
 	public static class Tooltip {
-		public static void render(MatrixStack matrixStack, Box box) {
+		public static void render(DrawContext context, Box box) {
 			Box bleed = box.expand(-1);
-			Flat flat = new Flat(matrixStack, 0, box);
+			Flat flat = new Flat(context, 0, box);
 
 			// Rectangle
 			flat.new Rectangle(Palette.Minecraft.TOOLTIP_BACKGROUND).render();

@@ -1,27 +1,22 @@
 package net.krlite.equator.test;
 
-import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.input.Keyboard;
 import net.krlite.equator.input.Mouse;
+import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.render.renderer.Flat;
-import net.krlite.equator.render.vanilla.VanillaWidgets;
 import net.krlite.equator.visual.animation.Interpolation;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.color.Colorspace;
-import net.krlite.equator.visual.color.Palette;
-import net.krlite.equator.visual.color.base.ColorStandard;
 import net.krlite.equator.visual.text.Paragraph;
 import net.krlite.equator.visual.text.Section;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.*;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import org.joml.Matrix4f;
 
 public class CanvasScreen extends Screen {
 	public CanvasScreen() {
@@ -80,15 +75,15 @@ public class CanvasScreen extends Screen {
 	}
 
 	@Override
-	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-		renderBackground(matrixStack);
+	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+		renderBackground(context);
 
-		//VanillaWidgets.Tooltip.render(matrixStack, box);
+		//VanillaWidgets.Tooltip.render(context, box);
 
 		Box another = FrameInfo.scaled().topLeft(box.bottomRight()).squareInner().alignBottomRight(FrameInfo.scaled());
 
 		/*
-		new Flat(matrixStack, 0, another).new Oval()
+		new Flat(context, 0, another).new Oval()
 				.addColor(0, AccurateColor.MAGENTA)
 				.addColor(Math.PI / 2, AccurateColor.CYAN)
 				.addColor(3 * Math.PI / 2, AccurateColor.YELLOW)
@@ -99,7 +94,7 @@ public class CanvasScreen extends Screen {
 		*/
 
 		/*
-		new Flat(matrixStack, 0, box).new Text(
+		new Flat(context, 0, box).new Text(
 				section -> section
 								   .appendTitle("TITLE")
 								   .append("Write me!")
@@ -114,9 +109,9 @@ public class CanvasScreen extends Screen {
 
 		 */
 
-		FrameInfo.scaled().render(matrixStack, 0, flat -> flat.new Rectangle(AccurateColor.WHITE));
+		FrameInfo.scaled().render(context, 0, flat -> flat.new Rectangle(AccurateColor.WHITE));
 
-		Box.fromCartesian(0, 0, 100, 100).render(matrixStack,
+		Box.fromCartesian(0, 0, 100, 100).render(context,
 				flat -> flat
 								.new Rectangle()
 								.colorTopLeft(AccurateColor.RED)
@@ -125,7 +120,7 @@ public class CanvasScreen extends Screen {
 								.colorTopRight(AccurateColor.WHITE)
 		);
 
-		Box.fromCartesian(100, 0, 100, 100).render(matrixStack,
+		Box.fromCartesian(100, 0, 100, 100).render(context,
 				flat -> flat
 								.new Rectangle(Colorspace.HSV)
 								.colorTopLeft(AccurateColor.RED.colorspace(Colorspace.HSV))
@@ -136,12 +131,12 @@ public class CanvasScreen extends Screen {
 
 		Box box = Box.fromCartesian(50, 50).center(FrameInfo.scaled());
 
-		box.render(matrixStack,
+		box.render(context,
 				flat -> flat.new Rectangle()
 								.colors(AccurateColor.MAGENTA.opacity(0.5))
 								.new Outlined(Vector.fromCartesian(240, 240).scale(interpolation.value()), Flat.Rectangle.Outlined.OutliningMode.NORMAL, Flat.Rectangle.Outlined.OutliningStyle.EDGE_FADED)
 		);
 
-		box.render(matrixStack, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
+		box.render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
 	}
 }

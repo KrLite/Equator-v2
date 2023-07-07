@@ -2,13 +2,13 @@ package net.krlite.equator.render.renderer;
 
 import net.krlite.equator.math.geometry.volume.Pos;
 import net.krlite.equator.render.renderer.base.Basic;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 public class Volume extends Basic {
 	// Constructors
 
-	protected Volume(MatrixStack matrixStack, Pos pos) {
-		super(matrixStack);
+	protected Volume(DrawContext context, Pos pos) {
+		super(context);
 		this.pos = pos;
 	}
 
@@ -25,6 +25,6 @@ public class Volume extends Basic {
 	// Mutators
 
 	public Volume pos(Pos pos) {
-		return new Volume(matrixStack(), pos);
+		return new Volume(context(), pos);
 	}
 }

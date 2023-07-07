@@ -4,12 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.krlite.equator.Equator;
-import net.krlite.equator.base.Exceptions;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.math.geometry.flat.Vector;
-import net.krlite.equator.math.logic.flat.FlatGate;
-import net.krlite.equator.math.logic.flat.FlatTransform;
 import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.render.frame.FrameInfo;
@@ -25,6 +22,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.ShaderProgram;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
@@ -48,8 +46,8 @@ import java.util.function.UnaryOperator;
 public class Flat extends Basic {
 	// Constructors
 
-	public Flat(MatrixStack matrixStack, float z, Box box) {
-		super(matrixStack);
+	public Flat(DrawContext context, float z, Box box) {
+		super(context);
 		this.z = z;
 		this.box = box;
 	}
@@ -72,11 +70,11 @@ public class Flat extends Basic {
 	// Mutators
 
 	public Flat z(float z) {
-		return new Flat(matrixStack(), z, box());
+		return new Flat(context(), z, box());
 	}
 
 	public Flat box(Box box) {
-		return new Flat(matrixStack(), z(), box);
+		return new Flat(context(), z(), box);
 	}
 
 	public class Rectangle implements Renderable {
@@ -1360,7 +1358,7 @@ public class Flat extends Basic {
 			matrixStack().push();
 			matrixStack().translate(box().x(), box().y(), 0);
 
-			section().render(box().alignTopLeft(Vector.ZERO), matrixStack(), textRenderer(), color(), verticalAlignment(), horizontalAlignment(), shadowed());
+			section().render(box().alignTopLeft(Vector.ZERO), context(), textRenderer(), color(), verticalAlignment(), horizontalAlignment(), shadowed());
 
 			matrixStack().pop();
 
@@ -1461,7 +1459,7 @@ public class Flat extends Basic {
 						).alignTopLeft(context),
 						snapped = tooltipSnap().snap(raw, context.w(), context.h());
 
-				VanillaWidgets.Tooltip.render(matrixStack(), snapped.expand(bleeding()));
+				VanillaWidgets.Tooltip.render(context(), snapped.expand(bleeding()));
 				preserve(snapped).render();
 			}
 
@@ -1599,10 +1597,10 @@ public class Flat extends Basic {
 			RenderSystem.setShaderColor(1, 1, 1, 1);
 		}
 
-		private void applyModelView(MatrixStack matrixStack) {
-			matrixStack.scale(1, -1, 1);
-			matrixStack.scale((float) box().w(), (float) box().h(), 1);
-			matrixStack.multiply(new Quaternionf(modifier()));
+		private void applyModelView(DrawContext context) {
+			context.getMatrices().scale(1, -1, 1);
+			context.getMatrices().scale((float) box().w(), (float) box().h(), 1);
+			context.getMatrices().multiply(new Quaternionf(modifier()));
 
 			RenderSystem.applyModelViewMatrix();
 		}
@@ -1619,7 +1617,7 @@ public class Flat extends Basic {
 
 			matrixStack().push();
 			matrixStack().translate(box().center().x(), box().center().y(), z);
-			applyModelView(matrixStack());
+			applyModelView(context());
 			MatrixStack modelMatrixStack = new MatrixStack();
 
 			if (bakedModel == null) // Block: translate to center

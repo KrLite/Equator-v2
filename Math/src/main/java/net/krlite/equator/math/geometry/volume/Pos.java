@@ -42,7 +42,7 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 	}
 
 	public Pos(Entity entity) {
-		this(entity.world.getRegistryKey(), entity.getX(), entity.getY(), entity.getZ());
+		this(entity.getWorld().getRegistryKey(), entity.getX(), entity.getY(), entity.getZ());
 	}
 
 	// Accessors

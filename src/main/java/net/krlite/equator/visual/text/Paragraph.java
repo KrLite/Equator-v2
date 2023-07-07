@@ -6,6 +6,7 @@ import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.davidmoten.text.utils.WordWrap;
@@ -135,34 +136,30 @@ public record Paragraph(Text text, double scalar) {
 		return width <= 0 ? 0 : wrap(fontSize, width).length;
 	}
 
-	public void render(double fontSize, double lineSpacing, Box box, MatrixStack matrixStack, TextRenderer textRenderer, AccurateColor color, Alignment alignment, boolean shadow) {
+	public void render(double fontSize, double lineSpacing, Box box, DrawContext context, TextRenderer textRenderer, AccurateColor color, Alignment alignment, boolean shadow) {
 		if (box.w() <= 0) return;
-		render(new LinkedList<>(Arrays.stream(wrap(fontSize, box.w())).toList()), fontSize, lineSpacing, box, matrixStack, textRenderer, color, alignment, shadow);
+		render(new LinkedList<>(Arrays.stream(wrap(fontSize, box.w())).toList()), fontSize, lineSpacing, box, context, textRenderer, color, alignment, shadow);
 	}
 
-	private void render(LinkedList<Text> lines, double fontSize, double lineSpacing, Box box, MatrixStack matrixStack, TextRenderer textRenderer, AccurateColor color, Alignment alignment, boolean shadow) {
+	private void render(LinkedList<Text> lines, double fontSize, double lineSpacing, Box box, DrawContext context, TextRenderer textRenderer, AccurateColor color, Alignment alignment, boolean shadow) {
 		Text line = lines.poll();
 
 		if (line == null) return;
 
 		if (lines.peek() != null) {
 			lines.set(0, lines.peek().copy().styled(style -> style.withParent(line.getStyle())));
-			render(lines, fontSize, lineSpacing, box.shift(0, height(fontSize, lineSpacing)), matrixStack, textRenderer, color, alignment, shadow);
+			render(lines, fontSize, lineSpacing, box.shift(0, height(fontSize, lineSpacing)), context, textRenderer, color, alignment, shadow);
 		}
 
-		matrixStack.push();
+		context.getMatrices().push();
 
 		Vector aligned = alignment.apply(box, line, textRenderer, fontSize, scalar());
-		matrixStack.translate(aligned.x(), aligned.y(), 0);
-		matrixStack.scale((float) (fontSize * scalar()), (float) (fontSize * scalar()), 1);
+		context.getMatrices().translate(aligned.x(), aligned.y(), 0);
+		context.getMatrices().scale((float) (fontSize * scalar()), (float) (fontSize * scalar()), 1);
 
-		if (shadow) {
-			textRenderer.drawWithShadow(matrixStack, line, 0, 0, color.toInt());
-		} else {
-			textRenderer.draw(matrixStack, line, 0, 0, color.toInt());
-		}
+		context.drawText(textRenderer, line, 0, 0, color.toInt(), shadow);
 
-		matrixStack.pop();
+		context.getMatrices().pop();
 	}
 
 	private void print(String text, boolean withFormattingPattern) {

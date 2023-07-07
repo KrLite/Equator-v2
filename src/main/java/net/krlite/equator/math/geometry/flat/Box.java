@@ -7,7 +7,7 @@ import net.krlite.equator.render.frame.Convertible;
 import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.render.renderer.Flat;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 import java.util.function.Function;
 
@@ -1300,33 +1300,33 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Starts rendering from a {@link Flat}, whose parameters are pre-set.
-	 * @param matrixStack	The {@link MatrixStack} to render in.
+	 * @param context		The {@link DrawContext} to render in.
 	 * @param z				{@code z} to render on.
 	 * @param function		A {@link Function} that takes a pre-set {@link Flat} and returns a {@link Renderable}, whose
 	 *                      {@link Renderable#render()} method will be called.
 	 */
-	public void render(MatrixStack matrixStack, float z, Function<Flat, Renderable> function) {
-		function.apply(new Flat(matrixStack, z, this)).render();
+	public void render(DrawContext context, float z, Function<Flat, Renderable> function) {
+		function.apply(new Flat(context, z, this)).render();
 	}
 
-	public void render(MatrixStack matrixStack, Function<Flat, Renderable> function) {
-		render(matrixStack, 0, function);
+	public void render(DrawContext context, Function<Flat, Renderable> function) {
+		render(context, 0, function);
 	}
 
 	/**
 	 * Starts rendering from a {@link Flat}, whose parameters are pre-set, in a snipped {@link Scissor}.
 	 * @param scissor		The {@link Scissor} to snip with.
-	 * @param matrixStack	The {@link MatrixStack} to render in.
+	 * @param context		The {@link DrawContext} to render in.
 	 * @param z				{@code z} to render on.
 	 * @param function		A {@link Function} that takes a pre-set {@link Flat} and returns a {@link Renderable}, whose
 	 *                      {@link Renderable#render()} method will be called.
 	 */
-	public void renderSnipped(Box scissor, MatrixStack matrixStack, float z, Function<Flat, Renderable> function) {
-		scissor.scissor().snipWith(function.apply(new Flat(matrixStack, z, this)));
+	public void renderSnipped(Box scissor, DrawContext context, float z, Function<Flat, Renderable> function) {
+		scissor.scissor().snipWith(function.apply(new Flat(context, z, this)));
 	}
 
-	public void renderSnipped(Box scissor, MatrixStack matrixStack, Function<Flat, Renderable> function) {
-		renderSnipped(scissor, matrixStack, 0, function);
+	public void renderSnipped(Box scissor, DrawContext context, Function<Flat, Renderable> function) {
+		renderSnipped(scissor, context, 0, function);
 	}
 
 	// Object Methods

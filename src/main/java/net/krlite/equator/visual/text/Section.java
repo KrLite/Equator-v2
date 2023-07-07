@@ -4,6 +4,7 @@ import net.krlite.equator.base.Cyclic;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
@@ -232,21 +233,21 @@ public record Section(
 		return appendTitle(Text.of(text));
 	}
 
-	public void render(Box box, MatrixStack matrixStack, TextRenderer textRenderer, AccurateColor color, Alignment vertical, Paragraph.Alignment horizontal, boolean shadow) {
-		render(new LinkedList<>(Arrays.stream(paragraphs()).toList()), vertical.apply(box, wrappedHeight(box.w())), matrixStack, textRenderer, color, vertical, horizontal, shadow);
+	public void render(Box box, DrawContext context, TextRenderer textRenderer, AccurateColor color, Alignment vertical, Paragraph.Alignment horizontal, boolean shadow) {
+		render(new LinkedList<>(Arrays.stream(paragraphs()).toList()), vertical.apply(box, wrappedHeight(box.w())), context, textRenderer, color, vertical, horizontal, shadow);
 	}
 
-	private void render(LinkedList<Paragraph> paragraphs, Box box, MatrixStack matrixStack, TextRenderer textRenderer, AccurateColor color, Alignment vertical, Paragraph.Alignment horizontal, boolean shadow) {
+	private void render(LinkedList<Paragraph> paragraphs, Box box, DrawContext context, TextRenderer textRenderer, AccurateColor color, Alignment vertical, Paragraph.Alignment horizontal, boolean shadow) {
 		Paragraph paragraph = paragraphs.poll();
 
 		if (paragraph == null) return;
 
 		if (paragraphs.peek() != null) {
 			render(paragraphs, box.shift(0, paragraph.wrappedHeight(fontSize(), lineSpacing(), box.w())),
-					matrixStack, textRenderer, color, vertical, horizontal, shadow);
+					context, textRenderer, color, vertical, horizontal, shadow);
 		}
 
-		paragraph.render(fontSize(), lineSpacing(), box, matrixStack, textRenderer, color, horizontal, shadow);
+		paragraph.render(fontSize(), lineSpacing(), box, context, textRenderer, color, horizontal, shadow);
 	}
 
 	public void print(boolean withFormattingPattern) {

@@ -1,15 +1,20 @@
 package net.krlite.equator.render.renderer.base;
 
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public abstract class Basic {
-	protected Basic(MatrixStack matrixStack) {
-		this.matrixStack = matrixStack;
+	protected Basic(DrawContext context) {
+		this.context = context;
 	}
 
-	private final MatrixStack matrixStack;
+	private final DrawContext context;
+
+	public DrawContext context() {
+		return context;
+	}
 
 	public MatrixStack matrixStack() {
-		return matrixStack;
+		return context.getMatrices();
 	}
 }
