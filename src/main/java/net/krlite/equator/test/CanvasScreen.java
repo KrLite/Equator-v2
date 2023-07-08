@@ -14,11 +14,13 @@ import net.krlite.equator.visual.color.Palette;
 import net.krlite.equator.visual.color.base.ColorStandard;
 import net.krlite.equator.visual.text.Paragraph;
 import net.krlite.equator.visual.text.Section;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import org.joml.Matrix4f;
@@ -114,6 +116,7 @@ public class CanvasScreen extends Screen {
 
 		 */
 
+		/*
 		FrameInfo.scaled().render(matrixStack, 0, flat -> flat.new Rectangle(AccurateColor.WHITE));
 
 		Box.fromCartesian(0, 0, 100, 100).render(matrixStack,
@@ -143,5 +146,10 @@ public class CanvasScreen extends Screen {
 		);
 
 		box.render(matrixStack, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
+
+		 */
+
+		new Flat(matrixStack, 0, box).new Model(Items.DIAMOND_SWORD.getDefaultStack(), null).render();
+		new Flat(matrixStack, 0, another).new Model(Blocks.DANDELION.getDefaultState(), null).render();
 	}
 }

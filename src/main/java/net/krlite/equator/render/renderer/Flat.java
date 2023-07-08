@@ -1497,12 +1497,20 @@ public class Flat extends Basic {
 			this(itemStack, modifier, false);
 		}
 
+		public Model(@Nullable ItemStack itemStack) {
+			this(itemStack, null);
+		}
+
 		public Model(@Nullable BlockState blockState, @Nullable Quaternionfc modifier, boolean leftHanded) {
 			this(null, blockState, modifier, leftHanded);
 		}
 
 		public Model(@Nullable BlockState blockState, @Nullable Quaternionfc modifier) {
 			this(blockState, modifier, false);
+		}
+
+		public Model(@Nullable BlockState blockState) {
+			this(blockState, null);
 		}
 
 		// Fields
@@ -1600,7 +1608,7 @@ public class Flat extends Basic {
 		}
 
 		private void applyModelView(MatrixStack matrixStack) {
-			matrixStack.scale(1, -1, 1);
+			matrixStack.multiplyPositionMatrix((new Matrix4f()).scaling(1, -1, 1));
 			matrixStack.scale((float) box().w(), (float) box().h(), 1);
 			matrixStack.multiply(new Quaternionf(modifier()));
 
@@ -1620,22 +1628,26 @@ public class Flat extends Basic {
 			matrixStack().push();
 			matrixStack().translate(box().center().x(), box().center().y(), z());
 			applyModelView(matrixStack());
-			MatrixStack modelMatrixStack = new MatrixStack();
 
 			if (bakedModel == null) // Block: translate to center
-				modelMatrixStack.translate(-0.5, -0.5, -0.5);
-
-			VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+				matrixStack().translate(-0.5, -0.5, -0.5);
 
 			if (bakedModel != null && !bakedModel.isSideLit()) // Item: disable lighting
 				DiffuseLighting.disableGuiDepthLighting();
 
-			if (bakedModel != null) // Item: render item model
-				MinecraftClient.getInstance().getItemRenderer().renderItem(itemStack(), ModelTransformationMode.GUI,
-						leftHanded(), modelMatrixStack, immediate, 0xF000F0, OverlayTexture.DEFAULT_UV, bakedModel);
-			else // Block: render block model
-				MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(blockState(), modelMatrixStack,
-						immediate, 0xF000F0, OverlayTexture.DEFAULT_UV);
+			VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+
+			if (bakedModel != null) // Item: render model
+				MinecraftClient.getInstance().getItemRenderer().renderItem(
+						itemStack(), ModelTransformationMode.GUI,
+						leftHanded(), matrixStack(), immediate,
+						0xF000F0, OverlayTexture.DEFAULT_UV, bakedModel
+				);
+			else // Block: render model
+				MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(
+						blockState(), matrixStack(), immediate,
+						0xF000F0, OverlayTexture.DEFAULT_UV
+				);
 
 			immediate.draw();
 			RenderSystem.enableDepthTest();
