@@ -1604,7 +1604,7 @@ public class Flat extends Basic {
 		}
 
 		private void applyModelView(MatrixStack matrixStack) {
-			matrixStack.multiplyPositionMatrix((new Matrix4f()).scaling(1, -1, 1));
+			matrixStack.scale(1, -1, 1);
 			matrixStack.scale((float) box().w(), (float) box().h(), 1);
 			matrixStack.multiply(new Quaternionf(modifier()));
 
