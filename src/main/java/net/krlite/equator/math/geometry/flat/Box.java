@@ -229,6 +229,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		return origin().add(size().scale(xOffset, yOffset));
 	}
 
+	
 
 	/**
 	 * @return	{@code y} of the top edge.
