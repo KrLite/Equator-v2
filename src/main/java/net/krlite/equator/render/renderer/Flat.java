@@ -1493,7 +1493,7 @@ public class Flat extends Basic {
 		}
 
 		public Model(@Nullable ItemStack itemStack) {
-			this(itemStack, null, false);
+			this(itemStack, null);
 		}
 
 		public Model(@Nullable BlockState blockState, @Nullable Quaternion modifier) {
