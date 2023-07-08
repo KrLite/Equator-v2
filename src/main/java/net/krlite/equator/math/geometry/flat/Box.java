@@ -225,6 +225,11 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		return Vector.fromCartesian(right(), center().y());
 	}
 
+	public Vector at(double xOffset, double yOffset) {
+		return origin().add(size().scale(xOffset, yOffset));
+	}
+
+
 
 	/**
 	 * @return	{@code y} of the top edge.
