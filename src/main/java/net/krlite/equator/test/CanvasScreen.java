@@ -15,8 +15,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import org.joml.Quaternionf;
 
 public class CanvasScreen extends Screen {
 	public CanvasScreen() {
@@ -109,6 +111,7 @@ public class CanvasScreen extends Screen {
 
 		 */
 
+		/*
 		FrameInfo.scaled().render(context, 0, flat -> flat.new Rectangle(AccurateColor.WHITE));
 
 		Box.fromCartesian(0, 0, 100, 100).render(context,
@@ -138,5 +141,9 @@ public class CanvasScreen extends Screen {
 		);
 
 		box.render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
+		 */
+
+		System.out.println(0);
+		new Flat(context, 0, box).new Model(Items.DIAMOND_SWORD.getDefaultStack(), new Quaternionf()).render();
 	}
 }

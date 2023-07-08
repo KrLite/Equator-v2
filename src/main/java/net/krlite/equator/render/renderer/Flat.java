@@ -1616,7 +1616,7 @@ public class Flat extends Basic {
 			prepareModel();
 
 			matrixStack().push();
-			matrixStack().translate(box().center().x(), box().center().y(), z);
+			matrixStack().translate(box().center().x(), box().center().y(), z());
 			applyModelView(context());
 			MatrixStack modelMatrixStack = new MatrixStack();
 
