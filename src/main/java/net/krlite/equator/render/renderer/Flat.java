@@ -1495,12 +1495,20 @@ public class Flat extends Basic {
 			this(itemStack, modifier, false);
 		}
 
+		public Model(@Nullable ItemStack itemStack) {
+			this(itemStack, null);
+		}
+
 		public Model(@Nullable BlockState blockState, @Nullable Quaternionfc modifier, boolean leftHanded) {
 			this(null, blockState, modifier, leftHanded);
 		}
 
 		public Model(@Nullable BlockState blockState, @Nullable Quaternionfc modifier) {
 			this(blockState, modifier, false);
+		}
+
+		public Model(@Nullable BlockState blockState) {
+			this(blockState, null);
 		}
 
 		// Fields
@@ -1633,8 +1641,7 @@ public class Flat extends Basic {
 				);
 			else // Block: render model
 				MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(
-						blockState(), matrixStack(),
-						context().getVertexConsumers(),
+						blockState(), matrixStack(), context().getVertexConsumers(),
 						0xF000F0, OverlayTexture.DEFAULT_UV
 				);
 
