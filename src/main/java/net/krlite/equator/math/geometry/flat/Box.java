@@ -230,6 +230,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	}
 
 
+	
 	/**
 	 * @return	{@code y} of the top edge.
 	 */
