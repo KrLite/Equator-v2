@@ -1501,12 +1501,8 @@ public class Flat extends Basic {
 			this(itemStack, null);
 		}
 
-		public Model(@Nullable BlockState blockState, @Nullable Quaternionfc modifier, boolean leftHanded) {
-			this(null, blockState, modifier, leftHanded);
-		}
-
 		public Model(@Nullable BlockState blockState, @Nullable Quaternionfc modifier) {
-			this(blockState, modifier, false);
+			this(null, blockState, modifier, false);
 		}
 
 		public Model(@Nullable BlockState blockState) {
