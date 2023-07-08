@@ -1598,7 +1598,7 @@ public class Flat extends Basic {
 		}
 
 		private void applyModelView(DrawContext context) {
-			context.getMatrices().scale(1, -1, 1);
+			context.getMatrices().multiplyPositionMatrix((new Matrix4f()).scaling(1, -1, 1));
 			context.getMatrices().scale((float) box().w(), (float) box().h(), 1);
 			context.getMatrices().multiply(new Quaternionf(modifier()));
 
@@ -1618,24 +1618,27 @@ public class Flat extends Basic {
 			matrixStack().push();
 			matrixStack().translate(box().center().x(), box().center().y(), z());
 			applyModelView(context());
-			MatrixStack modelMatrixStack = new MatrixStack();
 
 			if (bakedModel == null) // Block: translate to center
-				modelMatrixStack.translate(-0.5, -0.5, -0.5);
-
-			VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+				matrixStack().translate(-0.5, -0.5, -0.5);
 
 			if (bakedModel != null && !bakedModel.isSideLit()) // Item: disable lighting
 				DiffuseLighting.disableGuiDepthLighting();
 
-			if (bakedModel != null) // Item: render item model
-				MinecraftClient.getInstance().getItemRenderer().renderItem(itemStack(), ModelTransformationMode.GUI,
-						leftHanded(), modelMatrixStack, immediate, 0xF000F0, OverlayTexture.DEFAULT_UV, bakedModel);
-			else // Block: render block model
-				MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(blockState(), modelMatrixStack,
-						immediate, 0xF000F0, OverlayTexture.DEFAULT_UV);
+			if (bakedModel != null) // Item: render model
+				MinecraftClient.getInstance().getItemRenderer().renderItem(
+						itemStack(), ModelTransformationMode.GUI,
+						leftHanded(), matrixStack(), context().getVertexConsumers(),
+						0xF000F0, OverlayTexture.DEFAULT_UV, bakedModel
+				);
+			else // Block: render model
+				MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(
+						blockState(), matrixStack(),
+						context().getVertexConsumers(),
+						0xF000F0, OverlayTexture.DEFAULT_UV
+				);
 
-			immediate.draw();
+			context().draw();
 			RenderSystem.enableDepthTest();
 
 			if (bakedModel != null && !bakedModel.isSideLit()) // Item: re-enable lighting

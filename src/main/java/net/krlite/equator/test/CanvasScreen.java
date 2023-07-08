@@ -11,6 +11,7 @@ import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.color.Colorspace;
 import net.krlite.equator.visual.text.Paragraph;
 import net.krlite.equator.visual.text.Section;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,6 +19,7 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.RotationAxis;
 import org.joml.Quaternionf;
 
 public class CanvasScreen extends Screen {
@@ -143,7 +145,7 @@ public class CanvasScreen extends Screen {
 		box.render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
 		 */
 
-		System.out.println(0);
-		new Flat(context, 0, box).new Model(Items.DIAMOND_SWORD.getDefaultStack(), new Quaternionf()).render();
+		new Flat(context, 0, box).new Model(Items.DIAMOND_SWORD.getDefaultStack(), null).render();
+		new Flat(context, 0, another).new Model(Blocks.ACACIA_LOG.getDefaultState(), new Quaternionf().rotationXYZ((float) (Math.PI / 4), (float) (Math.PI / 4), 0)).render();
 	}
 }
