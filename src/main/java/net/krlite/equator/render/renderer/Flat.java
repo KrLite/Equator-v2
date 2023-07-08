@@ -1602,7 +1602,7 @@ public class Flat extends Basic {
 		}
 
 		private void applyModelView(DrawContext context) {
-			context.getMatrices().multiplyPositionMatrix((new Matrix4f()).scaling(1, -1, 1));
+			context.getMatrices().scale(1, -1, 1);
 			context.getMatrices().scale((float) box().w(), (float) box().h(), 1);
 			context.getMatrices().multiply(new Quaternionf(modifier()));
 
