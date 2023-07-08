@@ -383,47 +383,6 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		return Box.fromVector(bottomLeft(), topRight);
 	}
 
-
-
-	/**
-	 * Mutates the top left corner.
-	 * @param another	The box whose top left corner will be used.
-	 * @return	A new box with the given top left corner.
-	 * @see #origin(Vector)
-	 */
-	public Box topLeft(Box another) {
-		return topLeft(another.topLeft());
-	}
-
-	/**
-	 * Mutates the bottom left corner.
-	 * @param another	The box whose bottom left corner will be used.
-	 * @return	A new box with the given bottom left corner.
-	 */
-	public Box bottomLeft(Box another) {
-		return bottomLeft(another.bottomLeft());
-	}
-
-	/**
-	 * Mutates the bottom right corner.
-	 * @param another	The box whose bottom right corner will be used.
-	 * @return	A new box with the given bottom right corner.
-	 */
-	public Box bottomRight(Box another) {
-		return bottomRight(another.bottomRight());
-	}
-
-	/**
-	 * Mutates the top right corner.
-	 * @param another	The box whose top right corner will be used.
-	 * @return	A new box with the given top right corner.
-	 */
-	public Box topRight(Box another) {
-		return topRight(another.topRight());
-	}
-
-
-
 	/**
 	 * Mutates the center.
 	 * @param center	The center.
@@ -434,44 +393,6 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	}
 
 	/**
-	 * Mutates the top center.
-	 * @param topCenter	The top center. That is, the center of the top edge.
-	 * @return	A new box with the given top center.
-	 */
-	public Box topCenter(Vector topCenter) {
-		return center(topCenter.add(height().scale(0.5)));
-	}
-
-	/**
-	 * Mutates the bottom center.
-	 * @param bottomCenter	The bottom center. That is, the center of the bottom edge.
-	 * @return	A new box with the given bottom center.
-	 */
-	public Box bottomCenter(Vector bottomCenter) {
-		return center(bottomCenter.subtract(height().scale(0.5)));
-	}
-
-	/**
-	 * Mutates the left center.
-	 * @param leftCenter	The left center. That is, the center of the left edge.
-	 * @return	A new box with the given left center.
-	 */
-	public Box leftCenter(Vector leftCenter) {
-		return center(leftCenter.add(width().scale(0.5)));
-	}
-
-	/**
-	 * Mutates the right center.
-	 * @param rightCenter	The right center. That is, the center of the right edge.
-	 * @return	A new box with the given right center.
-	 */
-	public Box rightCenter(Vector rightCenter) {
-		return center(rightCenter.subtract(width().scale(0.5)));
-	}
-
-
-
-	/**
 	 * Mutates the center to the center of another box.
 	 * @param another	The box whose center will be used.
 	 * @return	A new box with the given center.
@@ -480,40 +401,46 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		return center(another.center());
 	}
 
+
+
 	/**
 	 * Mutates the top center.
-	 * @param another	The box whose top center will be used.
+	 * @param topCenter	The top center. That is, the center of the top edge.
 	 * @return	A new box with the given top center.
 	 */
-	public Box topCenter(Box another) {
-		return topCenter(another.topCenter());
+	public Box topCenter(Vector topCenter) {
+		return Box.fromVector(topCenter.subtract(width().scale(0.5)), topCenter.add(width().scale(0.5)));
 	}
 
 	/**
 	 * Mutates the bottom center.
-	 * @param another	The box whose bottom center will be used.
+	 * @param bottomCenter	The bottom center. That is, the center of the bottom edge.
 	 * @return	A new box with the given bottom center.
 	 */
-	public Box bottomCenter(Box another) {
-		return bottomCenter(another.bottomCenter());
+	public Box bottomCenter(Vector bottomCenter) {
+		return Box.fromVector(bottomCenter.subtract(width().scale(0.5)), bottomCenter.add(width().scale(0,.5)));
 	}
 
 	/**
 	 * Mutates the left center.
-	 * @param another	The box whose left center will be used.
+	 * @param leftCenter	The left center. That is, the center of the left edge.
 	 * @return	A new box with the given left center.
 	 */
-	public Box leftCenter(Box another) {
-		return leftCenter(another.leftCenter());
+	public Box leftCenter(Vector leftCenter) {
+		return Box.fromVector(leftCenter.subtract(height().scale(0.5)), leftCenter.add(height().scale(0.5)));
 	}
 
 	/**
 	 * Mutates the right center.
-	 * @param another	The box whose right center will be used.
+	 * @param rightCenter	The right center. That is, the center of the right edge.
 	 * @return	A new box with the given right center.
 	 */
-	public Box rightCenter(Box another) {
-		return rightCenter(another.rightCenter());
+	public Box rightCenter(Vector rightCenter) {
+		return Box.fromVector(rightCenter.subtract(height().scale(0.5)), rightCenter.add(height().scale(0.5)));
+	}
+
+	public Vector at(double xOffset, double yOffset) {
+		return origin().add(size().scale(xOffset, yOffset));
 	}
 
 
