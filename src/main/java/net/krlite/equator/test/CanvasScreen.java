@@ -145,7 +145,8 @@ public class CanvasScreen extends Screen {
 		box.render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
 		 */
 
+		new Flat(context, 0, box).new Text(builder -> builder.append("ABC")).color(AccurateColor.CYAN.opacity(0.2)).render();
 		new Flat(context, 0, box).new Model(Items.DIAMOND_SWORD.getDefaultStack(), null).render();
-		new Flat(context, 0, another).new Model(Blocks.ACACIA_LOG.getDefaultState(), new Quaternionf().rotationXYZ((float) (Math.PI / 4), (float) (Math.PI / 4), 0)).render();
+		new Flat(context, 0, another).new Model(Blocks.LAVA.getDefaultState(), new Quaternionf().rotationXYZ((float) (Math.PI / 4), (float) (Math.PI / 4), 0)).render();
 	}
 }
