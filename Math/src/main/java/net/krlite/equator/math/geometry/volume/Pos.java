@@ -52,17 +52,14 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return dimension;
 	}
 
-	public double x() {
-		return x;
-	}
+	@Override
+	public double x() { return x; }
 
-	public double y() {
-		return y;
-	}
+	@Override
+	public double y() { return y; }
 
-	public double z() {
-		return z;
-	}
+	@Override
+	public double z() { return z; }
 
 	// Mutators
 
@@ -180,6 +177,10 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 
 	public Pos withoutDimension() {
 		return dimension(null);
+	}
+
+	public Pos normalize() {
+		return magnitude(1);
 	}
 
 	public Pos projectOnto(Pos another) {

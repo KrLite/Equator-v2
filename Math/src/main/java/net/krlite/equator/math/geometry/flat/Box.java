@@ -17,32 +17,14 @@ import net.krlite.equator.render.frame.FrameInfo;
 public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box> {
 	// Constants
 
-	/**
-	 * A box with a width and height of {@code 0}, whose center is at {@code (0, 0)}.
-	 */
 	public static final Box ZERO = new Box(Vector.ZERO);
-	
-	/**
-	 * A box with a width and height of {@code 1}, whose origin is at {@code (0, 0)}.
-	 */
+
 	public static final Box UNIT = new Box(Vector.UNIT_SQUARE);
 
-	/**
-	 * A box with a width and height of {@code 1}, whose center is at {@code (0, 0)}.
-	 */
 	public static final Box UNIT_CENTERED = UNIT.center(Vector.ZERO);
 
 	// Static Constructors
 
-	/**
-	 * Creates a box in the {@link FrameInfo.Convertor Scaled Coordinate} from the given
-	 * cartesian coordinate, width, and height.
-	 * @param x			{@code x} of the top left corner.
-	 * @param y			{@code y} of the top left corner.
-	 * @param width		The width.
-	 * @param height	The height.
-	 * @return	A box with the given cartesian coordinate, width, and height.
-	 */
 	public static Box fromCartesian(double x, double y, double width, double height) {
 		return new Box(Vector.fromCartesian(x, y), Vector.fromCartesian(width, height));
 	}
@@ -1107,7 +1089,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		if (rotationCount % 2 == 0) {
 			return this;
 		}
-		return size(size().theta(Math.PI * 2 - size().theta()));
+		return size(size().angle(Math.PI * 2 - size().angle()));
 	}
 
 	/**

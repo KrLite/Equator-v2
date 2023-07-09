@@ -22,136 +22,60 @@ import java.util.function.Function;
 public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box> {
 	// Constants
 
-	/**
-	 * A box with a width and height of {@code 0}, whose center is at {@code (0, 0)}.
-	 */
 	public static final Box ZERO = new Box(Vector.ZERO);
-	
-	/**
-	 * A box with a width and height of {@code 1}, whose origin is at {@code (0, 0)}.
-	 */
+
 	public static final Box UNIT = new Box(Vector.UNIT_SQUARE);
 
-	/**
-	 * A box with a width and height of {@code 1}, whose center is at {@code (0, 0)}.
-	 */
 	public static final Box UNIT_CENTERED = UNIT.center(Vector.ZERO);
 
 	// Static Constructors
 
-	/**
-	 * Creates a box in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate} from the given 
-	 * cartesian coordinate, width, and height.
-	 * @param x			{@code x} of the top left corner.
-	 * @param y			{@code y} of the top left corner.
-	 * @param width		The width.
-	 * @param height	The height.
-	 * @return	A box with the given cartesian coordinate, width, and height.
-	 */
 	public static Box fromCartesian(double x, double y, double width, double height) {
 		return new Box(Vector.fromCartesian(x, y), Vector.fromCartesian(width, height));
 	}
 
-	/**
-	 * Creates a box in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate} from the given 
-	 * width and height.
-	 * @param width		The width.
-	 * @param height	The height.
-	 * @return	A box with the given width and height, whose origin is {@code (0, 0)}.
-	 */
 	public static Box fromCartesian(double width, double height) {
 		return fromCartesian(0, 0, width, height);
 	}
 
-	/**
-	 * Creates a box in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate} from the given
-	 * cartesian coordinate, width, and height.
-	 * @param xCenter		{@code x} of the center.
-	 * @param yCenter		{@code y} of the center.
-	 * @param width			The width.
-	 * @param height		The height.
-	 * @return	A box with the given cartesian coordinate, width, and height, whose center is the given cartesian coordinate.
-	 */
 	public static Box fromCartesianCentered(double xCenter, double yCenter, double width, double height) {
 		return fromCartesian(xCenter - width / 2, yCenter - height / 2, width, height);
 	}
 
-	/**
-	 * Creates a box in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate} from the given 
-	 * width and height.
-	 * @param width		The width.
-	 * @param height	The height.
-	 * @return	A box with the given width and height, whose center is {@code (0, 0)}.
-	 */
 	public static Box fromCartesianCentered(double width, double height) {
 		return fromCartesianCentered(0, 0, width, height);
 	}
 
-	/**
-	 * Creates a box from the given corner vectors.
-	 * @param topLeft		The top left corner.
-	 * @param bottomRight	The bottom right corner.
-	 * @return	A box with the given corner vectors.
-	 */
 	public static Box fromVector(Vector topLeft, Vector bottomRight) {
 		return new Box(topLeft, bottomRight.subtract(topLeft));
 	}
 
-	/**
-	 * Creates a centered box from the given center and size.
-	 * @param center	The center.
-	 * @param size		The size. That is, the diagonal vector.
-	 * @return	A box with the given size, whose center is the given center.
-	 */
 	public static Box fromVectorCentered(Vector center, Vector size) {
 		return fromCartesianCentered(center.x(), center.y(), size.x(), size.y());
 	}
 
 	// Constructors
 
-	/**
-	 * Creates a box from the given origin and size.
-	 * @param origin	The origin. That is, the top left corner.
-	 * @param size		The size. That is, the diagonal vector.
-	 */
 	public Box(Vector origin, Vector size) {
 		this.origin = origin.min(origin.add(size));
 		this.size = origin.max(origin.add(size)).subtract(this.origin);
 	}
 
-	/**
-	 * Creates a box from the given size, whose origin is {@code (0, 0)}.
-	 * @param size	The size. That is, the diagonal vector.
-	 */
 	public Box(Vector size) {
 		this(Vector.ZERO, size);
 	}
 
-	/**
-	 * Creates a box in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate} from the given
-	 * cartesian coordinates.
-	 * @param xMin	{@code x} of the top left corner.
-	 * @param yMin	{@code y} of the top left corner.
-	 * @param xMax	{@code x} of the bottom right corner.
-	 * @param yMax	{@code y} of the bottom right corner.
-	 */
 	public Box(double xMin, double yMin, double xMax, double yMax) {
 		this(Vector.fromCartesian(xMin, yMin), Vector.fromCartesian(xMax - xMin, yMax - yMin));
 	}
 
 	// Accessors
 
-	/**
-	 * @return	The origin.
-	 */
 	@Override
 	public Vector origin() {
 		return origin;
 	}
 
-	/**
-	 * @return	The size. That is, the diagonal vector.
-	 */
 	@Override
 	public Vector size() {
 		return size;
@@ -159,68 +83,40 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 
 
-	/**
-	 * @return	The top left corner.
-	 * @see #origin()
-	 */
 	public Vector topLeft() {
 		return origin();
 	}
 
-	/**
-	 * @return	The bottom left corner.
-	 */
 	public Vector bottomLeft() {
 		return Vector.fromCartesian(topLeft().x(), bottomRight().y());
 	}
 
-	/**
-	 * @return	The bottom right corner.
-	 */
 	public Vector bottomRight() {
 		return origin().add(size());
 	}
 
-	/**
-	 * @return	The top right corner.
-	 */
 	public Vector topRight() {
 		return Vector.fromCartesian(bottomRight().x(), topLeft().y());
 	}
 
-	/**
-	 * @return	The center.
-	 */
 	public Vector center() {
 		return topLeft().add(size().scale(0.5));
 	}
 
 
 
-	/**
-	 * @return	The top center. That is, the center of the top edge.
-	 */
 	public Vector topCenter() {
 		return Vector.fromCartesian(center().x(), top());
 	}
 
-	/**
-	 * @return	The bottom center. That is, the center of the bottom edge.
-	 */
 	public Vector bottomCenter() {
 		return Vector.fromCartesian(center().x(), bottom());
 	}
 
-	/**
-	 * @return	The left center. That is, the center of the left edge.
-	 */
 	public Vector leftCenter() {
 		return Vector.fromCartesian(left(), center().y());
 	}
 
-	/**
-	 * @return	The right center. That is, the center of the right edge.
-	 */
 	public Vector rightCenter() {
 		return Vector.fromCartesian(right(), center().y());
 	}
@@ -231,350 +127,178 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	
 
-	/**
-	 * @return	{@code y} of the top edge.
-	 */
 	public double top() {
 		return topLeft().y();
 	}
 
-	/**
-	 * @return	{@code y} of the bottom edge.
-	 */
 	public double bottom() {
 		return bottomLeft().y();
 	}
 
-	/**
-	 * @return	{@code x} of the left edge.
-	 */
 	public double left() {
 		return topLeft().x();
 	}
 
-	/**
-	 * @return	{@code x} of the right edge.
-	 */
 	public double right() {
 		return topRight().x();
 	}
 
 
 
-	/**
-	 * @return	The width.
-	 */
 	public Vector width() {
 		return topRight().subtract(topLeft());
 	}
 
-	/**
-	 * @return	The height.
-	 */
 	public Vector height() {
 		return bottomLeft().subtract(topLeft());
 	}
 
 
-	/**
-	 * @return	{@code x} of the top left corner.
-	 */
+
 	public double x() {
 		return topLeft().x();
 	}
 
-	/**
-	 * @return	{@code y} of the top left corner.
-	 */
 	public double y() {
 		return topLeft().y();
 	}
 
-	/**
-	 * @return	The width.
-	 * @see #width()
-	 */
 	public double w() {
 		return width().magnitude();
 	}
 
-	/**
-	 * @return	The height.
-	 * @see #height()
-	 */
 	public double h() {
 		return height().magnitude();
 	}
 
-	/**
-	 * @return	The diagonal length.
-	 */
 	public double d() {
 		return size().magnitude();
 	}
 
 
 
-	/**
-	 * @return	{@code x} of the center.
-	 */
 	public double xCenter() {
 		return center().x();
 	}
 
-	/**
-	 * @return	{@code y} of the center.
-	 */
 	public double yCenter() {
 		return center().y();
 	}
 
 	// Mutators
 
-	/**
-	 * Mutates the origin.
-	 * @param origin	The origin. That is, the top left corner.
-	 * @return	A new box with the given origin.
-	 */
 	public Box origin(Vector origin) {
 		return new Box(origin, size());
 	}
 
-	/**
-	 * Mutates the size.
-	 * @param size	The size. That is, the diagonal vector.
-	 * @return	A new box with the given size.
-	 */
 	public Box size(Vector size) {
 		return new Box(topLeft(), size);
 	}
 
 
 
-	/**
-	 * Mutates the top left corner.
-	 * @param topLeft	The top left corner.
-	 * @return	A new box with the given top left corner.
-	 * @see #origin(Vector)
-	 */
 	public Box topLeft(Vector topLeft) {
 		return Box.fromVector(topLeft, bottomRight());
 	}
 
-	/**
-	 * Mutates the bottom left corner.
-	 * @param bottomLeft	The bottom left corner.
-	 * @return	A new box with the given bottom left corner.
-	 */
 	public Box bottomLeft(Vector bottomLeft) {
 		return Box.fromVector(bottomLeft, topRight());
 	}
 
-	/**
-	 * Mutates the bottom right corner.
-	 * @param bottomRight	The bottom right corner.
-	 * @return	A new box with the given bottom right corner.
-	 */
 	public Box bottomRight(Vector bottomRight) {
 		return Box.fromVector(topLeft(), bottomRight);
 	}
 
-	/**
-	 * Mutates the top right corner.
-	 * @param topRight	The top right corner.
-	 * @return	A new box with the given top right corner.
-	 */
 	public Box topRight(Vector topRight) {
 		return Box.fromVector(bottomLeft(), topRight);
 	}
 
 
 
-	/**
-	 * Mutates the top left corner.
-	 * @param another	The box whose top left corner will be used.
-	 * @return	A new box with the given top left corner.
-	 * @see #origin(Vector)
-	 */
 	public Box topLeft(Box another) {
 		return topLeft(another.topLeft());
 	}
 
-	/**
-	 * Mutates the bottom left corner.
-	 * @param another	The box whose bottom left corner will be used.
-	 * @return	A new box with the given bottom left corner.
-	 */
 	public Box bottomLeft(Box another) {
 		return bottomLeft(another.bottomLeft());
 	}
 
-	/**
-	 * Mutates the bottom right corner.
-	 * @param another	The box whose bottom right corner will be used.
-	 * @return	A new box with the given bottom right corner.
-	 */
 	public Box bottomRight(Box another) {
 		return bottomRight(another.bottomRight());
 	}
 
-	/**
-	 * Mutates the top right corner.
-	 * @param another	The box whose top right corner will be used.
-	 * @return	A new box with the given top right corner.
-	 */
 	public Box topRight(Box another) {
 		return topRight(another.topRight());
 	}
 
 
 
-	/**
-	 * Mutates the center.
-	 * @param center	The center.
-	 * @return	A new box with the given center.
-	 */
 	public Box center(Vector center) {
 		return new Box(center.subtract(size().scale(0.5)), size());
 	}
 
-	/**
-	 * Mutates the top center.
-	 * @param topCenter	The top center. That is, the center of the top edge.
-	 * @return	A new box with the given top center.
-	 */
 	public Box topCenter(Vector topCenter) {
 		return center(topCenter.add(height().scale(0.5)));
 	}
 
-	/**
-	 * Mutates the bottom center.
-	 * @param bottomCenter	The bottom center. That is, the center of the bottom edge.
-	 * @return	A new box with the given bottom center.
-	 */
 	public Box bottomCenter(Vector bottomCenter) {
 		return center(bottomCenter.subtract(height().scale(0.5)));
 	}
 
-	/**
-	 * Mutates the left center.
-	 * @param leftCenter	The left center. That is, the center of the left edge.
-	 * @return	A new box with the given left center.
-	 */
 	public Box leftCenter(Vector leftCenter) {
 		return center(leftCenter.add(width().scale(0.5)));
 	}
 
-	/**
-	 * Mutates the right center.
-	 * @param rightCenter	The right center. That is, the center of the right edge.
-	 * @return	A new box with the given right center.
-	 */
 	public Box rightCenter(Vector rightCenter) {
 		return center(rightCenter.subtract(width().scale(0.5)));
 	}
 
 
 
-	/**
-	 * Mutates the center to the center of another box.
-	 * @param another	The box whose center will be used.
-	 * @return	A new box with the given center.
-	 */
 	public Box center(Box another) {
 		return center(another.center());
 	}
 
-	/**
-	 * Mutates the top center.
-	 * @param another	The box whose top center will be used.
-	 * @return	A new box with the given top center.
-	 */
 	public Box topCenter(Box another) {
 		return topCenter(another.topCenter());
 	}
 
-	/**
-	 * Mutates the bottom center.
-	 * @param another	The box whose bottom center will be used.
-	 * @return	A new box with the given bottom center.
-	 */
 	public Box bottomCenter(Box another) {
 		return bottomCenter(another.bottomCenter());
 	}
 
-	/**
-	 * Mutates the left center.
-	 * @param another	The box whose left center will be used.
-	 * @return	A new box with the given left center.
-	 */
 	public Box leftCenter(Box another) {
 		return leftCenter(another.leftCenter());
 	}
 
-	/**
-	 * Mutates the right center.
-	 * @param another	The box whose right center will be used.
-	 * @return	A new box with the given right center.
-	 */
 	public Box rightCenter(Box another) {
 		return rightCenter(another.rightCenter());
 	}
 
 
 
-	/**
-	 * Mutates the top edge.
-	 * @param y	{@code y} of the top edge.
-	 * @return	A new box with the given top edge.
-	 */
 	public Box top(double y) {
 		return topLeft(topLeft().y(y));
 	}
 
-	/**
-	 * Mutates the bottom edge.
-	 * @param y	{@code y} of the bottom edge.
-	 * @return	A new box with the given bottom edge.
-	 */
 	public Box bottom(double y) {
 		return bottomLeft(bottomLeft().y(y));
 	}
 
-	/**
-	 * Mutates the left edge.
-	 * @param x	{@code x} of the left edge.
-	 * @return	A new box with the given left edge.
-	 */
 	public Box left(double x) {
 		return topLeft(topLeft().x(x));
 	}
 
-	/**
-	 * Mutates the right edge.
-	 * @param x	{@code x} of the right edge.
-	 * @return	A new box with the given right edge.
-	 */
 	public Box right(double x) {
 		return topRight(topRight().x(x));
 	}
 
 
 
-	/**
-	 * Mutates the width.
-	 * @param width	The width.
-	 * @return	A new box with the given width.
-	 */
 	public Box width(double width) {
 		return new Box(topLeft(), width().magnitude(width).add(height()));
 	}
 
-	/**
-	 * Mutates the height.
-	 * @param height	The height.
-	 * @return	A new box with the given height.
-	 */
 	public Box height(double height) {
 		return new Box(topLeft(), height().magnitude(height).add(width()));
 	}
