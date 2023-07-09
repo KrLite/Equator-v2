@@ -1,12 +1,12 @@
 package net.krlite.equator.math.geometry.volume;
 
+import net.krlite.equator.math.algebra.Quaternion;
 import net.krlite.equator.math.algebra.Theory;
 import net.minecraft.entity.Entity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaterniondc;
 
 public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, double z) {
 	// Constants
@@ -51,17 +51,14 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return dimension;
 	}
 
-	public double x() {
-		return x;
-	}
+	@Override
+	public double x() { return x; }
 
-	public double y() {
-		return y;
-	}
+	@Override
+	public double y() { return y; }
 
-	public double z() {
-		return z;
-	}
+	@Override
+	public double z() { return z; }
 
 	// Mutators
 
@@ -181,6 +178,10 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return dimension(null);
 	}
 
+	public Pos normalize() {
+		return magnitude(1);
+	}
+
 	public Pos projectOnto(Pos another) {
 		return another.scale(dot(another) / another.dot(another));
 	}
@@ -237,7 +238,7 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return negateByXZ().negateByYZ();
 	}
 
-	public Pos rotate(Quaterniondc quaternion) {
+	public Pos rotate(Quaternion quaternion) {
 		double x = x(), y = y(), z = z(), w = quaternion.w(), i = quaternion.x(), j = quaternion.y(), k = quaternion.z(),
 				w2 = w * w, i2 = i * i, j2 = j * j, k2 = k * k;
 
@@ -248,7 +249,7 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return new Pos(dimension(), xRotated, yRotated, zRotated);
 	}
 
-	public Pos rotateAround(Pos pivot, Quaterniondc quaternion) {
+	public Pos rotateAround(Pos pivot, Quaternion quaternion) {
 		return subtract(pivot).rotate(quaternion).add(pivot);
 	}
 

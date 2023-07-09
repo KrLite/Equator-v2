@@ -1,7 +1,9 @@
 package net.krlite.equator.math.algebra;
 
 import net.krlite.equator.math.geometry.volume.Pos;
+import org.joml.Quaterniond;
 import org.joml.Quaterniondc;
+import org.joml.Quaternionf;
 import org.joml.Quaternionfc;
 
 public record Quaternion(double x, double y, double z, double w) {
@@ -82,6 +84,10 @@ public record Quaternion(double x, double y, double z, double w) {
 
 	public Quaternion(double x, double y, double z, double w) {
 		this.x = x; this.y = y; this.z = z; this.w = w;
+	}
+
+	public Quaternion() {
+		this(0, 0, 0, 1);
 	}
 
 	// Accessors
@@ -397,6 +403,14 @@ public record Quaternion(double x, double y, double z, double w) {
 
 	public Quaternion rotateLocalZDegrees(double angleDegrees) {
 		return rotateLocalZ(Math.toRadians(angleDegrees));
+	}
+
+	public Quaternionf toFloat() {
+		return new Quaternionf((float) x(), (float) y(), (float) z(), (float) w());
+	}
+
+	public Quaterniond toDouble() {
+		return new Quaterniond(x(), y(), z(), w());
 	}
 
 	// Object Methods

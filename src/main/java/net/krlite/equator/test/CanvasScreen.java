@@ -2,6 +2,7 @@ package net.krlite.equator.test;
 
 import net.krlite.equator.input.Keyboard;
 import net.krlite.equator.input.Mouse;
+import net.krlite.equator.math.algebra.Quaternion;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.render.frame.FrameInfo;
@@ -147,6 +148,6 @@ public class CanvasScreen extends Screen {
 
 		new Flat(context, 0, box).new Text(builder -> builder.append("ABC")).color(AccurateColor.CYAN.opacity(0.2)).render();
 		new Flat(context, 0, box).new Model(Items.DIAMOND_SWORD.getDefaultStack(), null).render();
-		new Flat(context, 0, another).new Model(Blocks.LAVA.getDefaultState(), new Quaternionf().rotationXYZ((float) (Math.PI / 4), (float) (Math.PI / 4), 0)).render();
+		new Flat(context, 0, another).new Model(Blocks.LAVA.getDefaultState(), Quaternion.rotationXYZ((float) (Math.PI / 4), (float) (Math.PI / 4), 0)).render();
 	}
 }
