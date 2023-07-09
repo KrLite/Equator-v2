@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.krlite.equator.Equator;
+import net.krlite.equator.math.algebra.Quaternion;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.math.geometry.flat.Vector;
@@ -27,12 +28,9 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Quaternionfc;
 import org.lwjgl.opengl.GL11;
 
 import java.util.AbstractMap;
@@ -1472,7 +1470,7 @@ public class Flat extends Basic {
 	public class Model implements Renderable {
 		// Constructors
 
-		protected Model(@Nullable ItemStack itemStack, @Nullable BlockState blockState, @Nullable Quaternionfc modifier, boolean leftHanded) {
+		protected Model(@Nullable ItemStack itemStack, @Nullable BlockState blockState, @Nullable Quaternion modifier, boolean leftHanded) {
 			if (itemStack != null && blockState != null) {
 				Equator.LOGGER.error("Cannot render a flat model with both an item stack and a block state! Using nothing.");
 				this.itemStack = null;
@@ -1483,15 +1481,15 @@ public class Flat extends Basic {
 				this.blockState = blockState;
 			}
 
-			this.modifier = modifier == null ? new Quaternionf() : modifier;
+			this.modifier = modifier == null ? new Quaternion() : modifier;
 			this.leftHanded = leftHanded;
 		}
 
-		public Model(@Nullable ItemStack itemStack, @Nullable Quaternionfc modifier, boolean leftHanded) {
+		public Model(@Nullable ItemStack itemStack, @Nullable Quaternion modifier, boolean leftHanded) {
 			this(itemStack, null, modifier, leftHanded);
 		}
 
-		public Model(@Nullable ItemStack itemStack, @Nullable Quaternionfc modifier) {
+		public Model(@Nullable ItemStack itemStack, @Nullable Quaternion modifier) {
 			this(itemStack, modifier, false);
 		}
 
@@ -1499,7 +1497,7 @@ public class Flat extends Basic {
 			this(itemStack, null);
 		}
 
-		public Model(@Nullable BlockState blockState, @Nullable Quaternionfc modifier) {
+		public Model(@Nullable BlockState blockState, @Nullable Quaternion modifier) {
 			this(null, blockState, modifier, false);
 		}
 
@@ -1513,7 +1511,7 @@ public class Flat extends Basic {
 		private final ItemStack itemStack;
 		@Nullable
 		private final BlockState blockState;
-		private final Quaternionfc modifier;
+		private final Quaternion modifier;
 		private final boolean leftHanded;
 
 		// Accessors
@@ -1528,7 +1526,7 @@ public class Flat extends Basic {
 			return blockState;
 		}
 
-		public Quaternionfc modifier() {
+		public Quaternion modifier() {
 			return modifier;
 		}
 
@@ -1550,12 +1548,12 @@ public class Flat extends Basic {
 			return new Model(itemStack(), blockState, modifier(), leftHanded());
 		}
 
-		public Model modifier(Quaternionfc modifier) {
+		public Model modifier(Quaternion modifier) {
 			return new Model(itemStack(), blockState(), modifier, leftHanded());
 		}
 
-		public Model modifier(UnaryOperator<Quaternionf> modifier) {
-			return modifier(modifier.apply(new Quaternionf(modifier())));
+		public Model modifier(UnaryOperator<Quaternion> modifier) {
+			return modifier(modifier.apply(modifier()));
 		}
 
 		public Model leftHanded(boolean leftHanded) {
@@ -1604,7 +1602,7 @@ public class Flat extends Basic {
 		private void applyModelView(DrawContext context) {
 			context.getMatrices().scale(1, -1, 1);
 			context.getMatrices().scale((float) box().w(), (float) box().h(), 1);
-			context.getMatrices().multiply(new Quaternionf(modifier()));
+			context.getMatrices().multiply(modifier().toFloat());
 
 			RenderSystem.applyModelViewMatrix();
 		}
