@@ -408,7 +408,7 @@ public record Quaternion(double x, double y, double z, double w) {
 
 	public String toString(boolean precisely) {
 		return isZero() ? "{zero}" : precisely
-											 ? String.format("{x=%f, y=%f, z=%f, w=%f}", x(), y(), z(), w()
+											 ? String.format("{x=%f, y=%f, z=%f, w=%f}", x(), y(), z(), w())
 											 : String.format("{x=%.5f, y=%.5f, z=%.5f, w=%.5f}", x(), y(), z(), w());
 	}
 }
