@@ -1,13 +1,11 @@
 package net.krlite.equator.math.geometry.volume;
 
 import net.krlite.equator.math.algebra.Theory;
-import net.krlite.equator.math.geometry.flat.Vector;
 import net.minecraft.entity.Entity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaterniond;
 import org.joml.Quaterniondc;
 
 public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, double z) {
@@ -24,16 +22,6 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 
 	public static final Pos UNIT_Z = new Pos(0, 0, 1), UNIT_Z_OVERWORLD = new Pos(World.OVERWORLD, 0, 0, 1),
 			UNIT_Z_NETHER = new Pos(World.NETHER, 0, 0, 1), UNIT_Z_END = new Pos(World.END, 0, 0, 1);
-
-	// Static Constructors
-
-	public static Pos fromRotation(double pitch, double yaw) {
-		return new Pos(
-				Math.cos(pitch) * Math.cos(yaw),
-				Math.sin(pitch),
-				Math.cos(pitch) * Math.sin(yaw)
-		).normalize();
-	}
 
 	// Constructors
 
@@ -75,14 +63,6 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return z;
 	}
 
-	public double pitch() {
-		return Math.asin(y());
-	}
-
-	public double yaw() {
-		return Math.atan2(z(), x());
-	}
-
 	// Mutators
 
 	public Pos dimension(@Nullable RegistryKey<World> dimension) {
@@ -99,14 +79,6 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 
 	public Pos z(double z) {
 		return new Pos(dimension(), x(), y(), z);
-	}
-
-	public Pos pitch(double pitch) {
-		return fromRotation(pitch, yaw());
-	}
-
-	public Pos yaw(double yaw) {
-		return fromRotation(pitch(), yaw);
 	}
 
 	// Properties
@@ -199,10 +171,6 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 
 	public Pos subtract(Pos another) {
 		return subtract(another.x(), another.y(), another.z());
-	}
-
-	public Pos normalize() {
-		return magnitude(1);
 	}
 
 	public Pos magnitude(double magnitude) {
@@ -306,22 +274,6 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 
 	public Pos interpolate(Pos another, double factor) {
 		return add(another.subtract(this).scale(factor));
-	}
-
-	/**
-	 * Projects onto the XY plane, using the given rotation (yaw and pitch).
-	 * Especially useful for converting a position to a vector based on its relative rotation to the player's camera.
-	 * Drop the {@code y} component to get the projected {@link Vector}.
-	 * @param rotation	{@link Vector} containing yaw for {@code x} and pitch for {@code y}.
-	 * @return	The projected {@link Pos}.
-	 */
-	public Pos projectOntoXYPlane(Vector rotation /* x: yaw, y: pitch */ ) {
-		Quaterniond q = new Quaterniond().rotateZYX(Math.toRadians(rotation.y()), Math.toRadians(rotation.x()), 0);
-		return rotate(q);
-	}
-	
-	public Pos projectOntoXYPlane(double pitch, double yaw) {
-		return projectOntoXYPlane(new Vector(yaw, pitch));
 	}
 
 	// Object Methods
