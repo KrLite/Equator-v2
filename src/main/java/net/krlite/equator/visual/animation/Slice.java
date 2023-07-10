@@ -1,5 +1,7 @@
 package net.krlite.equator.visual.animation;
 
+import net.krlite.equator.math.algebra.Theory;
+
 import java.util.function.UnaryOperator;
 
 /**
@@ -28,9 +30,21 @@ public interface Slice {
 	 * @param start		The start value.
 	 * @param end		The end value.
 	 * @param progress	The progress of the animation.
-	 * @return			The current value.
+	 * @return	The current value.
 	 */
 	double apply(double start, double end, double progress);
+
+	/**
+	 * Accepts the start and end values and the progress of the animation and returns the current value,
+	 * clamped between the start and end values.
+	 * @param start		The start value.
+	 * @param end		The end value.
+	 * @param progress	The progress of the animation.
+	 * @return	The current value, clamped between the start and end values.
+	 */
+	default double applyClamped(double start, double end, double progress) {
+		return Theory.clamp(apply(start, end, progress), start, end);
+	}
 
 	/**
 	 * Creates a slice that maps the progress to a new value.

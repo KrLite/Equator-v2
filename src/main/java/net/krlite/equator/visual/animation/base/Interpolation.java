@@ -1,9 +1,8 @@
-package net.krlite.equator.visual.animation;
+package net.krlite.equator.visual.animation.base;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.krlite.equator.base.SelfMutable;
 import net.krlite.equator.math.algebra.Theory;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,8 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * <h1>Interpolation</h1>
  * Handles the interpolation between two values.
  */
-@SelfMutable
-public class Interpolation implements Runnable {
+public abstract class Interpolation<I> implements Runnable {
 	public interface Callbacks {
 		interface Start {
 			Event<Start> EVENT = EventFactory.createArrayBacked(Start.class, (listeners) -> (interpolation) -> {
@@ -25,7 +23,7 @@ public class Interpolation implements Runnable {
 				}
 			});
 
-			void onStart(Interpolation interpolation);
+			void onStart(Interpolation<?> interpolation);
 		}
 
 		interface Complete {
@@ -35,7 +33,7 @@ public class Interpolation implements Runnable {
 				}
 			});
 
-			void onCompletion(Interpolation interpolation);
+			void onCompletion(Interpolation<?> interpolation);
 		}
 
 		interface FrameStart {
@@ -45,17 +43,17 @@ public class Interpolation implements Runnable {
 				}
 			});
 
-			void onFrameStart(Interpolation interpolation);
+			void onFrameStart(Interpolation<?> interpolation);
 		}
 
-		interface FrameEnd {
-			Event<FrameEnd> EVENT = EventFactory.createArrayBacked(FrameEnd.class, (listeners) -> (interpolation) -> {
-				for (FrameEnd listener : listeners) {
-					listener.onFrameEnd(interpolation);
+		interface FrameComplete {
+			Event<FrameComplete> EVENT = EventFactory.createArrayBacked(FrameComplete.class, (listeners) -> (interpolation) -> {
+				for (FrameComplete listener : listeners) {
+					listener.onFrameComplete(interpolation);
 				}
 			});
 
-			void onFrameEnd(Interpolation interpolation);
+			void onFrameComplete(Interpolation<?> interpolation);
 		}
 	}
 
@@ -182,7 +180,7 @@ public class Interpolation implements Runnable {
 			value.accumulateAndGet(targetValue(), (current, target) -> Theory.lerp(current, target, speed()));
 		}
 
-		Callbacks.FrameEnd.EVENT.invoker().onFrameEnd(this);
+		Callbacks.FrameComplete.EVENT.invoker().onFrameComplete(this);
 	}
 
 	// Functions
@@ -266,7 +264,7 @@ public class Interpolation implements Runnable {
 	}
 
 	public void onFrameEnd(Runnable runnable) {
-		Callbacks.FrameEnd.EVENT.register((interpolation) -> {
+		Callbacks.FrameComplete.EVENT.register((interpolation) -> {
 			if (interpolation == this) runnable.run();
 		});
 	}

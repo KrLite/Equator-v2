@@ -2,26 +2,20 @@ package net.krlite.equator.test;
 
 import net.krlite.equator.input.Keyboard;
 import net.krlite.equator.input.Mouse;
-import net.krlite.equator.math.algebra.Quaternion;
+import net.krlite.equator.math.algebra.Curves;
 import net.krlite.equator.math.geometry.flat.Box;
-import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.render.frame.FrameInfo;
-import net.krlite.equator.render.renderer.Flat;
-import net.krlite.equator.visual.animation.Interpolation;
+import net.krlite.equator.visual.animation.ValueAnimation;
+import net.krlite.equator.visual.animation.base.Interpolation;
 import net.krlite.equator.visual.color.AccurateColor;
-import net.krlite.equator.visual.color.Colorspace;
 import net.krlite.equator.visual.text.Paragraph;
 import net.krlite.equator.visual.text.Section;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.RotationAxis;
-import org.joml.Quaternionf;
 
 public class CanvasScreen extends Screen {
 	public CanvasScreen() {
@@ -32,8 +26,24 @@ public class CanvasScreen extends Screen {
 	private Box box = Box.fromCartesian(0, 0, 0, 0);
 	private Paragraph.Alignment horizontal = Paragraph.Alignment.LEFT;
 	private Section.Alignment vertical = Section.Alignment.TOP;
+	private final ValueAnimation animation = new ValueAnimation(1, 1.1, 100, Curves.Sinusoidal.EASE);
 
 	{
+		animation.sensitive(true);
+		animation.speedNegate();
+	}
+
+	{
+		Mouse.Callbacks.Click.EVENT.register((button, action, modifiers) -> {
+			if (MinecraftClient.getInstance().currentScreen != this) return;
+
+			if (button == Mouse.LEFT) {
+				if (client != null) {
+					animation.speedNegate();
+				}
+			}
+		});
+
 		Interpolation.Callbacks.Complete.EVENT.register(interpolation -> {
 			if (interpolation == this.interpolation) {
 				this.interpolation.reverse();
@@ -146,8 +156,6 @@ public class CanvasScreen extends Screen {
 		box.render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
 		 */
 
-		new Flat(context, 0, box).new Text(builder -> builder.append("ABC")).color(AccurateColor.CYAN.opacity(0.2)).render();
-		new Flat(context, 0, box).new Model(Items.DIAMOND_SWORD.getDefaultStack(), null).render();
-		new Flat(context, 0, another).new Model(Blocks.LAVA.getDefaultState(), Quaternion.rotationXYZ((float) (Math.PI / 4), (float) (Math.PI / 4), 0)).render();
+		FrameInfo.scaled().scaleCenter(0.5 * animation.value()).render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
 	}
 }

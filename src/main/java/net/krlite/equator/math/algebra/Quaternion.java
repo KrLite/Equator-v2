@@ -80,6 +80,48 @@ public record Quaternion(double x, double y, double z, double w) {
 		return rotationYXZ(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z));
 	}
 
+	public static Quaternion rotationX(double angle) {
+		double halfAngle = angle / 2;
+		return new Quaternion(
+				Math.sin(halfAngle),
+				0,
+				0,
+				Math.cos(halfAngle)
+		);
+	}
+
+	public static Quaternion rotationXDegrees(double angleDegrees) {
+		return rotationX(Math.toRadians(angleDegrees));
+	}
+
+	public static Quaternion rotationY(double angle) {
+		double halfAngle = angle / 2;
+		return new Quaternion(
+				0,
+				Math.sin(halfAngle),
+				0,
+				Math.cos(halfAngle)
+		);
+	}
+
+	public static Quaternion rotationYDegrees(double angleDegrees) {
+		return rotationY(Math.toRadians(angleDegrees));
+	}
+
+	public static Quaternion rotationZ(double angle) {
+		double halfAngle = angle / 2;
+		return new Quaternion(
+				0,
+				0,
+				Math.sin(halfAngle),
+				Math.cos(halfAngle)
+		);
+	}
+
+	public static Quaternion rotationZDegrees(double angleDegrees) {
+		return rotationZ(Math.toRadians(angleDegrees));
+	}
+
 	// Constructors
 
 	public Quaternion(double x, double y, double z, double w) {

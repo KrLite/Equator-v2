@@ -32,8 +32,8 @@ public record Scissor(Box box) {
 	}
 
 	/**
-	 * Mutates the scissor box by applying the given operator.
-	 * @param box	The operator to apply.
+	 * Mutates the scissor box by applying the given interpolator.
+	 * @param box	The interpolator to apply.
 	 * @return	A new scissor with the mutated scissor box.
 	 */
 	public Scissor box(UnaryOperator<Box> box) {

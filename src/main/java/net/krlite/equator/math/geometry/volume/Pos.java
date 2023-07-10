@@ -7,6 +7,8 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaterniond;
+import org.joml.Quaternionf;
 
 public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, double z) {
 	// Constants
@@ -275,6 +277,10 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 
 	public Pos interpolate(Pos another, double factor) {
 		return add(another.subtract(this).scale(factor));
+	}
+
+	public Pos cameraProjection(double yaw, double pitch) {
+		return rotate(Quaternion.rotationXDegrees(yaw)).rotate(Quaternion.rotationX(-pitch));
 	}
 
 	// Object Methods
