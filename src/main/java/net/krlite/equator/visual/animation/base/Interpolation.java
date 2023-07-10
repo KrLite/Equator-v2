@@ -1,14 +1,11 @@
 package net.krlite.equator.visual.animation.base;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.krlite.equator.math.algebra.Theory;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <h1>Interpolation</h1>
@@ -16,16 +13,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public abstract class Interpolation<I> implements Runnable {
 	public interface Callbacks {
-		interface Start {
-			Event<Start> EVENT = EventFactory.createArrayBacked(Start.class, (listeners) -> (interpolation) -> {
-				for (Start listener : listeners) {
-					listener.onStart(interpolation);
-				}
-			});
-
-			void onStart(Interpolation<?> interpolation);
-		}
-
 		interface Complete {
 			Event<Complete> EVENT = EventFactory.createArrayBacked(Complete.class, (listeners) -> (interpolation) -> {
 				for (Complete listener : listeners) {
@@ -34,6 +21,26 @@ public abstract class Interpolation<I> implements Runnable {
 			});
 
 			void onCompletion(Interpolation<?> interpolation);
+		}
+
+		interface Pause {
+			Event<Pause> EVENT = EventFactory.createArrayBacked(Pause.class, (listeners) -> (interpolation) -> {
+				for (Pause listener : listeners) {
+					listener.onPause(interpolation);
+				}
+			});
+
+			void onPause(Interpolation<?> interpolation);
+		}
+
+		interface Resume {
+			Event<Resume> EVENT = EventFactory.createArrayBacked(Resume.class, (listeners) -> (interpolation) -> {
+				for (Resume listener : listeners) {
+					listener.onResume(interpolation);
+				}
+			});
+
+			void onResume(Interpolation<?> interpolation);
 		}
 
 		interface FrameStart {
@@ -57,106 +64,109 @@ public abstract class Interpolation<I> implements Runnable {
 		}
 	}
 
+	protected record States(
+			double ratio,
+			boolean available, boolean completed,
+			@Nullable ScheduledFuture<?> future
+	) {}
+
 	// Constructors
 
-	public Interpolation(double value, double originValue, double targetValue, double approximatedDuration, boolean pauseAtStart) {
-		this.value = new AtomicDouble(value);
-		this.lastValue = new AtomicDouble(value);
-		this.originValue = new AtomicDouble(originValue);
-		this.targetValue = new AtomicDouble(targetValue);
-		this.speed = new AtomicDouble(Theory.clamp(1 / approximatedDuration, 0, 1));
-
-		start(pauseAtStart);
+	public Interpolation(@Nullable I initialValue, double ratio) {
+		this.value = this.last = this.target = initialValue;
+		this.states = new States(ratio, false, false, null);
 	}
 
-	public Interpolation(double value, double originValue, double targetValue, double approximatedDuration) {
-		this(value, originValue, targetValue, approximatedDuration, false);
-	}
-
-	public Interpolation(double originValue, double targetValue, double approximatedDuration, boolean pauseAtStart) {
-		this(originValue, originValue, targetValue, approximatedDuration, pauseAtStart);
-	}
-
-	public Interpolation(double originValue, double targetValue, double approximatedDuration) {
-		this(originValue, targetValue, approximatedDuration, false);
-	}
-
-	public Interpolation(double originValue, double targetValue, boolean pauseAtStart) {
-		this(originValue, targetValue, 35, pauseAtStart);
-	}
-
-	public Interpolation(double originValue, double targetValue) {
-		this(originValue, targetValue, false);
-	}
-	
-	protected Interpolation(Interpolation parent) {
-		this.value = new AtomicDouble(parent.value.get());
-		this.lastValue = new AtomicDouble(parent.lastValue.get());
-		this.originValue = new AtomicDouble(parent.originValue.get());
-		this.targetValue = new AtomicDouble(parent.targetValue.get());
-		this.speed = new AtomicDouble(parent.speed.get());
-		this.started.set(parent.started.get());
-		this.completed.set(parent.completed.get());
-		this.future.set(parent.future.get());
+	public Interpolation(double ratio) {
+		this(null, 0);
 	}
 
 	// Fields
 
-	private final AtomicDouble value, lastValue, originValue, targetValue, speed;
-	private final AtomicBoolean started = new AtomicBoolean(false), completed = new AtomicBoolean(false);
-	private final AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>(null);
+	@Nullable
+	private I value, last, target;
+	private States states;
 
 	// Accessors
 
-	public double value() {
-		return value.get();
+	@Nullable
+	public I value() {
+		return value;
 	}
 
-	public double percentage() {
-		return Theory.clamp((value() - originValue()) / (targetValue() - originValue()), 0, 1);
+	@Nullable
+	public I last() {
+		return last;
 	}
 
-	public double originValue() {
-		return originValue.get();
+	@Nullable
+	public I target() {
+		return target;
 	}
 
-	public double targetValue() {
-		return targetValue.get();
+	public double ratio() {
+		return states.ratio();
 	}
 
-	public double speed() {
-		return speed.get();
-	}
-
-	public double approximatedTimeSteps() {
-		return 1 / speed();
-	}
-
-	private ScheduledFuture<?> future() {
-		return future.get();
+	@Nullable
+	protected ScheduledFuture<?> future() {
+		return states.future();
 	}
 
 	// Mutators
 
-	public void originValue(double originValue) {
-		this.originValue.set(originValue);
+	protected void updateLast() {
+		last = value;
 	}
 
-	public void targetValue(double targetValue) {
-		this.targetValue.set(targetValue);
+	public void reset(I value) {
+		this.value = value;
+		updateLast();
 	}
 
-	public void speed(double speed) {
-		this.speed.set(Theory.clamp(speed, 0, 1));
+	public void target(I target) {
+		this.target = target;
+		if (!isAvailable()) {
+			available(true);
+			start();
+		}
 	}
 
-	public void approximatedTimeSteps(double approximatedTimeSteps) {
-		speed(1 / approximatedTimeSteps);
+	protected void states(double ratio, boolean started, boolean completed, @Nullable ScheduledFuture<?> future) {
+		states = new States(ratio, started, completed, future);
+	}
+
+	public void ratio(double ratio) {
+		states(ratio, states.available(), states.completed(), states.future());
+	}
+
+	protected void available(boolean available) {
+		states(states.ratio(), available, states.completed(), states.future());
+	}
+
+	protected void completed(boolean completed) {
+		states(states.ratio(), states.available(), completed, states.future());
 	}
 
 	private void future(@Nullable ScheduledFuture<?> future) {
-		this.future.set(future);
+		states(states.ratio(), states.available(), states.completed(), future);
 	}
+
+	// Properties
+
+	public boolean isPlaying() {
+		return future() != null && !Objects.requireNonNull(future()).isCancelled();
+	}
+
+	public boolean isPaused() {
+		return future() != null && Objects.requireNonNull(future()).isCancelled();
+	}
+
+	public boolean isAvailable() {
+		return states.available();
+	}
+
+	public abstract boolean isCompleted();
 
 	// Interface Implementations
 
@@ -165,94 +175,57 @@ public abstract class Interpolation<I> implements Runnable {
 	 */
 	@Override
 	public void run() {
+		if (!isAvailable()) return;
+
 		Callbacks.FrameStart.EVENT.invoker().onFrameStart(this);
 
-		if (!isCompleted() && !started.getAndSet(true)) {
-			Callbacks.Start.EVENT.invoker().onStart(this);
-			completed.set(false);
-		}
-		else if (isCompleted() && !completed.getAndSet(true)) {
+		if (isCompleted() && !states.completed()) {
 			Callbacks.Complete.EVENT.invoker().onCompletion(this);
-			started.set(false);
-		}
-		else {
-			lastValue.set(value.get());
-			value.accumulateAndGet(targetValue(), (current, target) -> Theory.lerp(current, target, speed()));
-		}
+			completed(true);
+		} else completed(false);
+
+		updateLast();
+		update();
 
 		Callbacks.FrameComplete.EVENT.invoker().onFrameComplete(this);
 	}
 
+	protected abstract void update();
+
 	// Functions
 
-	public boolean passing(double value) {
-		return (lastValue.get() < value && value <= value()) || (lastValue.get() > value && value >= value());
-	}
-
-	public Interpolation copy() {
-		return new Interpolation(this);
-	}
-
-	public void reverse() {
-		double originValue = originValue();
-		originValue(targetValue());
-		targetValue(originValue);
-	}
-
-	private void start(boolean pauseAtStart) {
-		Callbacks.Start.EVENT.invoker().onStart(this);
+	protected void start() {
 		future(AnimationThreadPoolExecutor.join(this, 0));
-		if (pauseAtStart) {
-			future().cancel(true);
-		}
 	}
 
 	public void pause() {
-		if (isRunning()) {
-			assert future() != null;
-			future().cancel(true);
+		if (isPlaying()) {
+			Callbacks.Pause.EVENT.invoker().onPause(this);
+			Objects.requireNonNull(future()).cancel(true);
 		}
 	}
 
 	public void resume() {
 		if (isPaused()) {
+			Callbacks.Resume.EVENT.invoker().onResume(this);
 			future(AnimationThreadPoolExecutor.join(this, 0));
 		}
 	}
 
-	public void switchPauseResume() {
-		if (isPaused()) {
-			resume();
-		}
-		else {
-			pause();
-		}
-	}
-
-	public void reset() {
-		value.set(originValue());
-	}
-
-	public boolean isRunning() {
-		return future() != null && !future().isCancelled();
-	}
-
-	public boolean isPaused() {
-		return future() != null && future().isCancelled();
-	}
-
-	public boolean isCompleted() {
-		return Theory.looseEquals(value(), targetValue());
-	}
-
-	public void onStart(Runnable runnable) {
-		Callbacks.Start.EVENT.register((interpolation) -> {
+	public void onCompletion(Runnable runnable) {
+		Callbacks.Complete.EVENT.register((interpolation) -> {
 			if (interpolation == this) runnable.run();
 		});
 	}
 
-	public void onCompletion(Runnable runnable) {
-		Callbacks.Complete.EVENT.register((interpolation) -> {
+	public void onPause(Runnable runnable) {
+		Callbacks.Pause.EVENT.register((interpolation) -> {
+			if (interpolation == this) runnable.run();
+		});
+	}
+
+	public void onResume(Runnable runnable) {
+		Callbacks.Resume.EVENT.register((interpolation) -> {
 			if (interpolation == this) runnable.run();
 		});
 	}
@@ -263,21 +236,9 @@ public abstract class Interpolation<I> implements Runnable {
 		});
 	}
 
-	public void onFrameEnd(Runnable runnable) {
+	public void onFrameComplete(Runnable runnable) {
 		Callbacks.FrameComplete.EVENT.register((interpolation) -> {
 			if (interpolation == this) runnable.run();
-		});
-	}
-
-	public void onFrameStartAt(double at, Runnable runnable) {
-		onFrameStart(() -> {
-			if (passing(at)) runnable.run();
-		});
-	}
-
-	public void onFrameEndAt(double at, Runnable runnable) {
-		onFrameEnd(() -> {
-			if (passing(at)) runnable.run();
 		});
 	}
 }

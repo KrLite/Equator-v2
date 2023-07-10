@@ -19,8 +19,8 @@ import java.util.function.UnaryOperator;
 public abstract class Animation<A> implements Runnable {
 	public interface Callbacks {
 		interface Start {
-			Event<Callbacks.Start> EVENT = EventFactory.createArrayBacked(Callbacks.Start.class, (listeners) -> (animation) -> {
-				for (Callbacks.Start listener : listeners) {
+			Event<Start> EVENT = EventFactory.createArrayBacked(Start.class, (listeners) -> (animation) -> {
+				for (Start listener : listeners) {
 					listener.onStart(animation);
 				}
 			});
@@ -89,15 +89,10 @@ public abstract class Animation<A> implements Runnable {
 		}
 	}
 
-	@FunctionalInterface
-	interface Interpolator<A> {
-		A interpolate(A startValue, A endValue, Slice slice, double progress);
-	}
-
-	protected record Values<A>(A startValue, A endValue, double progress) {
-		public Values(A startValue, A endValue, double progress) {
-			this.startValue = startValue;
-			this.endValue = endValue;
+	protected record Values<A>(A start, A end, double progress) {
+		public Values(A start, A end, double progress) {
+			this.start = start;
+			this.end = end;
 			this.progress = Theory.clamp(progress, 0, 1);
 		}
 	}
@@ -121,23 +116,22 @@ public abstract class Animation<A> implements Runnable {
 	protected record States(
 			Slice slice, boolean sensitive, boolean looping,
 			@Nullable ScheduledFuture<?> future
-	) {
-	}
+	) {}
 
 	// Constructors
 
 	protected Animation(
-			A startValue, A endValue,
+			A start, A end,
 			double speed, long duration, TimeUnit timeUnit,
 			boolean sensitive, Slice slice
 	) {
-		this.values = new Values<>(startValue, endValue, 0);
+		this.values = new Values<>(start, end, 0);
 		this.frequency = new Frequency(speed, duration, timeUnit);
 		this.states = new States(slice, sensitive, false, null);
 	}
 
-	public Animation(A startValue, A endValue, long duration, Slice slice) {
-		this(startValue, endValue, 0, duration, TimeUnit.MILLISECONDS, false, slice);
+	public Animation(A start, A end, long duration, Slice slice) {
+		this(start, end, 0, duration, TimeUnit.MILLISECONDS, false, slice);
 		defaultSpeedPositive();
 	}
 
@@ -160,12 +154,12 @@ public abstract class Animation<A> implements Runnable {
 		return Curves.LINEAR.applyClamped(0, 1, values.progress());
 	}
 
-	public A startValue() {
-		return values.startValue();
+	public A start() {
+		return values.start();
 	}
 
-	public A endValue() {
-		return values.endValue();
+	public A end() {
+		return values.end();
 	}
 
 	public double progress() {
@@ -210,20 +204,20 @@ public abstract class Animation<A> implements Runnable {
 
 	// Mutators
 
-	protected void values(A startValue, A endValue, double progress) {
-		values = new Values<>(startValue, endValue, progress);
+	protected void values(A start, A end, double progress) {
+		values = new Values<>(start, end, progress);
 	}
 
-	public void startValue(A startValue) {
-		values(startValue, endValue(), progress());
+	public void start(A start) {
+		values(start, end(), progress());
 	}
 
-	public void endValue(A endValue) {
-		values(startValue(), endValue, progress());
+	public void end(A end) {
+		values(start(), end, progress());
 	}
 
 	protected void progress(double progress) {
-		values(startValue(), endValue(), progress);
+		values(start(), end(), progress);
 	}
 
 	protected void frequency(double speed, long duration, TimeUnit timeUnit) {
@@ -310,6 +304,12 @@ public abstract class Animation<A> implements Runnable {
 		return isPositive() && progress() >= 1 || isNegative() && progress() <= 0;
 	}
 
+	public boolean isPassing(double atProgress) {
+		if (atProgress < 0 || atProgress > 1) return false;
+
+		return Theory.looseBetween(atProgress, progress() - accumulation(), progress());
+	}
+
 	// Interface Implementations
 
 	@Override
@@ -323,7 +323,7 @@ public abstract class Animation<A> implements Runnable {
 				update();
 			} else {
 				Callbacks.Complete.EVENT.invoker().onCompletion(this);
-				end();
+				terminate();
 			}
 		} else {
 			update();
@@ -338,22 +338,18 @@ public abstract class Animation<A> implements Runnable {
 
 	// Functions
 
-	public boolean isPassing(double atProgress) {
-		if (atProgress < 0 || atProgress > 1) return false;
-
-		return progress() - accumulation() < atProgress && progress() >= atProgress;
-	}
-
 	public void pause() {
-		if (isPlaying()) Objects.requireNonNull(future()).cancel(true);
-
-		Callbacks.Pause.EVENT.invoker().onPause(this);
+		if (isPlaying()) {
+			Callbacks.Pause.EVENT.invoker().onPause(this);
+			Objects.requireNonNull(future()).cancel(true);
+		}
 	}
 
 	public void resume() {
-		if (isPaused()) future(AnimationThreadPoolExecutor.join(this, 0));
-
-		Callbacks.Resume.EVENT.invoker().onResume(this);
+		if (isPaused()) {
+			Callbacks.Resume.EVENT.invoker().onResume(this);
+			future(AnimationThreadPoolExecutor.join(this, 0));
+		}
 	}
 
 	public void pauseOrResume() {
@@ -369,7 +365,7 @@ public abstract class Animation<A> implements Runnable {
 		}
 	}
 
-	public void end() {
+	public void terminate() {
 		pause();
 		future(null);
 	}
@@ -379,7 +375,7 @@ public abstract class Animation<A> implements Runnable {
 	}
 
 	public void replay() {
-		end();
+		terminate();
 		play();
 	}
 

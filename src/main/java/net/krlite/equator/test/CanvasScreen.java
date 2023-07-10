@@ -6,7 +6,6 @@ import net.krlite.equator.math.algebra.Curves;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.visual.animation.ValueAnimation;
-import net.krlite.equator.visual.animation.base.Interpolation;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.text.Paragraph;
 import net.krlite.equator.visual.text.Section;
@@ -22,7 +21,6 @@ public class CanvasScreen extends Screen {
 		super(Text.of("Canvas"));
 	}
 
-	private final Interpolation interpolation = new Interpolation(0, 0, 1, 120);
 	private Box box = Box.fromCartesian(0, 0, 0, 0);
 	private Paragraph.Alignment horizontal = Paragraph.Alignment.LEFT;
 	private Section.Alignment vertical = Section.Alignment.TOP;
@@ -41,12 +39,6 @@ public class CanvasScreen extends Screen {
 				if (client != null) {
 					animation.speedNegate();
 				}
-			}
-		});
-
-		Interpolation.Callbacks.Complete.EVENT.register(interpolation -> {
-			if (interpolation == this.interpolation) {
-				this.interpolation.reverse();
 			}
 		});
 
