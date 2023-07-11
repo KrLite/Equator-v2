@@ -8,7 +8,7 @@ import net.krlite.equator.math.algebra.Theory;
  * <h1>Vector</h1>
  * Represents a vector in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate} and is
  * stored in polar form.
- * @param theta		The angle <b>in radians.</b>
+ * @param angle		The angle <b>in radians.</b>
  * @param magnitude	The magnitude, which is always positive.
  */
 public record Vector(double angle, double magnitude) implements Convertible.Scaled<Vector> {
