@@ -10,25 +10,14 @@ import static net.krlite.equator.visual.color.Colorspace.*;
 public class AccurateColor {
 	// Constants
 
-	public static final AccurateColor
-			BLACK = fromColor(Color.BLACK),
-			WHITE = fromColor(Color.WHITE),
-			TRANSPARENT = new AccurateColor(RGB, new double[] { 0, 0, 0 }, 0, true);
+	public static final AccurateColor BLACK = Palette.BLACK, WHITE = Palette.WHITE, TRANSPARENT = Palette.TRANSPARENT;
+
+	public static final AccurateColor GRAY = Palette.GRAY, LIGHT_GRAY = Palette.LIGHT_GRAY, DARK_GRAY = Palette.DARK_GRAY;
 
 	public static final AccurateColor
-			GRAY = fromColor(Color.GRAY),
-			LIGHT_GRAY = fromColor(Color.LIGHT_GRAY),
-			DARK_GRAY = fromColor(Color.DARK_GRAY);
-
-	public static final AccurateColor
-			RED = fromColor(Color.RED),
-			GREEN = fromColor(Color.GREEN),
-			BLUE = fromColor(Color.BLUE),
-			CYAN = fromColor(Color.CYAN),
-			MAGENTA = fromColor(Color.MAGENTA),
-			YELLOW = fromColor(Color.YELLOW),
-			ORANGE = fromColor(Color.ORANGE),
-			PINK = fromColor(Color.PINK);
+			RED = Palette.RED, GREEN = Palette.GREEN, BLUE = Palette.BLUE,
+			CYAN = Palette.CYAN, MAGENTA = Palette.MAGENTA, YELLOW = Palette.YELLOW,
+			ORANGE = Palette.ORANGE, PINK = Palette.PINK;
 
 	// Static Constructors
 
@@ -229,7 +218,7 @@ public class AccurateColor {
 		return new AccurateColor(this, LCH).color()[1];
 	}
 
-	public double h() {
+	public double H() {
 		return new AccurateColor(this, LCH).color()[2];
 	}
 
@@ -330,11 +319,11 @@ public class AccurateColor {
 	}
 
 	public AccurateColor C(double C) {
-		return color(new double[] { L(), C, h() }, LCH);
+		return color(new double[] { L(), C, H() }, LCH);
 	}
 
-	public AccurateColor h(double h) {
-		return color(new double[] { L(), C(), h }, LCH);
+	public AccurateColor H(double H) {
+		return color(new double[] { L(), C(), H }, LCH);
 	}
 
 	// Properties
@@ -443,7 +432,13 @@ public class AccurateColor {
 			}
 		}
 
-		return !hasColor() ? (getClass().getSimpleName() + "(transparent)")
-					   : (colorspace().getName() + "(" + builder + ")" + "-(opacity=" + (precisely ? opacity() : String.format("%.2f", opacity())) + ")");
+		return getClass().getSimpleName()
+					   + (!hasColor()
+								  ? "(transparent)"
+								  : (colorspace().getName()
+											 + "(" + builder + ")"
+											 + "-(opacity=" + (precisely
+																	   ? opacity()
+																	   : String.format("%.2f", opacity())) + ")"));
 	}
 }

@@ -6,8 +6,8 @@
   "mixins": [
   ],
   "client": [
-	"MinecraftClientMixin",
-	"TitleScreenMixin"
+	"client.MinecraftClientMixin",
+	"client.TitleScreenMixin"
   ],
   "injectors": {
 	"defaultRequire": 0

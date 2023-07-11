@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.krlite.equator.Equator;
+import net.krlite.equator.math.algebra.Quaternion;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.math.geometry.flat.Vector;
@@ -28,7 +29,6 @@ import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Quaternion;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
@@ -1480,7 +1480,7 @@ public class Flat extends Basic {
 				this.blockState = blockState;
 			}
 
-			this.modifier = modifier == null ? Quaternion.IDENTITY : modifier;
+			this.modifier = modifier == null ? new Quaternion() : modifier;
 			this.leftHanded = leftHanded;
 		}
 
@@ -1552,7 +1552,7 @@ public class Flat extends Basic {
 		}
 
 		public Model modifier(UnaryOperator<Quaternion> modifier) {
-			return modifier(modifier.apply(new Quaternion(modifier())));
+			return modifier(modifier.apply(modifier()));
 		}
 
 		public Model leftHanded(boolean leftHanded) {
@@ -1601,7 +1601,7 @@ public class Flat extends Basic {
 		private void applyModelView(MatrixStack matrixStack) {
 			matrixStack.scale(1, -1, 1);
 			matrixStack.scale((float) box().w(), (float) box().h(), 1);
-			matrixStack.multiply(new Quaternion(modifier()));
+			matrixStack.multiply(modifier().toMinecraft());
 
 			RenderSystem.applyModelViewMatrix();
 		}
