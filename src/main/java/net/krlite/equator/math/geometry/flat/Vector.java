@@ -1,164 +1,76 @@
 package net.krlite.equator.math.geometry.flat;
 
+import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.render.frame.Convertible;
 import net.krlite.equator.render.frame.FrameInfo;
-import net.krlite.equator.math.algebra.Theory;
 
 /**
  * <h1>Vector</h1>
- * Represents a vector in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate} and is
+ * Represents a vector in the {@link FrameInfo.Convertor Scaled Coordinate} and is
  * stored in polar form.
- * @param theta		The angle <b>in radians.</b>
+ * @param angle		The angle <b>in radians.</b>
  * @param magnitude	The magnitude, which is always positive.
  */
-public record Vector(double theta, double magnitude) implements Convertible.Scaled<Vector> {
+public record Vector(double angle, double magnitude) implements Convertible.Scaled<Vector> {
 	// Constants
 
-	/**
-	 * A vector with a {@code magnitude} of {@code 0} and an {@code angle} of {@code 0}.
-	 */
 	public static final Vector ZERO = new Vector(0, 0);
 
-	/**
-	 * A vector with a {@code magnitude} of {@code 1} and an {@code angle} of {@code π / 4},
-	 * representing the unit vector {@code (√2 / 2, √2 / 2)}.
-	 */
-	public static final Vector UNIT = new Vector(Math.PI / 4, 1);
+	public static final Vector UNIT = new Vector(Math.PI / 4, Math.sqrt(2));
 
-	/**
-	 * A vector with a {@code magnitude} of {@code √2} and an {@code angle} of {@code π / 4},
-	 * representing the unit vector {@code (1, 1)}.
-	 */
-	public static final Vector UNIT_SQUARE = new Vector(Math.PI / 4, Math.sqrt(2));
-
-	/**
-	 * A vector with a {@code magnitude} of {@code 1} and an {@code angle} of {@code 0},
-	 * representing the unit vector {@code (1, 0)}, which is the unit vector on the positive x-axis(right).
-	 */
 	public static final Vector UNIT_X = new Vector(0, 1);
 
-	/**
-	 * A vector with a {@code magnitude} of {@code 1} and an {@code angle} of {@code π / 2},
-	 * representing the unit vector {@code (0, 1)}, which is the unit vector on the positive y-axis(down).
-	 */
 	public static final Vector UNIT_Y = new Vector(Math.PI / 2, 1);
 
 	// Static Constructors
 
-	/**
-	 * Creates a vector in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate} from the 
-	 * given cartesian coordinate.
-	 * @param x	{@code x} component.
-	 * @param y	{@code y} component.
-	 */
 	public static Vector fromCartesian(double x, double y) {
 		return new Vector(Math.atan2(y, x), Math.sqrt(x * x + y * y));
 	}
 
-	/**
-	 * Creates a vector from the given polar coordinate <b>in degrees.</b>
-	 * @param thetaDegrees	The angle <b>in degrees,</b> and is normalized to the range {@code [0, 360)}.
-	 * @param magnitude		The magnitude.
-	 * @return	A new vector with the given polar coordinate.
-	 */
-	public static Vector fromDegrees(double thetaDegrees, double magnitude) {
-		return new Vector(Math.toRadians(thetaDegrees), magnitude);
+	public static Vector fromDegrees(double angle, double magnitude) {
+		return new Vector(Math.toRadians(angle), magnitude);
 	}
 
 	// Constructors
 
-	/**
-	 * Creates a vector from the given polar coordinate <b>in radians.</b>
-	 * @param theta		The angle <b>in radians,</b> and is normalized to the range {@code [0, 2π)}.
-	 * @param magnitude	The magnitude.
-	 */
-	public Vector(double theta, double magnitude) {
-		this.theta = theta % (Math.PI * 2) + (magnitude < 0 ? Math.PI : 0);
+	public Vector(double angle, double magnitude) {
+		this.angle = angle % (Math.PI * 2) + (magnitude < 0 ? Math.PI : 0);
 		this.magnitude = Math.abs(magnitude);
 	}
 
 	// Accessors
 
-	/**
-	 * @return	The angle <b>in radians,</b> and is normalized to the range {@code [0, 2π)}.
-	 */
 	@Override
-	public double theta() {
-		return theta % (Math.PI * 2);
-	}
+	public double angle() { return angle % (Math.PI * 2); }
 
-	/**
-	 * @return	The angle <b>in degrees,</b> and is normalized to the range {@code [0, 360)}.
-	 */
-	public double thetaDegrees() {
-		return Math.toDegrees(theta());
-	}
+	public double angleDegrees() { return Math.toDegrees(angle()); }
 
-	/**
-	 * @return	The magnitude, which is always positive.
-	 */
 	@Override
-	public double magnitude() {
-		return magnitude;
-	}
+	public double magnitude() { return magnitude; }
 
-	/**
-	 * @return	{@code x} component.
-	 */
-	public double x() {
-		return Math.cos(theta()) * magnitude();
-	}
+	public double x() { return Math.cos(angle()) * magnitude(); }
 
-	/**
-	 * @return	{@code y} component.
-	 */
-	public double y() {
-		return Math.sin(theta()) * magnitude();
-	}
+	public double y() { return Math.sin(angle()) * magnitude(); }
 
 	// Mutators
 
-	/**
-	 * Mutates the angle.
-	 * @param theta	The angle <b>in radians,</b> and is normalized to the range {@code [0, 2π)}.
-	 * @return	A new vector with the given angle.
-	 */
-	public Vector theta(double theta) {
-		return new Vector(theta, magnitude());
+	public Vector angle(double angle) {
+		return new Vector(angle, magnitude());
 	}
 
-	/**
-	 * Mutates the angle.
-	 * @param thetaDegrees	The angle <b>in degrees,</b> and is normalized to the range {@code [0, 360)}.
-	 * @return	A new vector with the given angle.
-	 */
-	public Vector thetaDegrees(double thetaDegrees) {
-		return theta(Math.toRadians(thetaDegrees));
+	public Vector angleDegrees(double angleDegrees) {
+		return angle(Math.toRadians(angleDegrees));
 	}
 
-	/**
-	 * Mutates the magnitude.
-	 * @param magnitude	The magnitude.
-	 * @return	A new vector with the given magnitude.
-	 */
 	public Vector magnitude(double magnitude) {
-		return new Vector(theta(), magnitude);
+		return new Vector(angle(), magnitude);
 	}
 
-	/**
-	 * Mutates the {@code x} component.
-	 * @param x	{@code x} component.
-	 * @return	A new vector with the given {@code x} component.
-	 */
 	public Vector x(double x) {
 		return fromCartesian(x, y());
 	}
 
-	/**
-	 * Mutates the {@code y} component.
-	 * @param y	{@code y} component.
-	 * @return	A new vector with the given {@code y} component.
-	 */
 	public Vector y(double y) {
 		return fromCartesian(x(), y);
 	}
@@ -189,7 +101,7 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	 * <br />	{@code false -} otherwise.
 	 */
 	public boolean isParallelTo(Vector another) {
-		return isZero() || another.isZero() || Theory.looseEquals(theta(), another.theta());
+		return isZero() || another.isZero() || Theory.looseEquals(angle(), another.angle());
 	}
 
 	/**
@@ -198,7 +110,7 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	 * <br />	{@code false -} otherwise.
 	 */
 	public boolean isPerpendicularTo(Vector another) {
-		return isZero() || another.isZero() || Theory.looseEquals(theta(), another.theta() + Math.PI / 2);
+		return isZero() || another.isZero() || Theory.looseEquals(angle(), another.angle() + Math.PI / 2);
 	}
 
 	/**
@@ -320,7 +232,7 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	}
 
 	public Vector negate() {
-		return theta(theta() + Math.PI);
+		return angle(angle() + Math.PI);
 	}
 
 	public Vector negateByX() {
@@ -331,20 +243,20 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 		return y(-y());
 	}
 
-	public Vector rotate(double theta) {
-		return theta(theta() + theta);
+	public Vector rotate(double angle) {
+		return angle(angle() + angle);
 	}
 
-	public Vector rotateDegrees(double thetaDegrees) {
-		return thetaDegrees(thetaDegrees() + thetaDegrees);
+	public Vector rotateDegrees(double angleDegrees) {
+		return angleDegrees(angleDegrees() + angleDegrees);
 	}
 
-	public Vector rotateAround(Vector center, double theta) {
-		return center.add(subtract(center).rotate(theta));
+	public Vector rotateAround(Vector center, double angle) {
+		return center.add(subtract(center).rotate(angle));
 	}
 
-	public Vector rotateAroundDegrees(Vector center, double thetaDegrees) {
-		return center.add(subtract(center).rotateDegrees(thetaDegrees));
+	public Vector rotateAroundDegrees(Vector center, double angleDegrees) {
+		return center.add(subtract(center).rotateDegrees(angleDegrees));
 	}
 
 	/**
@@ -390,7 +302,7 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	}
 
 	public Vector normal() {
-		return new Vector(theta() + Math.PI / 2, magnitude());
+		return new Vector(angle() + Math.PI / 2, magnitude());
 	}
 
 	public Vector reflect(Vector normal) {
@@ -404,28 +316,28 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	// Interface Implementations
 
 	/**
-	 * @return	A new vector fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
+	 * @return	A new vector fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Vector fitToScreen() {
 		return FrameInfo.Convertor.scaledToScreen(this);
 	}
 
 	/**
-	 * @return	A new vector fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	A new vector fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Vector fitToOpenGL() {
 		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
 
 	/**
-	 * @return	A new vector fitted from the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
+	 * @return	A new vector fitted from the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Vector fitFromScreen() {
 		return FrameInfo.Convertor.screenToScaled(this);
 	}
 
 	/**
-	 * @return	A new vector fitted from the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	A new vector fitted from the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Vector fitFromOpenGL() {
 		return FrameInfo.Convertor.openGLToScaled(this);
@@ -438,7 +350,7 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	}
 
 	public String toStringAsCartesian(boolean precisely) {
-		return precisely ? String.format("(%f, %f)", x(), y()) : String.format("(%.5f, %.5f)", x(), y());
+		return getClass().getSimpleName() + (precisely ? String.format("(%f, %f)", x(), y()) : String.format("(%.5f, %.5f)", x(), y()));
 	}
 
 	@Override
@@ -447,8 +359,11 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	}
 
 	public String toString(boolean precisely) {
-		return isZero() ? "(zero)" : precisely
-											 ? String.format("(θ=%f°, mag=%f)", thetaDegrees(), magnitude())
-											 : String.format("(θ=%.5f°, mag=%.5f)", thetaDegrees(), magnitude());
+		return getClass().getSimpleName()
+					   + (isZero()
+								  ? "(zero)"
+								  : precisely
+											? String.format("(θ=%f°, mag=%f)", angleDegrees(), magnitude())
+											: String.format("(θ=%.5f°, mag=%.5f)", angleDegrees(), magnitude()));
 	}
 }
