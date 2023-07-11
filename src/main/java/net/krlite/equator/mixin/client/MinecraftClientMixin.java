@@ -1,4 +1,4 @@
-package net.krlite.equator.mixin;
+package net.krlite.equator.mixin.client;
 
 import net.fabricmc.fabric.impl.client.indigo.renderer.render.BlockRenderContext;
 import net.krlite.equator.input.Keyboard;

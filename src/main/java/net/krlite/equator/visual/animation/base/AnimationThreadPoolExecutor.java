@@ -1,4 +1,4 @@
-package net.krlite.equator.visual.animation;
+package net.krlite.equator.visual.animation.base;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -19,24 +19,11 @@ public class AnimationThreadPoolExecutor {
 			1, new ThreadPoolExecutor.DiscardPolicy()
 	);
 
-	/**
-	 * Joins an {@link Animation} to the {@link #INSTANCE} and returns the {@link ScheduledFuture} of the task.
-	 * @param animation	The {@link Animation} to join.
-	 * @param delay		The delay before the task starts to execute in milliseconds.
-	 * @return	The {@link ScheduledFuture} of the task.
-	 */
-	public static ScheduledFuture<?> join(Animation animation, long delay) {
+	public static ScheduledFuture<?> join(Animation<?> animation, long delay) {
 		return INSTANCE.scheduleAtFixedRate(animation, delay, animation.period(), animation.timeUnit());
 	}
 
-	/**
-	 * Joins an {@link Interpolation} to the {@link #INSTANCE} and returns the {@link ScheduledFuture} of the task.
-	 * Note well that the {@link Interpolation} will be executed at a rate of 1 millisecond.
-	 * @param interpolation	The {@link Interpolation} to join.
-	 * @param delay			The delay before the task starts to execute in milliseconds.
-	 * @return	The {@link ScheduledFuture} of the task.
-	 */
-	public static ScheduledFuture<?> join(Interpolation interpolation, long delay) {
+	public static ScheduledFuture<?> join(Interpolation<?> interpolation, long delay) {
 		return INSTANCE.scheduleAtFixedRate(interpolation, delay, TimeUnit.MILLISECONDS.toMillis(1), TimeUnit.MILLISECONDS);
 	}
 }
