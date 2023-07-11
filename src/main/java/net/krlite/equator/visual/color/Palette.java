@@ -1,5 +1,9 @@
 package net.krlite.equator.visual.color;
 
+import java.awt.*;
+
+import static net.krlite.equator.visual.color.Colorspace.RGB;
+
 /**
  * <h1>Palette</h1>
  * Contains <b>coloring utilities</b> along with <b>sets of colors</b> that can be used in a variety of contexts.
@@ -9,16 +13,41 @@ public class Palette {
 	public static AccurateColor rainbow(double radians) {
 		return new AccurateColor(Colorspace.HSV, new double[] { Math.toDegrees(radians), 1, 0.72 }, 1);
 	}
+
+	public static final AccurateColor
+			BLACK = AccurateColor.fromColor(Color.BLACK),
+			WHITE = AccurateColor.fromColor(Color.WHITE),
+			TRANSPARENT = new AccurateColor(RGB, new double[] { 0, 0, 0 }, 0, true);
+
+	public static final AccurateColor
+			GRAY = AccurateColor.fromColor(Color.GRAY),
+			LIGHT_GRAY = AccurateColor.fromColor(Color.LIGHT_GRAY),
+			DARK_GRAY = AccurateColor.fromColor(Color.DARK_GRAY);
+
+	public static final AccurateColor
+			RED = AccurateColor.fromColor(Color.RED),
+			GREEN = AccurateColor.fromColor(Color.GREEN),
+			BLUE = AccurateColor.fromColor(Color.BLUE),
+			CYAN = AccurateColor.fromColor(Color.CYAN),
+			MAGENTA = AccurateColor.fromColor(Color.MAGENTA),
+			YELLOW = AccurateColor.fromColor(Color.YELLOW),
+			ORANGE = AccurateColor.fromColor(Color.ORANGE),
+			PINK = AccurateColor.fromColor(Color.PINK);
 	
-	public static final AccurateColor BROWN = new AccurateColor(0.5, 0.25, 0, 1), TEAL = new AccurateColor(0, 0.5, 0.5, 1),
-			GOLD = new AccurateColor(1, 0.75, 0, 1), SILVER = new AccurateColor(0.75, 0.75, 0.75, 1), NAVY = new AccurateColor(0, 0, 0.5, 1),
-			MAROON = new AccurateColor(0.5, 0, 0, 1), OLIVE = new AccurateColor(0.5, 0.5, 0, 1), LIME = new AccurateColor(0, 1, 0, 1),
-			AQUA = new AccurateColor(0, 1, 1, 1), FUCHSIA = new AccurateColor(1, 0, 1, 1), TURQUOISE = new AccurateColor(0.25, 0.875, 0.8125, 1),
-			INDIGO = new AccurateColor(0.29, 0, 0.51, 1), VIOLET = new AccurateColor(0.93, 0.51, 0.93, 1), CRIMSON = new AccurateColor(0.86, 0.08, 0.24, 1),
-			CHARTREUSE = new AccurateColor(0.5, 1, 0, 1), CORAL = new AccurateColor(1, 0.5, 0.31, 1), DEEP_PINK = new AccurateColor(1, 0.08, 0.58, 1),
-			DEEP_SKY_BLUE = new AccurateColor(0, 0.75, 1, 1), DIM_GRAY = new AccurateColor(0.41, 0.41, 0.41, 1), DODGER_BLUE = new AccurateColor(0.12, 0.56, 1, 1),
-			FOREST_GREEN = new AccurateColor(0.13, 0.55, 0.13, 1), GAINSBORO = new AccurateColor(0.86, 0.86, 0.86, 1), GOLDEN_ROD = new AccurateColor(0.85, 0.65, 0.13, 1),
-			HOT_PINK = new AccurateColor(1, 0.41, 0.71, 1), KHAKI = new AccurateColor(0.94, 0.9, 0.55, 1);
+	public static final AccurateColor
+			BROWN = new AccurateColor(0.5, 0.25, 0, 1), TEAL = new AccurateColor(0, 0.5, 0.5, 1),
+			GOLD = new AccurateColor(1, 0.75, 0, 1), SILVER = new AccurateColor(0.75, 0.75, 0.75, 1),
+			NAVY = new AccurateColor(0, 0, 0.5, 1), MAROON = new AccurateColor(0.5, 0, 0, 1),
+			OLIVE = new AccurateColor(0.5, 0.5, 0, 1), LIME = new AccurateColor(0, 1, 0, 1),
+			AQUA = new AccurateColor(0, 1, 1, 1), FUCHSIA = new AccurateColor(1, 0, 1, 1),
+			TURQUOISE = new AccurateColor(0.25, 0.875, 0.8125, 1), INDIGO = new AccurateColor(0.29, 0, 0.51, 1),
+			VIOLET = new AccurateColor(0.93, 0.51, 0.93, 1), CRIMSON = new AccurateColor(0.86, 0.08, 0.24, 1),
+			CHARTREUSE = new AccurateColor(0.5, 1, 0, 1), CORAL = new AccurateColor(1, 0.5, 0.31, 1),
+			DEEP_PINK = new AccurateColor(1, 0.08, 0.58, 1), DEEP_SKY_BLUE = new AccurateColor(0, 0.75, 1, 1),
+			DIM_GRAY = new AccurateColor(0.41, 0.41, 0.41, 1), DODGER_BLUE = new AccurateColor(0.12, 0.56, 1, 1),
+			FOREST_GREEN = new AccurateColor(0.13, 0.55, 0.13, 1), GAINSBORO = new AccurateColor(0.86, 0.86, 0.86, 1),
+			GOLDEN_ROD = new AccurateColor(0.85, 0.65, 0.13, 1), HOT_PINK = new AccurateColor(1, 0.41, 0.71, 1),
+			KHAKI = new AccurateColor(0.94, 0.9, 0.55, 1), LIGHT_CORAL = new AccurateColor(0.94, 0.5, 0.5, 1);
 
 	/**
 	 * <h2>Translucent</h2>
