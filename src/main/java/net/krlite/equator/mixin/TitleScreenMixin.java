@@ -10,11 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin {
-	///*
 	@Inject(method = "init", at = @At("HEAD"))
 	private void init(CallbackInfo info) {
 		MinecraftClient.getInstance().setScreen(new CanvasScreen());
 	}
-
-	// */
 }

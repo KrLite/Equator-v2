@@ -15,8 +15,60 @@ import java.util.function.UnaryOperator;
 /**
  * <h1>Animation</h1>
  * Handles the animation between two values.
+ * @param <A>	The type of the animated value.
  */
 public abstract class Animation<A> implements Runnable {
+	public static class Any<A> {
+		@FunctionalInterface
+		public interface Protocol<A> {
+			A animate(A start, A end, double progress, Slice slice);
+		}
+
+		public Any(Protocol<A> protocol, Protocol<A> protocolClamped) {
+			this.protocol = protocol;
+			this.protocolClamped = protocolClamped;
+		}
+
+		public Any(Protocol<A> protocol) {
+			this(protocol, protocol);
+		}
+
+		protected final Protocol<A> protocol, protocolClamped;
+
+		public Protocol<A> protocol() {
+			return protocol;
+		}
+
+		public Protocol<A> protocolClamped() {
+			return protocolClamped;
+		}
+
+		public Animation<A> use(
+				A start, A end,
+				double speed, long duration, TimeUnit timeUnit,
+				boolean sensitive, Slice slice
+		) {
+			return new Animation<>(start, end, speed, duration, timeUnit, sensitive, slice) {
+				@Override
+				public A value(double progress) {
+					return Any.this.protocol.animate(start(), end(), progress, slice());
+				}
+
+				@Override
+				public A valueClamped(double progress) {
+					return Any.this.protocolClamped.animate(start(), end(), progress, slice());
+				}
+			};
+		}
+
+		public Animation<A> use(A start, A end, long duration, Slice slice) {
+			Animation<A> animation = use(start, end, 0, duration, TimeUnit.MILLISECONDS, false, slice);
+			animation.defaultSpeedPositive();
+
+			return animation;
+		}
+	}
+
 	public interface Callbacks {
 		interface Start {
 			Event<Start> EVENT = EventFactory.createArrayBacked(Start.class, (listeners) -> (animation) -> {
@@ -130,7 +182,7 @@ public abstract class Animation<A> implements Runnable {
 		this.states = new States(slice, sensitive, false, null);
 	}
 
-	public Animation(A start, A end, long duration, Slice slice) {
+	protected Animation(A start, A end, long duration, Slice slice) {
 		this(start, end, 0, duration, TimeUnit.MILLISECONDS, false, slice);
 		defaultSpeedPositive();
 	}
@@ -142,9 +194,17 @@ public abstract class Animation<A> implements Runnable {
 
 	// Accessors
 
-	public abstract A value();
+	public abstract A value(double progress);
 
-	public abstract A valueClamped();
+	public abstract A valueClamped(double progress);
+
+	public A value() {
+		return value(progress());
+	}
+
+	public A valueClamped() {
+		return valueClamped(progress());
+	}
 
 	public double valuePercent() {
 		return Curves.LINEAR.apply(0, 1, values.progress());
@@ -320,20 +380,20 @@ public abstract class Animation<A> implements Runnable {
 			if (looping()) {
 				Callbacks.Loop.EVENT.invoker().onLooping(this);
 				reset();
-				update();
+				progress(animate(progress()));
 			} else {
 				Callbacks.Complete.EVENT.invoker().onCompletion(this);
 				terminate();
 			}
 		} else {
-			update();
+			progress(animate(progress()));
 		}
 
 		Callbacks.FrameComplete.EVENT.invoker().onFrameComplete(this);
 	}
 
-	protected void update() {
-		progress(Theory.clamp(progress() + accumulation() / duration(), 0, 1));
+	protected double animate(double progress) {
+		return Theory.clamp(progress + accumulation() / duration(), 0, 1);
 	}
 
 	// Functions

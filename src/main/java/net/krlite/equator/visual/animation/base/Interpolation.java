@@ -10,8 +10,44 @@ import java.util.concurrent.ScheduledFuture;
 /**
  * <h1>Interpolation</h1>
  * Handles the interpolation between two values.
+ * @param <I>	The type of the interpolated value.
  */
 public abstract class Interpolation<I> implements Runnable {
+	public static class Any<I> {
+		@FunctionalInterface
+		public interface Protocol<I> {
+			I interpolate(I value, I target, double ratio);
+		}
+
+		private final Protocol<I> protocol;
+
+		public Protocol<I> protocol() {
+			return protocol;
+		}
+
+		public Any(Protocol<I> protocol) {
+			this.protocol = protocol;
+		}
+
+		public Interpolation<I> use(@Nullable I initialValue, double ratio) {
+			return new Interpolation<>(initialValue, ratio) {
+				@Override
+				public I interpolate(I value, I target) {
+					return protocol().interpolate(value, target, ratio());
+				}
+
+				@Override
+				public boolean isCompleted() {
+					return Objects.equals(value(), target());
+				}
+			};
+		}
+
+		public Interpolation<I> use(double ratio) {
+			return use(null, ratio);
+		}
+	}
+
 	public interface Callbacks {
 		interface Complete {
 			Event<Complete> EVENT = EventFactory.createArrayBacked(Complete.class, (listeners) -> (interpolation) -> {
@@ -115,20 +151,24 @@ public abstract class Interpolation<I> implements Runnable {
 
 	// Mutators
 
-	protected void updateLast() {
+	protected void fetch() {
 		last = value;
 	}
 
-	public void reset(I value) {
+	protected void value(I value) {
 		this.value = value;
-		updateLast();
+	}
+
+	public void reset(I value) {
+		value(value);
+		fetch();
 	}
 
 	public void target(I target) {
 		this.target = target;
 		if (!isAvailable()) {
 			available(true);
-			start();
+			play();
 		}
 	}
 
@@ -184,17 +224,19 @@ public abstract class Interpolation<I> implements Runnable {
 			completed(true);
 		} else completed(false);
 
-		updateLast();
-		update();
+		if (value() != null && target() != null) {
+			fetch();
+			value(interpolate(value(), target()));
+		}
 
 		Callbacks.FrameComplete.EVENT.invoker().onFrameComplete(this);
 	}
 
-	protected abstract void update();
+	public abstract I interpolate(I value, I target);
 
 	// Functions
 
-	protected void start() {
+	protected void play() {
 		future(AnimationThreadPoolExecutor.join(this, 0));
 	}
 

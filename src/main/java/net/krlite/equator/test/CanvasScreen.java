@@ -5,7 +5,7 @@ import net.krlite.equator.input.Mouse;
 import net.krlite.equator.math.algebra.Curves;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.render.frame.FrameInfo;
-import net.krlite.equator.visual.animation.ValueAnimation;
+import net.krlite.equator.visual.animation.animated.AnimatedDouble;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.text.Paragraph;
 import net.krlite.equator.visual.text.Section;
@@ -24,7 +24,7 @@ public class CanvasScreen extends Screen {
 	private Box box = Box.fromCartesian(0, 0, 0, 0);
 	private Paragraph.Alignment horizontal = Paragraph.Alignment.LEFT;
 	private Section.Alignment vertical = Section.Alignment.TOP;
-	private final ValueAnimation animation = new ValueAnimation(1, 1.1, 100, Curves.Sinusoidal.EASE);
+	private final AnimatedDouble animation = new AnimatedDouble(1, 1.1, 100, Curves.Sinusoidal.EASE);
 
 	{
 		animation.sensitive(true);
