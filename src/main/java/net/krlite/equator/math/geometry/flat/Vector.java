@@ -16,9 +16,7 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 
 	public static final Vector ZERO = new Vector(0, 0);
 
-	public static final Vector UNIT = new Vector(Math.PI / 4, 1);
-
-	public static final Vector UNIT_SQUARE = new Vector(Math.PI / 4, Math.sqrt(2));
+	public static final Vector UNIT = new Vector(Math.PI / 4, Math.sqrt(2));
 
 	public static final Vector UNIT_X = new Vector(0, 1);
 
@@ -352,7 +350,7 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	}
 
 	public String toStringAsCartesian(boolean precisely) {
-		return precisely ? String.format("(%f, %f)", x(), y()) : String.format("(%.5f, %.5f)", x(), y());
+		return getClass().getSimpleName() + (precisely ? String.format("(%f, %f)", x(), y()) : String.format("(%.5f, %.5f)", x(), y()));
 	}
 
 	@Override
@@ -361,8 +359,11 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	}
 
 	public String toString(boolean precisely) {
-		return isZero() ? "(zero)" : precisely
-											 ? String.format("(θ=%f°, mag=%f)", angleDegrees(), magnitude())
-											 : String.format("(θ=%.5f°, mag=%.5f)", angleDegrees(), magnitude());
+		return getClass().getSimpleName()
+					   + (isZero()
+								  ? "(zero)"
+								  : precisely
+											? String.format("(θ=%f°, mag=%f)", angleDegrees(), magnitude())
+											: String.format("(θ=%.5f°, mag=%.5f)", angleDegrees(), magnitude()));
 	}
 }

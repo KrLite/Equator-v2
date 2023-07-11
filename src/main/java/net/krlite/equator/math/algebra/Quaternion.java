@@ -262,10 +262,10 @@ public record Quaternion(double x, double y, double z, double w) {
 				rz = xCos * yCosZSin - xSin * ySinZCos;
 
 		return new Quaternion(
-				w() * rx + x() * rw + y() * rz - z() * ry,
-				w() * ry - x() * rz + y() * rw + z() * rx,
-				w() * rz + x() * ry - y() * rx + z() * rw,
-				w() * rw - x() * rx - y() * ry - z() * rz
+				Math.fma(w(), rx, Math.fma(x(), 	rw, Math.fma(y(), 	rz, -z() 	* ry))),
+				Math.fma(w(), ry, Math.fma(-x(), 	rz, Math.fma(y(), 	rw, z() 	* rx))),
+				Math.fma(w(), rz, Math.fma(x(), 	ry, Math.fma(-y(), 	rx, z() 	* rw))),
+				Math.fma(w(), rw, Math.fma(-x(), 	rx, Math.fma(-y(), 	ry, -z() 	* rz)))
 		);
 	}
 
@@ -287,10 +287,10 @@ public record Quaternion(double x, double y, double z, double w) {
 				rz = xCos * yCosZSin - xSin * ySinZCos;
 
 		return new Quaternion(
-				w() * rx + x() * rw + y() * rz - z() * ry,
-				w() * ry - x() * rz + y() * rw + z() * rx,
-				w() * rz + x() * ry - y() * rx + z() * rw,
-				w() * rw - x() * rx - y() * ry - z() * rz
+				Math.fma(w(), rx, Math.fma(x(), 	rw, Math.fma(y(), 	rz, -z() 	* ry))),
+				Math.fma(w(), ry, Math.fma(-x(), 	rz, Math.fma(y(), 	rw, z() 	* rx))),
+				Math.fma(w(), rz, Math.fma(x(), 	ry, Math.fma(-y(), 	rx, z() 	* rw))),
+				Math.fma(w(), rw, Math.fma(-x(), 	rx, Math.fma(-y(), 	ry, -z() 	* rz)))
 		);
 	}
 
@@ -312,10 +312,10 @@ public record Quaternion(double x, double y, double z, double w) {
 				rz = zCos * yCosXSin - zSin * ySinXCos;
 
 		return new Quaternion(
-				w() * rx + x() * rw + y() * rz - z() * ry,
-				w() * ry - x() * rz + y() * rw + z() * rx,
-				w() * rz + x() * ry - y() * rx + z() * rw,
-				w() * rw - x() * rx - y() * ry - z() * rz
+				Math.fma(w(), rx, Math.fma(x(), 	rw, Math.fma(y(), 	rz, -z() 	* ry))),
+				Math.fma(w(), ry, Math.fma(-x(), 	rz, Math.fma(y(), 	rw, z() 	* rx))),
+				Math.fma(w(), rz, Math.fma(x(), 	ry, Math.fma(-y(), 	rx, z() 	* rw))),
+				Math.fma(w(), rw, Math.fma(-x(), 	rx, Math.fma(-y(), 	ry, -z() 	* rz)))
 		);
 	}
 
@@ -447,6 +447,23 @@ public record Quaternion(double x, double y, double z, double w) {
 		return rotateLocalZ(Math.toRadians(angleDegrees));
 	}
 
+	public Pos transform(Pos pos) {
+		return transform(pos.x(), pos.y(), pos.z());
+	}
+
+	public Pos transform(double x, double y, double z) {
+		double
+				xx = x() * x(), yy = y() * y(), zz = z() * z(),
+				xy = x() * y(), xz = x() * z(), yz = y() * z(),
+				xw = x() * w(), yw = y() * w(), zw = z() * w();
+
+		return new Pos(
+				Math.fma(Math.fma(-2, yy + zz, 1), 	x, Math.fma(2 * (xy - zw), 				y, (2 * (xz + yw)) 			* z)),
+				Math.fma(2 * (xy + zw), 			x, Math.fma(Math.fma(-2, xx + zz, 1), 	y, (2 * (yz - xw)) 			* z)),
+				Math.fma(2 * (xz - yw), 			x, Math.fma(2 * (yz + xw), 				y, Math.fma(-2, xx + yy, 1) * z))
+		);
+	}
+
 	public Quaternionf toFloat() {
 		return new Quaternionf((float) x(), (float) y(), (float) z(), (float) w());
 	}
@@ -455,7 +472,19 @@ public record Quaternion(double x, double y, double z, double w) {
 		return new Quaterniond(x(), y(), z(), w());
 	}
 
+	public Pos toNormalizedUnitPos() {
+		return transform(Pos.UNIT.normalize());
+	}
+
 	// Object Methods
+
+	public String toStringAsNormalizedUnitPos() {
+		return toStringAsNormalizedUnitPos(false);
+	}
+
+	public String toStringAsNormalizedUnitPos(boolean precisely) {
+		return toNormalizedUnitPos().toString(precisely);
+	}
 
 	@Override
 	public String toString() {
@@ -463,8 +492,11 @@ public record Quaternion(double x, double y, double z, double w) {
 	}
 
 	public String toString(boolean precisely) {
-		return isZero() ? "{zero}" : precisely
-											 ? String.format("{x=%f, y=%f, z=%f, w=%f}", x(), y(), z(), w())
-											 : String.format("{x=%.5f, y=%.5f, z=%.5f, w=%.5f}", x(), y(), z(), w());
+		return getClass().getSimpleName()
+					   + (isZero()
+								  ? "{zero}"
+								  : precisely
+											? String.format("{x=%f, y=%f, z=%f, w=%f}", x(), y(), z(), w())
+											: String.format("{x=%.5f, y=%.5f, z=%.5f, w=%.5f}", x(), y(), z(), w()));
 	}
 }

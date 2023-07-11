@@ -24,7 +24,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	public static final Box ZERO = new Box(Vector.ZERO);
 
-	public static final Box UNIT = new Box(Vector.UNIT_SQUARE);
+	public static final Box UNIT = new Box(Vector.UNIT);
 
 	public static final Box UNIT_CENTERED = UNIT.center(Vector.ZERO);
 
@@ -1138,7 +1138,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	}
 
 	public String toStringAsCartesian(boolean precisely) {
-		return String.format("[%s, %s]", topLeft().toStringAsCartesian(precisely), bottomRight().toStringAsCartesian(precisely));
+		return getClass().getSimpleName() + String.format("[%s, %s]", topLeft().toStringAsCartesian(precisely), bottomRight().toStringAsCartesian(precisely));
 	}
 
 	@Override
@@ -1147,6 +1147,6 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	}
 
 	public String toString(boolean precisely) {
-		return String.format("[origin=%s, size=%s]", origin().toString(precisely), size().toString(precisely));
+		return getClass().getSimpleName() + String.format("[origin=%s, size=%s]", origin().toString(precisely), size().toString(precisely));
 	}
 }

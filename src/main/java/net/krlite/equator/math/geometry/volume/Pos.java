@@ -7,14 +7,15 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaterniond;
-import org.joml.Quaternionf;
 
 public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, double z) {
 	// Constants
 
 	public static final Pos ZERO = new Pos(0, 0, 0), ZERO_OVERWORLD = new Pos(World.OVERWORLD, 0, 0, 0),
 			ZERO_NETHER = new Pos(World.NETHER, 0, 0, 0), ZERO_END = new Pos(World.END, 0, 0, 0);
+
+	public static final Pos UNIT = new Pos(1, 1, 1), UNIT_OVERWORLD = new Pos(World.OVERWORLD, 1, 1, 1),
+			UNIT_NETHER = new Pos(World.NETHER, 1, 1, 1), UNIT_END = new Pos(World.END, 1, 1, 1);
 
 	public static final Pos UNIT_X = new Pos(1, 0, 0), UNIT_X_OVERWORLD = new Pos(World.OVERWORLD, 1, 0, 0),
 			UNIT_X_NETHER = new Pos(World.NETHER, 1, 0, 0), UNIT_X_END = new Pos(World.END, 1, 0, 0);
@@ -291,9 +292,14 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 	}
 
 	public String toString(boolean precisely) {
-		return isZero() ? "[zero]" : precisely
-											 ? String.format("[x=%f, y=%f, z=%f]", x(), y(), z())
-											 : String.format("[x=%.5f, y=%.5f, z=%.5f]", x(), y(), z())
-													   + (!hasDimension() ? "" : ("-(dimension=" + dimension() + ")"));
+		return getClass().getSimpleName()
+					   + (isZero()
+								  ? "[zero]"
+								  : precisely
+											? String.format("[x=%f, y=%f, z=%f]", x(), y(), z())
+											: String.format("[x=%.5f, y=%.5f, z=%.5f]", x(), y(), z())
+													  + (!hasDimension()
+																 ? ""
+																 : ("-(dimension=" + dimension() + ")")));
 	}
 }
