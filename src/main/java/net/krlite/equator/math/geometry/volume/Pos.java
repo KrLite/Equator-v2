@@ -1,18 +1,21 @@
 package net.krlite.equator.math.geometry.volume;
 
+import net.krlite.equator.math.algebra.Quaternion;
 import net.krlite.equator.math.algebra.Theory;
 import net.minecraft.entity.Entity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaterniondc;
 
 public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, double z) {
 	// Constants
 
 	public static final Pos ZERO = new Pos(0, 0, 0), ZERO_OVERWORLD = new Pos(World.OVERWORLD, 0, 0, 0),
 			ZERO_NETHER = new Pos(World.NETHER, 0, 0, 0), ZERO_END = new Pos(World.END, 0, 0, 0);
+
+	public static final Pos UNIT = new Pos(1, 1, 1), UNIT_OVERWORLD = new Pos(World.OVERWORLD, 1, 1, 1),
+			UNIT_NETHER = new Pos(World.NETHER, 1, 1, 1), UNIT_END = new Pos(World.END, 1, 1, 1);
 
 	public static final Pos UNIT_X = new Pos(1, 0, 0), UNIT_X_OVERWORLD = new Pos(World.OVERWORLD, 1, 0, 0),
 			UNIT_X_NETHER = new Pos(World.NETHER, 1, 0, 0), UNIT_X_END = new Pos(World.END, 1, 0, 0);
@@ -41,7 +44,7 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 	}
 
 	public Pos(Entity entity) {
-		this(entity.world.getRegistryKey(), entity.getX(), entity.getY(), entity.getZ());
+		this(entity.getWorld().getRegistryKey(), entity.getX(), entity.getY(), entity.getZ());
 	}
 
 	// Accessors
@@ -51,17 +54,14 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return dimension;
 	}
 
-	public double x() {
-		return x;
-	}
+	@Override
+	public double x() { return x; }
 
-	public double y() {
-		return y;
-	}
+	@Override
+	public double y() { return y; }
 
-	public double z() {
-		return z;
-	}
+	@Override
+	public double z() { return z; }
 
 	// Mutators
 
@@ -181,6 +181,10 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return dimension(null);
 	}
 
+	public Pos normalize() {
+		return magnitude(1);
+	}
+
 	public Pos projectOnto(Pos another) {
 		return another.scale(dot(another) / another.dot(another));
 	}
@@ -237,7 +241,7 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return negateByXZ().negateByYZ();
 	}
 
-	public Pos rotate(Quaterniondc quaternion) {
+	public Pos rotate(Quaternion quaternion) {
 		double x = x(), y = y(), z = z(), w = quaternion.w(), i = quaternion.x(), j = quaternion.y(), k = quaternion.z(),
 				w2 = w * w, i2 = i * i, j2 = j * j, k2 = k * k;
 
@@ -248,7 +252,7 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return new Pos(dimension(), xRotated, yRotated, zRotated);
 	}
 
-	public Pos rotateAround(Pos pivot, Quaterniondc quaternion) {
+	public Pos rotateAround(Pos pivot, Quaternion quaternion) {
 		return subtract(pivot).rotate(quaternion).add(pivot);
 	}
 
@@ -276,6 +280,10 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return add(another.subtract(this).scale(factor));
 	}
 
+	public Pos cameraProjection(double yaw, double pitch) {
+		return rotate(Quaternion.rotationXDegrees(yaw)).rotate(Quaternion.rotationX(-pitch));
+	}
+
 	// Object Methods
 
 	@Override
@@ -284,9 +292,14 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 	}
 
 	public String toString(boolean precisely) {
-		return isZero() ? "[zero]" : precisely
-											 ? String.format("[x=%f, y=%f, z=%f]", x(), y(), z())
-											 : String.format("[x=%.5f, y=%.5f, z=%.5f]", x(), y(), z())
-													   + (!hasDimension() ? "" : ("-(dimension=" + dimension() + ")"));
+		return getClass().getSimpleName()
+					   + (isZero()
+								  ? "[zero]"
+								  : precisely
+											? String.format("[x=%f, y=%f, z=%f]", x(), y(), z())
+											: String.format("[x=%.5f, y=%.5f, z=%.5f]", x(), y(), z())
+													  + (!hasDimension()
+																 ? ""
+																 : ("-(dimension=" + dimension() + ")")));
 	}
 }
