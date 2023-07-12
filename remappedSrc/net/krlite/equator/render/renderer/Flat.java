@@ -88,10 +88,10 @@ public class Flat extends Basic {
 				Colorspace colorspace, RectangleMode rectangleMode
 		) {
 			this.texture = texture;
-			this.colorTopLeft = colorTopLeft == null ? AccurateColor.TRANSPARENT : colorTopLeft.colorspace(colorspace);
-			this.colorBottomLeft = colorBottomLeft == null ? AccurateColor.TRANSPARENT : colorBottomLeft.colorspace(colorspace);
-			this.colorBottomRight = colorBottomRight == null ? AccurateColor.TRANSPARENT : colorBottomRight.colorspace(colorspace);
-			this.colorTopRight = colorTopRight == null ? AccurateColor.TRANSPARENT : colorTopRight.colorspace(colorspace);
+			this.colorTopLeft = colorTopLeft == null ? Palette.TRANSPARENT : colorTopLeft.colorspace(colorspace);
+			this.colorBottomLeft = colorBottomLeft == null ? Palette.TRANSPARENT : colorBottomLeft.colorspace(colorspace);
+			this.colorBottomRight = colorBottomRight == null ? Palette.TRANSPARENT : colorBottomRight.colorspace(colorspace);
+			this.colorTopRight = colorTopRight == null ? Palette.TRANSPARENT : colorTopRight.colorspace(colorspace);
 			this.rectangleMode = rectangleMode;
 		}
 
@@ -901,10 +901,10 @@ public class Flat extends Basic {
 					double width = box().w() + expansion.x() * 2, height = box().h() + expansion.y() * 2;
 					double xCornerScalar = expansion.x() / width, yCornerScalar = expansion.y() / height;
 
-					AccurateColor topLeft 		= colorTopLeft(), 		topLeftBottom 		= AccurateColor.TRANSPARENT, 	topLeftTop 		= AccurateColor.TRANSPARENT, 	topLeftDiagonal 		= AccurateColor.TRANSPARENT;
-					AccurateColor bottomLeft 	= colorBottomLeft(), 	bottomLeftBottom 	= AccurateColor.TRANSPARENT, 	bottomLeftTop 	= AccurateColor.TRANSPARENT, 	bottomLeftDiagonal 		= AccurateColor.TRANSPARENT;
-					AccurateColor bottomRight 	= colorBottomRight(), 	bottomRightBottom 	= AccurateColor.TRANSPARENT, 	bottomRightTop 	= AccurateColor.TRANSPARENT, 	bottomRightDiagonal 	= AccurateColor.TRANSPARENT;
-					AccurateColor topRight 		= colorTopRight(), 		topRightBottom 		= AccurateColor.TRANSPARENT, 	topRightTop 	= AccurateColor.TRANSPARENT, 	topRightDiagonal 		= AccurateColor.TRANSPARENT;
+					AccurateColor topLeft 		= colorTopLeft(), 		topLeftBottom 		= Palette.TRANSPARENT, 	topLeftTop 		= Palette.TRANSPARENT, 	topLeftDiagonal 		= Palette.TRANSPARENT;
+					AccurateColor bottomLeft 	= colorBottomLeft(), 	bottomLeftBottom 	= Palette.TRANSPARENT, 	bottomLeftTop 	= Palette.TRANSPARENT, 	bottomLeftDiagonal 		= Palette.TRANSPARENT;
+					AccurateColor bottomRight 	= colorBottomRight(), 	bottomRightBottom 	= Palette.TRANSPARENT, 	bottomRightTop 	= Palette.TRANSPARENT, 	bottomRightDiagonal 	= Palette.TRANSPARENT;
+					AccurateColor topRight 		= colorTopRight(), 		topRightBottom 		= Palette.TRANSPARENT, 	topRightTop 	= Palette.TRANSPARENT, 	topRightDiagonal 		= Palette.TRANSPARENT;
 
 					switch (outliningStyle) {
 						case CLAMPED -> {
@@ -943,16 +943,16 @@ public class Flat extends Basic {
 						}
 						case EDGE_FADED -> {
 							topLeftDiagonal = topLeft;
-							topLeft = topLeftTop = topLeftBottom = AccurateColor.TRANSPARENT;
+							topLeft = topLeftTop = topLeftBottom = Palette.TRANSPARENT;
 
 							bottomLeftDiagonal = bottomLeft;
-							bottomLeft = bottomLeftTop = bottomLeftBottom = AccurateColor.TRANSPARENT;
+							bottomLeft = bottomLeftTop = bottomLeftBottom = Palette.TRANSPARENT;
 
 							bottomRightDiagonal = bottomRight;
-							bottomRight = bottomRightTop = bottomRightBottom = AccurateColor.TRANSPARENT;
+							bottomRight = bottomRightTop = bottomRightBottom = Palette.TRANSPARENT;
 
 							topRightDiagonal = topRight;
-							topRight = topRightTop = topRightBottom = AccurateColor.TRANSPARENT;
+							topRight = topRightTop = topRightBottom = Palette.TRANSPARENT;
 						}
 					}
 
@@ -1052,7 +1052,7 @@ public class Flat extends Basic {
 		}
 
 		public Oval() {
-			this(AccurateColor.TRANSPARENT);
+			this(Palette.TRANSPARENT);
 		}
 
 		// Fields
@@ -1126,11 +1126,11 @@ public class Flat extends Basic {
 		}
 
 		public AccurateColor firstColor() {
-			return !colorMap().isEmpty() ? colorMap().values().stream().findFirst().orElseThrow() : existsColor() ? colorCenter() : AccurateColor.TRANSPARENT;
+			return !colorMap().isEmpty() ? colorMap().values().stream().findFirst().orElseThrow() : existsColor() ? colorCenter() : Palette.TRANSPARENT;
 		}
 
 		public AccurateColor lastColor() {
-			return !colorMap().isEmpty() ? colorMap().values().stream().reduce((first, second) -> second).orElseThrow() : existsColor() ? colorCenter() : AccurateColor.TRANSPARENT;
+			return !colorMap().isEmpty() ? colorMap().values().stream().reduce((first, second) -> second).orElseThrow() : existsColor() ? colorCenter() : Palette.TRANSPARENT;
 		}
 
 		public ImmutableMap<Double, AccurateColor> colorMapSafe() {
@@ -1213,16 +1213,16 @@ public class Flat extends Basic {
 		}
 
 		public Map.Entry<Double, AccurateColor> nearestPrevious(double offset) {
-			return !colorMapSafe().isEmpty() ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() <= modOffset(offset)).reduce((first, second) -> second).orElseThrow() : new AbstractMap.SimpleEntry<>(0.0, existsColor() ? colorCenter() : AccurateColor.TRANSPARENT);
+			return !colorMapSafe().isEmpty() ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() <= modOffset(offset)).reduce((first, second) -> second).orElseThrow() : new AbstractMap.SimpleEntry<>(0.0, existsColor() ? colorCenter() : Palette.TRANSPARENT);
 		}
 
 		public Map.Entry<Double, AccurateColor> nearestNext(double offset) {
-			return !colorMapSafe().isEmpty() ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() >= modOffset(offset)).findFirst().orElseThrow() : new AbstractMap.SimpleEntry<>(2 * Math.PI, existsColor() ? colorCenter() : AccurateColor.TRANSPARENT);
+			return !colorMapSafe().isEmpty() ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() >= modOffset(offset)).findFirst().orElseThrow() : new AbstractMap.SimpleEntry<>(2 * Math.PI, existsColor() ? colorCenter() : Palette.TRANSPARENT);
 		}
 
 		public AccurateColor colorAt(double offset) {
 			if (!existsColor()) {
-				return AccurateColor.TRANSPARENT;
+				return Palette.TRANSPARENT;
 			}
 
 			if (colorMap().isEmpty()) {
@@ -1335,7 +1335,7 @@ public class Flat extends Basic {
 		}
 
 		public Text(UnaryOperator<Section> builder) {
-			this(builder.apply(Section.DEFAULT), AccurateColor.WHITE, null, Section.Alignment.TOP, Paragraph.Alignment.LEFT, false, false);
+			this(builder.apply(Section.DEFAULT), Palette.WHITE, null, Section.Alignment.TOP, Paragraph.Alignment.LEFT, false, false);
 		}
 
 		// Fields
