@@ -1021,11 +1021,19 @@ public class Flat extends Basic {
 		}
 
 		public AccurateColor firstColor() {
-			return !colorMap().isEmpty() ? colorMap().values().stream().findFirst().orElse(Palette.TRANSPARENT) : existsColor() ? colorCenter() : Palette.TRANSPARENT;
+			return !colorMapSafe().isEmpty()
+						   ? colorMapSafe().values().stream().findFirst().orElse(Palette.TRANSPARENT)
+						   : existsColor()
+									 ? colorCenter()
+									 : Palette.TRANSPARENT;
 		}
 
 		public AccurateColor lastColor() {
-			return !colorMap().isEmpty() ? colorMap().values().stream().reduce((first, second) -> second).orElse(Palette.TRANSPARENT) : existsColor() ? colorCenter() : Palette.TRANSPARENT;
+			return !colorMapSafe().isEmpty()
+						   ? colorMapSafe().values().stream().reduce((first, second) -> second).orElse(Palette.TRANSPARENT)
+						   : existsColor()
+									 ? colorCenter()
+									 : Palette.TRANSPARENT;
 		}
 
 		public ImmutableMap<Double, AccurateColor> colorMapSafe() {
