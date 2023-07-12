@@ -3,10 +3,11 @@ package net.krlite.equator.math.geometry.flat;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.render.frame.Convertible;
 import net.krlite.equator.render.frame.FrameInfo;
+import net.minecraft.util.math.Vec2f;
 
 /**
  * <h1>Vector</h1>
- * Represents a vector in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate} and is
+ * Represents a vector in the {@link FrameInfo.Convertor Scaled Coordinate} and is
  * stored in polar form.
  * @param angle		The angle <b>in radians.</b>
  * @param magnitude	The magnitude, which is always positive.
@@ -117,17 +118,17 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	 * @param another	The other vector.
 	 * @return	The angle between the two vectors <b>in radians.</b>
 	 */
-	public double between(Vector another) {
+	public double angleTo(Vector another) {
 		return Math.acos(normalize().dot(another.normalize()));
 	}
 
 	/**
 	 * @param another	The other vector.
 	 * @return	The angle between the two vectors <b>in degrees.</b>
-	 * @see #between(Vector)
+	 * @see #angleTo(Vector)
 	 */
-	public double betweenDegrees(Vector another) {
-		return Math.toDegrees(between(another));
+	public double angleDegreesTo(Vector another) {
+		return Math.toDegrees(angleTo(another));
 	}
 
 	/**
@@ -313,6 +314,13 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 		return add(another.subtract(this).scale(factor));
 	}
 
+	public Vector sphericalInterpolate(Vector another, double factor) {
+		return new Vector(
+			Theory.lerp(angle(), another.angle(), factor),
+			Theory.lerp(magnitude(), another.magnitude(), factor)
+		);
+	}
+
 	// Interface Implementations
 
 	/**
@@ -341,6 +349,12 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	 */
 	public Vector fitFromOpenGL() {
 		return FrameInfo.Convertor.openGLToScaled(this);
+	}
+
+	// Links
+
+	public Vec2f toVec2f() {
+		return new Vec2f((float) x(), (float) y());
 	}
 
 	// Object Methods

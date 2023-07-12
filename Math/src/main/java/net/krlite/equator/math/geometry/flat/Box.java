@@ -2,12 +2,18 @@ package net.krlite.equator.math.geometry.flat;
 
 import net.krlite.equator.base.Exceptions;
 import net.krlite.equator.math.algebra.Theory;
+import net.krlite.equator.render.base.Renderable;
+import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.render.frame.Convertible;
 import net.krlite.equator.render.frame.FrameInfo;
+import net.krlite.equator.render.renderer.Flat;
+import net.minecraft.client.gui.DrawContext;
+
+import java.util.function.Function;
 
 /**
  * <h1>Box</h1>
- * Represents a rectangle in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}
+ * Represents a rectangle in the {@link FrameInfo.Convertor Scaled Coordinate}
  * and is not rotatable.
  * @see Vector
  * @param origin	The top left corner.
@@ -1056,31 +1062,73 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	// Interface Implementations
 
 	/**
-	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
+	 * @return	A new box fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Box fitToScreen() {
 		return FrameInfo.Convertor.scaledToScreen(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	A new box fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Box fitToOpenGL() {
 		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
+	 * @return	A new box fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Box fitFromScreen() {
 		return FrameInfo.Convertor.screenToScaled(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	A new box fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Box fitFromOpenGL() {
 		return FrameInfo.Convertor.openGLToScaled(this);
+	}
+
+	// Links
+
+	/**
+	 * Creates a {@link Scissor} from this {@link Box}.
+	 * @return	A {@link Scissor} with the same dimension.
+	 * @see Scissor
+	 */
+	public Scissor scissor() {
+		return new Scissor(this);
+	}
+
+	/**
+	 * Starts rendering from a {@link Flat}, whose parameters are pre-set.
+	 * @param context		The {@link DrawContext} to render in.
+	 * @param z				{@code z} to render on.
+	 * @param function		A {@link Function} that takes a pre-set {@link Flat} and returns a {@link Renderable}, whose
+	 *                      {@link Renderable#render()} method will be called.
+	 */
+	public void render(DrawContext context, float z, Function<Flat, Renderable> function) {
+		function.apply(new Flat(context, z, this)).render();
+	}
+
+	public void render(DrawContext context, Function<Flat, Renderable> function) {
+		render(context, 0, function);
+	}
+
+	/**
+	 * Starts rendering from a {@link Flat}, whose parameters are pre-set, in a snipped {@link Scissor}.
+	 * @param scissor		The {@link Scissor} to snip with.
+	 * @param context		The {@link DrawContext} to render in.
+	 * @param z				{@code z} to render on.
+	 * @param function		A {@link Function} that takes a pre-set {@link Flat} and returns a {@link Renderable}, whose
+	 *                      {@link Renderable#render()} method will be called.
+	 */
+	public void renderSnipped(Box scissor, DrawContext context, float z, Function<Flat, Renderable> function) {
+		scissor.scissor().snipWith(function.apply(new Flat(context, z, this)));
+	}
+
+	public void renderSnipped(Box scissor, DrawContext context, Function<Flat, Renderable> function) {
+		renderSnipped(scissor, context, 0, function);
 	}
 
 	// Object Methods
