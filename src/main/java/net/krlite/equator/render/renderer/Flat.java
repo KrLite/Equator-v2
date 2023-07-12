@@ -34,6 +34,7 @@ import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -1560,10 +1561,10 @@ public class Flat extends Basic {
 			RenderSystem.setShaderColor(1, 1, 1, 1);
 		}
 
-		private void applyModelView(DrawContext context) {
-			context.getMatrices().scale(1, -1, 1);
-			context.getMatrices().scale((float) box().w(), (float) box().h(), 1);
-			context.getMatrices().multiply(modifier().toFloat());
+		private void applyModelView(MatrixStack matrixStack) {
+			matrixStack.scale(1, -1, 1);
+			matrixStack.scale((float) box().w(), (float) box().h(), 1);
+			matrixStack.multiply(modifier().toFloat());
 
 			RenderSystem.applyModelViewMatrix();
 		}
@@ -1579,7 +1580,7 @@ public class Flat extends Basic {
 
 				matrixStack().push();
 				matrixStack().translate(box().center().x(), box().center().y(), z());
-				applyModelView(context());
+				applyModelView(matrixStack());
 
 				if (!bakedModel.isSideLit())
 					DiffuseLighting.disableGuiDepthLighting();
@@ -1711,14 +1712,12 @@ public class Flat extends Basic {
 
 				matrixStack().translate(-0.5, -0.5, -0.5);
 
-				VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-
 				switch (blockState.getRenderType()) {
 					case MODEL -> {
 						@NotNull AccurateColor color = hasColor() ? Objects.requireNonNull(color()) : Palette.WHITE;
 
 						new BlockModelRenderer(MinecraftClient.getInstance().getBlockColors()).render(
-								matrixStack().peek(), immediate.getBuffer(RenderLayers.getBlockLayer(blockState)), blockState,
+								matrixStack().peek(), context().getVertexConsumers().getBuffer(RenderLayers.getBlockLayer(blockState)), blockState,
 								MinecraftClient.getInstance().getBlockRenderManager().getModel(blockState),
 								color.redAsFloat(), color.greenAsFloat(), color.blueAsFloat(),
 								0xF000F0, OverlayTexture.DEFAULT_UV
@@ -1728,12 +1727,12 @@ public class Flat extends Basic {
 						// FIXME: 2023/7/12 The lightning is incorrect
 						new BuiltinModelItemRenderer(MinecraftClient.getInstance().getBlockEntityRenderDispatcher(), MinecraftClient.getInstance().getEntityModelLoader()).render(
 								blockState.getBlock().asItem().getDefaultStack(), ModelTransformationMode.FIXED,
-								matrixStack(), immediate, 0xF000F0, OverlayTexture.DEFAULT_UV
+								matrixStack(), context().getVertexConsumers(), 0xF000F0, OverlayTexture.DEFAULT_UV
 						);
 					}
 				}
 
-				immediate.draw();
+				context().draw();
 				RenderSystem.enableCull();
 				RenderSystem.disableDepthTest();
 
