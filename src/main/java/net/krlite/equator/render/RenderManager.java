@@ -1,9 +1,15 @@
 package net.krlite.equator.render;
 
 import net.krlite.equator.base.Exceptions;
+import net.krlite.equator.math.geometry.volume.Pos;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFWImage;
 
 import javax.imageio.ImageIO;
@@ -11,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Objects;
 import java.util.Optional;
 
 public class RenderManager {
@@ -81,5 +88,11 @@ public class RenderManager {
 
 	public static int getGlId(Identifier identifier) {
 		return MinecraftClient.getInstance().getTextureManager().getTexture(identifier).getGlId();
+	}
+
+	public static int getBlockColorAt(BlockState blockState, @Nullable World world, BlockPos blockPos) {
+		return world == null ? 0xFFFFFF : MinecraftClient.getInstance().getBlockColors().getColor(
+				blockState, world, blockPos, 0
+		);
 	}
 }

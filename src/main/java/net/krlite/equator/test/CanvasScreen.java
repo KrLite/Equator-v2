@@ -3,12 +3,15 @@ package net.krlite.equator.test;
 import net.krlite.equator.input.Keyboard;
 import net.krlite.equator.input.Mouse;
 import net.krlite.equator.math.algebra.Curves;
+import net.krlite.equator.math.algebra.Quaternion;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.visual.animation.animated.AnimatedDouble;
 import net.krlite.equator.visual.color.AccurateColor;
+import net.krlite.equator.visual.color.Palette;
 import net.krlite.equator.visual.text.Paragraph;
 import net.krlite.equator.visual.text.Section;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -148,6 +151,22 @@ public class CanvasScreen extends Screen {
 		box.render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
 		 */
 
-		FrameInfo.scaled().scaleCenter(0.5 * animation.value()).render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
+		// FrameInfo.scaled().scaleCenter(0.5 * animation.value()).render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
+
+		FrameInfo.scaled().squareInner().scale(0.4).scale(animation.value()).leftCenter(FrameInfo.scaled().scaleCenter(0.7)).render(context,
+				flat -> flat.new Block(Blocks.BLUE_BED.getDefaultState(), Palette.BLACK, Quaternion.rotationXYZDegrees(90 + 45 * Curves.Sinusoidal.EASE.rewind().apply(-1, 1, (System.currentTimeMillis() % 2000) / 2000.0), 45, 0))
+		);
+
+		FrameInfo.scaled().squareInner().scale(0.4).scale(animation.value()).rightCenter(FrameInfo.scaled().scaleCenter(0.7)).render(context,
+				flat -> flat.new Block(Blocks.AMETHYST_BLOCK.getDefaultState(), Palette.BLACK, Quaternion.rotationXYZDegrees(90 + 45 * Curves.Sinusoidal.EASE.rewind().apply(-1, 1, (System.currentTimeMillis() % 2000) / 2000.0), 45, 0))
+		);
+
+		FrameInfo.scaled().translateRight(-0.5).render(context,
+				flat -> flat.new Text(section -> section.append("Block Entity Model")).color(Palette.Minecraft.AQUA).verticalAlignment(Section.Alignment.BOTTOM).horizontalAlignment(Paragraph.Alignment.CENTER)
+		);
+
+		FrameInfo.scaled().translateLeft(0.5).render(context,
+				flat -> flat.new Text(section -> section.append("Block Model")).color(Palette.Minecraft.LIGHT_PURPLE).verticalAlignment(Section.Alignment.BOTTOM).horizontalAlignment(Paragraph.Alignment.CENTER)
+		);
 	}
 }
