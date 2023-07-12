@@ -16,8 +16,12 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
+	// Mixbox
 	implementation include("com.scrtwpns:mixbox:${project.mixbox_version}")
+
+	// Word Wrap
 	implementation include("com.github.davidmoten:word-wrap:${project.word_wrap_version}")
+	implementation include("com.github.davidmoten:guava-mini:${project.guava_mini_version}")
 }
 
 processResources {
