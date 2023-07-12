@@ -1102,7 +1102,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Starts rendering from a {@link Flat}, whose parameters are pre-set.
-	 * @param matrixStack		The {@link MatrixStack} to render in.
+	 * @param matrixStack	The {@link MatrixStack} to render in.
 	 * @param z				{@code z} to render on.
 	 * @param function		A {@link Function} that takes a pre-set {@link Flat} and returns a {@link Renderable}, whose
 	 *                      {@link Renderable#render()} method will be called.
@@ -1118,7 +1118,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	/**
 	 * Starts rendering from a {@link Flat}, whose parameters are pre-set, in a snipped {@link Scissor}.
 	 * @param scissor		The {@link Scissor} to snip with.
-	 * @param matrixStack		The {@link MatrixStack} to render in.
+	 * @param matrixStack	The {@link MatrixStack} to render in.
 	 * @param z				{@code z} to render on.
 	 * @param function		A {@link Function} that takes a pre-set {@link Flat} and returns a {@link Renderable}, whose
 	 *                      {@link Renderable#render()} method will be called.
