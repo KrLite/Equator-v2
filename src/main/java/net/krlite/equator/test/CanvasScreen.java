@@ -120,7 +120,7 @@ public class CanvasScreen extends Screen {
 		 */
 
 		/*
-		FrameInfo.scaled().render(context, 0, flat -> flat.new Rectangle(AccurateColor.WHITE));
+		FrameInfo.scaled().render(context, 0, flat -> flat.new Rectangle(Palette.WHITE));
 
 		Box.fromCartesian(0, 0, 100, 100).render(context,
 				flat -> flat
@@ -128,7 +128,7 @@ public class CanvasScreen extends Screen {
 								.colorTopLeft(AccurateColor.RED)
 								.colorBottomLeft(AccurateColor.BLACK)
 								.colorBottomRight(AccurateColor.BLACK)
-								.colorTopRight(AccurateColor.WHITE)
+								.colorTopRight(Palette.WHITE)
 		);
 
 		Box.fromCartesian(100, 0, 100, 100).render(context,
