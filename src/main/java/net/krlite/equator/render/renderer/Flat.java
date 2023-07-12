@@ -1727,7 +1727,7 @@ public class Flat extends Basic {
 					case ENTITYBLOCK_ANIMATED -> {
 						// FIXME: 2023/7/12 The lightning is incorrect
 						new BuiltinModelItemRenderer(MinecraftClient.getInstance().getBlockEntityRenderDispatcher(), MinecraftClient.getInstance().getEntityModelLoader()).render(
-								blockState.getBlock().asItem().getDefaultStack(), ModelTransformationMode.FIXED,
+								blockState.getBlock().asItem().getDefaultStack(), ModelTransformationMode.NONE,
 								matrixStack(), immediate, 0xF000F0, OverlayTexture.DEFAULT_UV
 						);
 					}
