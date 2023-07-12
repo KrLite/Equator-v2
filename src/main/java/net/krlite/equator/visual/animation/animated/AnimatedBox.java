@@ -17,17 +17,11 @@ public class AnimatedBox extends Animation<Box> {
 
 	@Override
 	public Box value(double progress) {
-		return new Box(
-				new AnimatedVector.Linear(start().origin(), end().origin(), 0, slice()).value(progress),
-				new AnimatedVector.Linear(start().size(), end().size(), 0, slice()).value(progress)
-		);
+		return start().interpolate(end(), slice().apply(0, 1, progress));
 	}
 
 	@Override
 	public Box valueClamped(double progress) {
-		return new Box(
-				new AnimatedVector.Linear(start().origin(), end().origin(), 0, slice()).valueClamped(progress),
-				new AnimatedVector.Linear(start().size(), end().size(), 0, slice()).valueClamped(progress)
-		);
+		return start().interpolate(end(), slice().applyClamped(0, 1, progress));
 	}
 }

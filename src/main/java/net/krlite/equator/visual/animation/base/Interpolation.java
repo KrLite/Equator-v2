@@ -29,8 +29,8 @@ public abstract class Interpolation<I> implements Runnable {
 			this.protocol = protocol;
 		}
 
-		public Interpolation<I> use(@Nullable I initialValue, double ratio) {
-			return new Interpolation<>(initialValue, ratio) {
+		public Interpolation<I> use(I initial, double ratio) {
+			return new Interpolation<>(initial, ratio) {
 				@Override
 				public I interpolate(I value, I target) {
 					return protocol().interpolate(value, target, ratio());
@@ -41,10 +41,6 @@ public abstract class Interpolation<I> implements Runnable {
 					return Objects.equals(value(), target());
 				}
 			};
-		}
-
-		public Interpolation<I> use(double ratio) {
-			return use(null, ratio);
 		}
 	}
 
@@ -108,34 +104,26 @@ public abstract class Interpolation<I> implements Runnable {
 
 	// Constructors
 
-	public Interpolation(@Nullable I initialValue, double ratio) {
-		this.value = this.last = this.target = initialValue;
+	public Interpolation(I initial, double ratio) {
+		this.value = this.last = this.target = initial;
 		this.states = new States(ratio, false, false, null);
-	}
-
-	public Interpolation(double ratio) {
-		this(null, 0);
 	}
 
 	// Fields
 
-	@Nullable
 	private I value, last, target;
 	private States states;
 
 	// Accessors
 
-	@Nullable
 	public I value() {
 		return value;
 	}
 
-	@Nullable
 	public I last() {
 		return last;
 	}
 
-	@Nullable
 	public I target() {
 		return target;
 	}
