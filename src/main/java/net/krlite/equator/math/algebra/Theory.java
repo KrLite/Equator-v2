@@ -159,4 +159,32 @@ public class Theory {
 	public static double lerp(double a, double b, double t) {
 		return a + (b - a) * t;
 	}
+
+	/**
+	 * Approximates a value to the maximum value using function:
+	 * <table>
+	 *     <tr>
+	 *         <th>Function</th>
+	 *         <th>Domain</th>
+	 *     </tr>
+	 *     <tr>
+	 *         <td>{@code y = yMax * (1 - e^(-k * x))}</td>
+	 *         <td>{@code x ∈ (0, +∞)}</td>
+	 *     </tr>
+	 *     <tr>
+	 *         <td>{@code y = 0}</td>
+	 *         <td>{@code x = 0}</td>
+	 *     </tr>
+	 *     <tr>
+	 *         <td>{@code y = -yMax * (1 - e^(k * x))}</td>
+	 *         <td>{@code x ∈ (-∞, 0)}</td>
+	 *     </tr>
+	 * </table>
+	 * @return	The approximated value.
+	 */
+	public static double approximation(double x, double yMax, double k) {
+		if (Theory.looseEquals(x, 0)) return 0;
+
+		return x > 0 ? (yMax * (1 - Math.exp(-k * x))) : (-yMax * (1 - Math.exp(k * x)));
+	}
 }
