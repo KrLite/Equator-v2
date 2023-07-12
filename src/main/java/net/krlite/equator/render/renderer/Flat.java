@@ -1116,11 +1116,19 @@ public class Flat extends Basic {
 		}
 
 		public Map.Entry<Double, AccurateColor> nearestPrevious(double offset) {
-			return !colorMapSafe().isEmpty() ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() <= modOffset(offset)).reduce((first, second) -> second).orElseThrow() : new AbstractMap.SimpleEntry<>(0.0, existsColor() ? colorCenter() : Palette.TRANSPARENT);
+			AbstractMap.SimpleEntry<Double, AccurateColor> fallback = new AbstractMap.SimpleEntry<>(0.0, existsColor() ? colorCenter() : Palette.TRANSPARENT);
+
+			return !colorMapSafe().isEmpty()
+						   ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() <= modOffset(offset)).reduce((first, second) -> second).orElse(fallback)
+						   : fallback;
 		}
 
 		public Map.Entry<Double, AccurateColor> nearestNext(double offset) {
-			return !colorMapSafe().isEmpty() ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() >= modOffset(offset)).findFirst().orElseThrow() : new AbstractMap.SimpleEntry<>(2 * Math.PI, existsColor() ? colorCenter() : Palette.TRANSPARENT);
+			AbstractMap.SimpleEntry<Double, AccurateColor> fallback = new AbstractMap.SimpleEntry<>(2 * Math.PI, existsColor() ? colorCenter() : Palette.TRANSPARENT);
+
+			return !colorMapSafe().isEmpty()
+						   ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() >= modOffset(offset)).findFirst().orElse(fallback)
+						   : fallback;
 		}
 
 		public AccurateColor colorAt(double offset) {
