@@ -4,12 +4,12 @@ import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.visual.animation.base.Interpolation;
 
 public class InterpolatedDouble extends Interpolation<Double> {
-	public InterpolatedDouble(double initialValue, double ratio) {
-		super(initialValue, ratio);
+	public InterpolatedDouble(double initial, double ratio) {
+		super(initial, ratio);
 	}
 
 	public InterpolatedDouble(double ratio) {
-		super(ratio);
+		super(0D, ratio);
 	}
 
 	@Override

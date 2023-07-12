@@ -2,8 +2,12 @@ package net.krlite.equator.math.geometry.volume;
 
 import net.krlite.equator.math.algebra.Quaternion;
 import net.krlite.equator.math.algebra.Theory;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -54,6 +58,12 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return dimension;
 	}
 
+	public World world() {
+		IntegratedServer server = MinecraftClient.getInstance().getServer();
+		if (server != null) return server.getWorld(dimension());
+		else return MinecraftClient.getInstance().world;
+	}
+
 	@Override
 	public double x() { return x; }
 
@@ -101,22 +111,28 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 					   : (ignore || hasDimension() && another.hasDimension() && dimension() == another.dimension());
 	}
 
-	public boolean isParallelTo(Pos another, boolean ignoreDimension, boolean allowDimensionNullCase) {
-		return explicitlySameDimension(another, ignoreDimension, allowDimensionNullCase)
-					   && (isZero() || another.isZero() || Theory.isZero(cross(another)));
-	}
-
-	public boolean isPerpendicularTo(Pos another, boolean ignoreDimension, boolean allowDimensionNullCase) {
-		return explicitlySameDimension(another, ignoreDimension, allowDimensionNullCase)
-					   && (isZero() || another.isZero() || Theory.isZero(dot(another)));
-	}
-
 	public boolean sameDimension(Pos another, boolean allowNullCase) {
 		return explicitlySameDimension(another, false, allowNullCase);
 	}
 
 	public boolean sameDimension(Pos another) {
 		return sameDimension(another, true);
+	}
+
+	public boolean isParallelTo(Pos another) {
+		return isZero() || another.isZero() || Theory.isZero(cross(another));
+	}
+
+	public boolean isPerpendicularTo(Pos another) {
+		return isZero() || another.isZero() || Theory.isZero(dot(another));
+	}
+
+	public double angleTo(Pos another) {
+		return Math.acos(normalize().dot(another.normalize()));
+	}
+
+	public double angleDegreesTo(Pos another) {
+		return Math.toDegrees(angleTo(another));
 	}
 
 	public double magnitude() {
@@ -280,8 +296,35 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 		return add(another.subtract(this).scale(factor));
 	}
 
+	public Pos sphericalInterpolate(Pos another, double factor) {
+		Pos unit = normalize(), anotherUnit = another.normalize();
+		double angle = angleTo(another);
+		double sin = Math.sin(angle), sinFactor = Math.sin(factor * angle), oneMinusSinFactor = Math.sin((1 - factor) * angle);
+
+		return new Pos(
+				dimension(),
+				(unit.x() * oneMinusSinFactor + another.x() * sin) / sin,
+				(unit.y() * oneMinusSinFactor + another.y() * sin) / sin,
+				(unit.z() * oneMinusSinFactor + another.z() * sin) / sin
+		);
+	}
+
 	public Pos cameraProjection(double yaw, double pitch) {
 		return rotate(Quaternion.rotationXDegrees(yaw)).rotate(Quaternion.rotationX(-pitch));
+	}
+
+	// Links
+
+	public Vec3d toVec3d() {
+		return new Vec3d(x(), y(), z());
+	}
+
+	public Vec3i toVec3i() {
+		return new Vec3i((int) x(), (int) y(), (int) z());
+	}
+
+	public BlockPos toBlockPos() {
+		return new BlockPos(toVec3i());
 	}
 
 	// Object Methods

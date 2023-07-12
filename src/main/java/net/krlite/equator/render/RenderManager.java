@@ -1,9 +1,13 @@
 package net.krlite.equator.render;
 
 import net.krlite.equator.base.Exceptions;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFWImage;
 
 import javax.imageio.ImageIO;
@@ -90,5 +94,11 @@ public class RenderManager {
 
 	public static int getGlId(Identifier identifier) {
 		return MinecraftClient.getInstance().getTextureManager().getTexture(identifier).getGlId();
+	}
+
+	public static int getBlockColorAt(BlockState blockState, @Nullable World world, BlockPos blockPos) {
+		return world == null ? 0xFFFFFF : MinecraftClient.getInstance().getBlockColors().getColor(
+				blockState, world, blockPos, 0
+		);
 	}
 }
