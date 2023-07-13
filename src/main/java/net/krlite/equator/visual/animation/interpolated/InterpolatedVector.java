@@ -17,13 +17,13 @@ public class InterpolatedVector {
 		}
 
 		@Override
-		public Vector interpolate(Vector value, Vector target) {
-			return value.interpolate(target, ratio());
+		public boolean isCompleted() {
+			return value().distanceTo(target()) <= Theory.EPSILON;
 		}
 
 		@Override
-		public boolean isCompleted() {
-			return value() != null && target() != null && (Objects.requireNonNull(value()).distanceTo(target()) <= Theory.EPSILON);
+		public Vector interpolate(Vector value, Vector target) {
+			return value.interpolate(target, ratio());
 		}
 	}
 
@@ -37,13 +37,13 @@ public class InterpolatedVector {
 		}
 
 		@Override
-		public Vector interpolate(Vector value, Vector target) {
-			return value.sphericalInterpolate(target, ratio());
+		public boolean isCompleted() {
+			return value().distanceTo(target()) <= Theory.EPSILON;
 		}
 
 		@Override
-		public boolean isCompleted() {
-			return value().distanceTo(target()) <= Theory.EPSILON;
+		public Vector interpolate(Vector value, Vector target) {
+			return value.sphericalInterpolate(target, ratio());
 		}
 	}
 }

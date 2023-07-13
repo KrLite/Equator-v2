@@ -6,6 +6,7 @@ import net.krlite.equator.math.algebra.Curves;
 import net.krlite.equator.math.algebra.Quaternion;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.render.frame.FrameInfo;
+import net.krlite.equator.render.renderer.Flat;
 import net.krlite.equator.visual.animation.animated.AnimatedDouble;
 import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.color.Palette;
@@ -18,6 +19,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+
+import java.util.Map;
 
 public class CanvasScreen extends Screen {
 	public CanvasScreen() {
@@ -114,7 +117,7 @@ public class CanvasScreen extends Screen {
 								   .appendSubtitle("SUBTITLE")
 								   .append("§aTooltips are cool!")
 								   .appendTitle("§fTITLE")
-		).color(Palette.rainbow(interpolation.value() * Math.PI * 2))
+		).color(Palette.rainbow(interpolation.value() * 2 * Math.PI))
 				.horizontalAlignment(horizontal).verticalAlignment(vertical).enableCulling().new Tooltip(Flat.Text.Tooltip.TooltipSnap.BOTH).render();
 
 		 */
@@ -153,6 +156,7 @@ public class CanvasScreen extends Screen {
 
 		// FrameInfo.scaled().scaleCenter(0.5 * animation.value()).render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
 
+		/*
 		FrameInfo.scaled().squareInner().scale(0.4).scale(animation.value()).leftCenter(FrameInfo.scaled().scaleCenter(0.7)).render(context,
 				flat -> flat.new Block(Blocks.BLUE_BED.getDefaultState(), Palette.BLACK, Quaternion.rotationXYZDegrees(90 + 45 * Curves.Sinusoidal.EASE.rewind().apply(-1, 1, (System.currentTimeMillis() % 2000) / 2000.0), 45, 0))
 		);
@@ -167,6 +171,16 @@ public class CanvasScreen extends Screen {
 
 		FrameInfo.scaled().translateLeft(0.5).render(context,
 				flat -> flat.new Text(section -> section.append("Block Model")).color(Palette.Minecraft.LIGHT_PURPLE).verticalAlignment(Section.Alignment.BOTTOM).horizontalAlignment(Paragraph.Alignment.CENTER)
+		);
+
+		 */
+
+		box.render(context,
+				flat -> flat.new Oval(Palette.CORAL)
+								.mode(Flat.Oval.OvalMode.GRADIANT_OUT)
+								.addColor(0, Palette.WHITE)
+								.addColor(Math.PI, Palette.CYAN)
+								.outline(Flat.Oval.VertexProvider.NONE, 5)
 		);
 	}
 }

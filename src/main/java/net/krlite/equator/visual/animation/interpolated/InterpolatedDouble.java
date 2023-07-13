@@ -13,12 +13,20 @@ public class InterpolatedDouble extends Interpolation<Double> {
 	}
 
 	@Override
+	public boolean isCompleted() {
+		return Theory.looseEquals(value(), target());
+	}
+
+	@Override
 	public Double interpolate(Double value, Double target) {
 		return Theory.lerp(value, target, ratio());
 	}
 
-	@Override
-	public boolean isCompleted() {
-		return false;
+	public void reset(double value) {
+		super.reset(value);
+	}
+
+	public void target(double target) {
+		super.target(target);
 	}
 }

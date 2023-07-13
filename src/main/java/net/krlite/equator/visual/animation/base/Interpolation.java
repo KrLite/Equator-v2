@@ -132,8 +132,7 @@ public abstract class Interpolation<I> implements Runnable {
 		return states.ratio();
 	}
 
-	@Nullable
-	protected ScheduledFuture<?> future() {
+	protected @Nullable ScheduledFuture<?> future() {
 		return states.future();
 	}
 

@@ -16,12 +16,12 @@ public class InterpolatedBox extends Interpolation<Box> {
 	}
 
 	@Override
-	public Box interpolate(Box value, Box target) {
-		return value.interpolate(target, ratio());
+	public boolean isCompleted() {
+		return value().origin().distanceTo(target().origin()) <= Theory.EPSILON && value().size().distanceTo(target().size()) <= Theory.EPSILON;
 	}
 
 	@Override
-	public boolean isCompleted() {
-		return value().origin().distanceTo(target().origin()) <= Theory.EPSILON && value().size().distanceTo(target().size()) <= Theory.EPSILON;
+	public Box interpolate(Box value, Box target) {
+		return value.interpolate(target, ratio());
 	}
 }
