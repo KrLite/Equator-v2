@@ -94,7 +94,7 @@ public class Flat extends Basic {
 			this.colorTopRight = 		AccurateColor.notnull(colorTopRight)	.colorspace(colorspace);
 
 			this.opacityMultiplier = Theory.clamp(opacityMultiplier, 0, 1);
-			this.colorspace = colorspace == null ? Colorspace.RGB : colorspace;
+			this.colorspace = AccurateColor.notnull(colorspace);
 			this.mode = mode;
 		}
 
