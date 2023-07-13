@@ -4,8 +4,6 @@ import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.visual.animation.base.Interpolation;
 
-import java.util.Objects;
-
 public class InterpolatedVector {
 	public static class Linear extends Interpolation<Vector> {
 		public Linear(Vector initial, double ratio) {
@@ -17,13 +15,13 @@ public class InterpolatedVector {
 		}
 
 		@Override
-		public Vector interpolate(Vector value, Vector target) {
-			return value.interpolate(target, ratio());
+		public boolean isCompleted() {
+			return value().distanceTo(target()) <= Theory.EPSILON;
 		}
 
 		@Override
-		public boolean isCompleted() {
-			return value() != null && target() != null && (Objects.requireNonNull(value()).distanceTo(target()) <= Theory.EPSILON);
+		public Vector interpolate(Vector value, Vector target) {
+			return value.interpolate(target, ratio());
 		}
 	}
 
@@ -37,13 +35,13 @@ public class InterpolatedVector {
 		}
 
 		@Override
-		public Vector interpolate(Vector value, Vector target) {
-			return value.sphericalInterpolate(target, ratio());
+		public boolean isCompleted() {
+			return value().distanceTo(target()) <= Theory.EPSILON;
 		}
 
 		@Override
-		public boolean isCompleted() {
-			return value().distanceTo(target()) <= Theory.EPSILON;
+		public Vector interpolate(Vector value, Vector target) {
+			return value.sphericalInterpolate(target, ratio());
 		}
 	}
 }

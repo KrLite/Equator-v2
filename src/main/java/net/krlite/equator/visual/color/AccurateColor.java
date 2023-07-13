@@ -1,25 +1,20 @@
 package net.krlite.equator.visual.color;
 
 import net.krlite.equator.math.algebra.Theory;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
 import static net.krlite.equator.visual.color.Colorspace.*;
+import static net.krlite.equator.visual.color.Palette.TRANSPARENT;
 
 public class AccurateColor {
-	// Constants
-
-	public static final AccurateColor BLACK = Palette.BLACK, WHITE = Palette.WHITE, TRANSPARENT = Palette.TRANSPARENT;
-
-	public static final AccurateColor GRAY = Palette.GRAY, LIGHT_GRAY = Palette.LIGHT_GRAY, DARK_GRAY = Palette.DARK_GRAY;
-
-	public static final AccurateColor
-			RED = Palette.RED, GREEN = Palette.GREEN, BLUE = Palette.BLUE,
-			CYAN = Palette.CYAN, MAGENTA = Palette.MAGENTA, YELLOW = Palette.YELLOW,
-			ORANGE = Palette.ORANGE, PINK = Palette.PINK;
-
 	// Static Constructors
+
+	public static @NotNull AccurateColor notnull(@Nullable AccurateColor color) {
+		return color == null ? TRANSPARENT : color;
+	}
 
 	public static AccurateColor fromARGB(long argb) {
 		return new AccurateColor(RGB.fromInt((int) argb), argb > 0xFFFFFF ? ((argb >> 24) & 0xFF) / 255.0 : 1);
@@ -47,7 +42,7 @@ public class AccurateColor {
 	protected AccurateColor(Colorspace colorspace, double[] color, double opacity, boolean transparent) {
 		this.colorspace = colorspace;
 		this.color = color;
-		this.opacity = opacity;
+		this.opacity = Theory.clamp(opacity, 0, 1);
 		this.transparent = transparent;
 	}
 
@@ -229,7 +224,7 @@ public class AccurateColor {
 	}
 
 	public AccurateColor color(double[] color) {
-		return color() == color ? this : new AccurateColor(colorspace(), color, opacity());
+		return new AccurateColor(colorspace(), color, opacity());
 	}
 
 	public AccurateColor color(double[] color, Colorspace colorspace) {
@@ -237,7 +232,11 @@ public class AccurateColor {
 	}
 
 	public AccurateColor opacity(double opacity) {
-		return opacity() == opacity ? this : new AccurateColor(colorspace(), color(), opacity);
+		return new AccurateColor(colorspace(), color(), opacity);
+	}
+
+	public AccurateColor multiplyOpacity(double opacity) {
+		return opacity(opacity() * opacity);
 	}
 
 	// Mutators: RGB Components
@@ -348,7 +347,10 @@ public class AccurateColor {
 
 	// Operations
 
-	public AccurateColor mix(AccurateColor another, double ratio, MixMode mixMode) {
+	public @NotNull AccurateColor mix(@Nullable AccurateColor another, double ratio, MixMode mixMode) {
+		another = notnull(another);
+		ratio = Theory.clamp(ratio, 0, 1);
+
 		if (!hasColor() && !another.hasColor()) return TRANSPARENT;
 		if (!hasColor()) return another.mix(this, 1 - ratio, MixMode.OPACITY_ONLY);
 
@@ -358,15 +360,15 @@ public class AccurateColor {
 		return new AccurateColor(colorspace(), colorspace().mix(color(), another.color(), ratio, another.colorspace(), mixMode), Theory.lerp(opacity(), another.opacity(), ratio));
 	}
 
-	public AccurateColor mix(AccurateColor another, MixMode mixMode) {
+	public @NotNull AccurateColor mix(@Nullable AccurateColor another, MixMode mixMode) {
 		return mix(another, 0.5, mixMode);
 	}
 
-	public AccurateColor mix(AccurateColor another, double ratio) {
+	public @NotNull AccurateColor mix(@Nullable AccurateColor another, double ratio) {
 		return mix(another, ratio, MixMode.BLEND);
 	}
 
-	public AccurateColor mix(AccurateColor another) {
+	public @NotNull AccurateColor mix(@Nullable AccurateColor another) {
 		return mix(another, 0.5);
 	}
 
@@ -435,7 +437,7 @@ public class AccurateColor {
 		return getClass().getSimpleName()
 					   + (!hasColor()
 								  ? "(transparent)"
-								  : (colorspace().getName()
+								  : (":" + colorspace().getName()
 											 + "(" + builder + ")"
 											 + "-(opacity=" + (precisely
 																	   ? opacity()

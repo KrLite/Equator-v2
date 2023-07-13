@@ -36,14 +36,14 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	// Constructors
 
 	public Vector(double angle, double magnitude) {
-		this.angle = angle % (Math.PI * 2) + (magnitude < 0 ? Math.PI : 0);
+		this.angle = angle % (2 * Math.PI) + (magnitude < 0 ? Math.PI : 0);
 		this.magnitude = Math.abs(magnitude);
 	}
 
 	// Accessors
 
 	@Override
-	public double angle() { return angle % (Math.PI * 2); }
+	public double angle() { return angle % (2 * Math.PI); }
 
 	public double angleDegrees() { return Math.toDegrees(angle()); }
 

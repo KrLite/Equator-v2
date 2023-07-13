@@ -23,4 +23,12 @@ public class AnimatedDouble extends Animation<Double> {
 	public Double valueClamped(double progress) {
 		return slice().applyClamped(end(), start(), progress);
 	}
+
+	public void start(double start) {
+		super.start(start);
+	}
+
+	public void end(double end) {
+		super.end(end);
+	}
 }
