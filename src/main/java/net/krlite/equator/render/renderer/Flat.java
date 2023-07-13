@@ -3,7 +3,6 @@ package net.krlite.equator.render.renderer;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.krlite.equator.Equator;
 import net.krlite.equator.math.algebra.Quaternion;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.flat.Box;
@@ -39,10 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import java.util.AbstractMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -86,48 +82,48 @@ public class Flat extends Basic {
 
 		public Rectangle(
 				@Nullable Texture texture,
-				@Nullable AccurateColor colorTopLeft, @Nullable AccurateColor colorBottomLeft, @Nullable AccurateColor colorBottomRight, @Nullable AccurateColor colorTopRight,
-				Colorspace colorspace, RectangleMode rectangleMode
+				@Nullable AccurateColor colorTopLeft, 		@Nullable AccurateColor colorBottomLeft,
+				@Nullable AccurateColor colorBottomRight, 	@Nullable AccurateColor colorTopRight,
+				double opacityMultiplier, @Nullable Colorspace colorspace, RectangleMode mode
 		) {
 			this.texture = texture;
-			this.colorTopLeft = 		(colorTopLeft == null ? 	Palette.TRANSPARENT : colorTopLeft)		.colorspace(colorspace);
-			this.colorBottomLeft = 		(colorBottomLeft == null ? 	Palette.TRANSPARENT : colorBottomLeft)	.colorspace(colorspace);
-			this.colorBottomRight = 	(colorBottomRight == null ? Palette.TRANSPARENT : colorBottomRight)	.colorspace(colorspace);
-			this.colorTopRight = 		(colorTopRight == null ? 	Palette.TRANSPARENT : colorTopRight)		.colorspace(colorspace);
-			this.colorspace = colorspace;
-			this.rectangleMode = rectangleMode;
+
+			this.colorTopLeft = 		AccurateColor.notnull(colorTopLeft)		.colorspace(colorspace);
+			this.colorBottomLeft = 		AccurateColor.notnull(colorBottomLeft)	.colorspace(colorspace);
+			this.colorBottomRight = 	AccurateColor.notnull(colorBottomRight)	.colorspace(colorspace);
+			this.colorTopRight = 		AccurateColor.notnull(colorTopRight)	.colorspace(colorspace);
+
+			this.opacityMultiplier = Theory.clamp(opacityMultiplier, 0, 1);
+			this.colorspace = colorspace == null ? Colorspace.RGB : colorspace;
+			this.mode = mode;
 		}
 
 		public Rectangle(
 				@Nullable Texture texture,
-				@Nullable AccurateColor colorTopLeft, @Nullable AccurateColor colorBottomLeft, @Nullable AccurateColor colorBottomRight, @Nullable AccurateColor colorTopRight,
-				RectangleMode rectangleMode
+				@Nullable AccurateColor colorTopLeft, 		@Nullable AccurateColor colorBottomLeft,
+				@Nullable AccurateColor colorBottomRight, 	@Nullable AccurateColor colorTopRight
 		) {
-			this(texture, colorTopLeft, colorBottomLeft, colorBottomRight, colorTopRight, Colorspace.RGB, rectangleMode);
+			this(texture, colorTopLeft, colorBottomLeft, colorBottomRight, colorTopRight, 1, Colorspace.RGB, RectangleMode.NORMAL);
 		}
 
-		public Rectangle(@Nullable Texture texture, @Nullable AccurateColor color, Colorspace colorspace, RectangleMode rectangleMode) {
-			this(texture, color, color, color, color, colorspace, rectangleMode);
+		public Rectangle(@Nullable Texture texture, @Nullable AccurateColor color, @Nullable Colorspace colorspace) {
+			this(texture, color, color, color, color, 1, colorspace, RectangleMode.NORMAL);
 		}
 
-		public Rectangle(@Nullable Texture texture, @Nullable AccurateColor color, RectangleMode rectangleMode) {
-			this(texture, color, color, color, color, Colorspace.RGB, rectangleMode);
+		public Rectangle(@Nullable AccurateColor color) {
+			this(null, color, null);
 		}
 
-		public Rectangle(Colorspace colorspace) {
-			this(null, null, colorspace, RectangleMode.NORMAL);
+		public Rectangle(@Nullable Texture texture) {
+			this(texture, null, null);
 		}
 
-		public Rectangle(Texture texture) {
-			this(texture, null, RectangleMode.NORMAL);
-		}
-
-		public Rectangle(AccurateColor color) {
-			this(null, color, RectangleMode.NORMAL);
+		public Rectangle(@Nullable Colorspace colorspace) {
+			this(null, null, colorspace);
 		}
 
 		public Rectangle() {
-			this(null, null, RectangleMode.NORMAL);
+			this(null, null, null);
 		}
 
 		// Fields
@@ -136,11 +132,11 @@ public class Flat extends Basic {
 			NORMAL, TILING, FIXED_CORNERS
 		}
 
-		@Nullable
-		private final Texture texture;
-		private final AccurateColor colorTopLeft, colorBottomLeft, colorBottomRight, colorTopRight;
-		private final Colorspace colorspace;
-		private final RectangleMode rectangleMode;
+		private final @Nullable Texture texture;
+		private final @NotNull AccurateColor colorTopLeft, colorBottomLeft, colorBottomRight, colorTopRight;
+		private final double opacityMultiplier;
+		private final @NotNull Colorspace colorspace;
+		private final RectangleMode mode;
 
 		// Accessors
 
@@ -148,47 +144,50 @@ public class Flat extends Basic {
 			return box;
 		}
 
-		@Nullable
-		public Texture texture() {
+		public @Nullable Texture texture() {
 			return texture;
 		}
 
-		public AccurateColor colorTopLeft() {
+		public @NotNull AccurateColor colorTopLeft() {
 			return colorTopLeft;
 		}
 
-		public AccurateColor colorBottomLeft() {
+		public @NotNull AccurateColor colorBottomLeft() {
 			return colorBottomLeft;
 		}
 
-		public AccurateColor colorBottomRight() {
+		public @NotNull AccurateColor colorBottomRight() {
 			return colorBottomRight;
 		}
 
-		public AccurateColor colorTopRight() {
+		public @NotNull AccurateColor colorTopRight() {
 			return colorTopRight;
 		}
 
-		public AccurateColor[] colors() {
+		public @NotNull AccurateColor[] colors() {
 			return new AccurateColor[] { colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight() };
 		}
 
-		public AccurateColor colorAtCenter() {
+		public @NotNull AccurateColor colorAtCenter() {
 			return colorAt(0.5, 0.5);
 		}
 
-		public RectangleMode rectangleMode() {
-			return rectangleMode;
+		public double opacityMultiplier() {
+			return opacityMultiplier;
 		}
 
-		public Colorspace colorspace() {
+		public @NotNull Colorspace colorspace() {
 			return colorspace;
+		}
+
+		public RectangleMode mode() {
+			return mode;
 		}
 
 		// Mutators
 
 		public Rectangle parent(UnaryOperator<Flat> flat) {
-			return flat.apply(Flat.this).new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight(), colorspace(), rectangleMode());
+			return flat.apply(Flat.this).new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight(), opacityMultiplier(), colorspace(), mode());
 		}
 
 		protected Rectangle preserve(Box box, Box uvBox) {
@@ -200,55 +199,62 @@ public class Flat extends Basic {
 		}
 
 		public Rectangle texture(@Nullable Texture texture) {
-			return new Rectangle(texture, colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight(), rectangleMode());
+			return new Rectangle(texture, colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight(), opacityMultiplier(), colorspace(), mode());
 		}
 
 		public Rectangle colorTopLeft(@Nullable AccurateColor colorTopLeft) {
-			return new Rectangle(texture(), colorTopLeft, colorBottomLeft(), colorBottomRight(), colorTopRight(), colorspace(), rectangleMode());
+			return new Rectangle(texture(), colorTopLeft, colorBottomLeft(), colorBottomRight(), colorTopRight(), opacityMultiplier(), colorspace(), mode());
 		}
 
 		public Rectangle colorBottomLeft(@Nullable AccurateColor colorBottomLeft) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft, colorBottomRight(), colorTopRight(), colorspace(), rectangleMode());
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft, colorBottomRight(), colorTopRight(), opacityMultiplier(), colorspace(), mode());
 		}
 
 		public Rectangle colorBottomRight(@Nullable AccurateColor colorBottomRight) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight, colorTopRight(), colorspace(), rectangleMode());
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight, colorTopRight(), opacityMultiplier(), colorspace(), mode());
 		}
 
 		public Rectangle colorTopRight(@Nullable AccurateColor colorTopRight) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight, colorspace(), rectangleMode());
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight, opacityMultiplier(), colorspace(), mode());
 		}
 
 		public Rectangle colorTop(@Nullable AccurateColor colorTop) {
-			return new Rectangle(texture(), colorTop, colorBottomLeft(), colorBottomRight(), colorTop, colorspace(), rectangleMode());
+			return new Rectangle(texture(), colorTop, colorBottomLeft(), colorBottomRight(), colorTop, opacityMultiplier(), colorspace(), mode());
 		}
 
 		public Rectangle colorBottom(@Nullable AccurateColor colorBottom) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottom, colorBottom, colorTopRight(), colorspace(), rectangleMode());
+			return new Rectangle(texture(), colorTopLeft(), colorBottom, colorBottom, colorTopRight(), opacityMultiplier(), colorspace(), mode());
 		}
 
 		public Rectangle colorLeft(@Nullable AccurateColor colorLeft) {
-			return new Rectangle(texture(), colorLeft, colorLeft, colorLeft, colorTopRight(), colorspace(), rectangleMode());
+			return new Rectangle(texture(), colorLeft, colorLeft, colorLeft, colorTopRight(), opacityMultiplier(), colorspace(), mode());
 		}
 
 		public Rectangle colorRight(@Nullable AccurateColor colorRight) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorRight, colorRight, colorspace(), rectangleMode());
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorRight, colorRight, opacityMultiplier(), colorspace(), mode());
 		}
 
-		public Rectangle colors(@Nullable AccurateColor colorTopLeft, @Nullable AccurateColor colorBottomLeft, @Nullable AccurateColor colorBottomRight, @Nullable AccurateColor colorTopRight) {
-			return new Rectangle(texture(), colorTopLeft, colorBottomLeft, colorBottomRight, colorTopRight, colorspace(), rectangleMode());
+		public Rectangle colors(
+				@Nullable AccurateColor colorTopLeft, 		@Nullable AccurateColor colorBottomLeft,
+				@Nullable AccurateColor colorBottomRight, 	@Nullable AccurateColor colorTopRight
+		) {
+			return new Rectangle(texture(), colorTopLeft, colorBottomLeft, colorBottomRight, colorTopRight, opacityMultiplier(), colorspace(), mode());
 		}
 
 		public Rectangle colors(@Nullable AccurateColor color) {
-			return new Rectangle(texture(), color, color, color, color, colorspace(), rectangleMode());
+			return new Rectangle(texture(), color, color, color, color, opacityMultiplier(), colorspace(), mode());
 		}
 
-		public Rectangle rectangleMode(RectangleMode rectangleMode) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight(), colorspace(), rectangleMode);
+		public Rectangle opacityMultiplier(double opacityMultiplier) {
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight(), opacityMultiplier, colorspace(), mode());
 		}
 
-		public Rectangle colorspace(Colorspace colorspace) {
-			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight(), colorspace, rectangleMode());
+		public Rectangle mode(RectangleMode mode) {
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight(), opacityMultiplier(), colorspace(), mode);
+		}
+
+		public Rectangle colorspace(@Nullable Colorspace colorspace) {
+			return new Rectangle(texture(), colorTopLeft(), colorBottomLeft(), colorBottomRight(), colorTopRight(), opacityMultiplier(), colorspace, mode());
 		}
 
 		// Properties
@@ -259,25 +265,20 @@ public class Flat extends Basic {
 			TEXTURE(VertexFormats.POSITION_TEXTURE, GameRenderer::getPositionTexShader),
 			COLOR_TEXTURE(VertexFormats.POSITION_COLOR_TEXTURE, GameRenderer::getPositionColorTexShader);
 
-			@Nullable
-			private final VertexFormat vertexFormat;
+			private final @Nullable VertexFormat vertexFormat;
+			private final @Nullable Supplier<Shader> shaderProgram;
 
-			@Nullable
-			private final Supplier<Shader> shader;
-
-			State(@Nullable VertexFormat vertexFormat, @Nullable Supplier<Shader> shader) {
+			State(@Nullable VertexFormat vertexFormat, @Nullable Supplier<Shader> shaderProgram) {
 				this.vertexFormat = vertexFormat;
-				this.shader = shader;
+				this.shaderProgram = shaderProgram;
 			}
 
-			@Nullable
-			public VertexFormat vertexFormat() {
+			public @Nullable VertexFormat vertexFormat() {
 				return vertexFormat;
 			}
 
-			@Nullable
-			public Supplier<Shader> shader() {
-				return shader;
+			public @Nullable Supplier<Shader> shaderProgram() {
+				return shaderProgram;
 			}
 		}
 
@@ -286,9 +287,9 @@ public class Flat extends Basic {
 		}
 
 		public boolean hasColor() {
-			return
-					(colorTopLeft().hasColor() || colorBottomLeft().hasColor() || colorBottomRight().hasColor() || colorTopRight().hasColor())
-							&& (colorTopLeft().hasOpacity() || colorBottomLeft().hasOpacity() || colorBottomRight().hasOpacity() || colorTopRight().hasOpacity());
+			return Theory.looseGreater(opacityMultiplier(), 0)
+						   && (colorTopLeft().hasColor() || colorBottomLeft().hasColor() || colorBottomRight().hasColor() || colorTopRight().hasColor())
+						   && (colorTopLeft().hasOpacity() || colorBottomLeft().hasOpacity() || colorBottomRight().hasOpacity() || colorTopRight().hasOpacity());
 		}
 
 		public AccurateColor colorAt(double xOffset, double yOffset) {
@@ -303,19 +304,14 @@ public class Flat extends Basic {
 		}
 
 		private State state() {
-			if (hasTexture()) {
-				if (hasColor()) {
-					return State.COLOR_TEXTURE;
-				} else {
-					return State.TEXTURE;
-				}
-			} else {
-				if (hasColor()) {
-					return State.COLOR;
-				} else {
-					return State.UNABLE;
-				}
-			}
+			if (hasColor() && hasTexture())
+				return State.COLOR_TEXTURE;
+			else if (hasColor())
+				return State.COLOR;
+			else if (hasTexture())
+				return State.TEXTURE;
+			else
+				return State.UNABLE;
 		}
 
 		// Interface Implementations
@@ -342,7 +338,7 @@ public class Flat extends Basic {
 				RenderSystem.enableBlend();
 			}
 
-			RenderSystem.setShader(Objects.requireNonNull(state().shader()));
+			RenderSystem.setShader(Objects.requireNonNull(state().shaderProgram()));
 
 			if (hasTexture()) {
 				RenderSystem.setShaderTexture(0, Objects.requireNonNull(texture()).identifier());
@@ -357,30 +353,33 @@ public class Flat extends Basic {
 			double xDelta, yDelta;
 
 			// Width optimization
-			if (box().w() < 1) xDelta = box().w() / 2;
-			else if (box().w() < 10) xDelta = box().w() / 4;
-			else if (box().w() < 100) xDelta = box().w() / 8;
-			else xDelta = Math.min(25, box().w() / 16);
+			if 		(box().w() < 1) 	xDelta = box().w() / 2;
+			else if (box().w() < 10) 	xDelta = box().w() / 4;
+			else if (box().w() < 100) 	xDelta = box().w() / 8;
+			else 						xDelta = Math.min(25, box().w() / 16);
 
 			// Height optimization
-			if (box().h() < 1) yDelta = box().h() / 2;
-			else if (box().h() < 10) yDelta = box().h() / 4;
-			else if (box().h() < 100) yDelta = box().h() / 8;
-			else yDelta = Math.min(25, box().h() / 16);
+			if 		(box().h() < 1) 	yDelta = box().h() / 2;
+			else if (box().h() < 10) 	yDelta = box().h() / 4;
+			else if (box().h() < 100) 	yDelta = box().h() / 8;
+			else 						yDelta = Math.min(25, box().h() / 16);
 
 			for (double yr = 0; yr < box().h(); yr += yDelta) {
 				double y = Math.min(box().h(), yr);
+
 				for (double xr = 0; xr < box().w() + xDelta; xr += xDelta) {
 					double x = Math.min(box().w(), xr);
+
 					renderVertex(
 							builder, matrix, box().topLeft().add(x, y),
 							hasTexture() ? Objects.requireNonNull(texture()).uvAt(x / box().w(), y / box().h()) : Vector.ZERO,
-							assertColor(colorAt(x / box().w(), y / box().h())), z()
+							assertColor(colorAt(x / box().w(), y / box().h())).multiplyOpacity(opacityMultiplier()), z()
 					);
+
 					renderVertex(
 							builder, matrix, box().topLeft().add(x, Math.min(box().h(), y + yDelta)),
 							hasTexture() ? Objects.requireNonNull(texture()).uvAt(x / box().w(), Math.min(box().h(), y + yDelta) / box().h()) : Vector.ZERO,
-							assertColor(colorAt(x / box().w(), Math.min(box().h(), y + yDelta) / box().h())), z()
+							assertColor(colorAt(x / box().w(), Math.min(box().h(), y + yDelta) / box().h())).multiplyOpacity(opacityMultiplier()), z()
 					);
 				}
 			}
@@ -393,40 +392,67 @@ public class Flat extends Basic {
 		}
 
 		private void renderTiling() {
-			preserve(FrameInfo.scaled(), FrameInfo.scaled().normalizeBy(box()).shift(0.5, 0.5)).render();
+			preserve(
+					FrameInfo.scaled(),
+					FrameInfo.scaled().normalizeBy(box()).shift(0.5, 0.5)
+			).render();
 		}
 
 		private void renderFixedCorners() {
 			Box corner = box().squareInner().scaleCenter(0.5);
 
 			// Top left
-			preserve(corner.alignTopLeft(box()), new Box(0, 0, 0.5, 0.5)).render();
+			preserve(
+					corner.alignTopLeft(box()),
+					new Box(0, 0, 0.5, 0.5)
+			).render();
 
 			// Bottom left
-			preserve(corner.alignBottomLeft(box()), new Box(0, 0.5, 0.5, 1)).render();
+			preserve(
+					corner.alignBottomLeft(box()),
+					new Box(0, 0.5, 0.5, 1)
+			).render();
 
 			// Bottom right
-			preserve(corner.alignBottomRight(box()), new Box(0.5, 0.5, 1, 1)).render();
+			preserve(
+					corner.alignBottomRight(box()),
+					new Box(0.5, 0.5, 1, 1)
+			).render();
 
 			// Top right
-			preserve(corner.alignTopRight(box()), new Box(0.5, 0, 1, 0.5)).render();
+			preserve(
+					corner.alignTopRight(box()),
+					new Box(0.5, 0, 1, 0.5)
+			).render();
 
 			if (box().w() > box().h()) {
 				Box gap = Box.fromVector(corner.alignTopLeft(box()).topRight(), corner.alignTopRight(box()).bottomLeft());
 
 				// Top
-				preserve(gap, new Box(0.5, 0, 0.5, 0.5)).render();
+				preserve(
+						gap,
+						new Box(0.5, 0, 0.5, 0.5)
+				).render();
 
 				// Bottom
-				preserve(gap.translate(0, 1), new Box(0.5, 0.5, 0.5, 1)).render();
+				preserve(
+						gap.translate(0, 1),
+						new Box(0.5, 0.5, 0.5, 1)
+				).render();
 			} else if (box().w() < box().h()) {
 				Box gap = Box.fromVector(corner.alignTopLeft(box()).bottomLeft(), corner.alignBottomLeft(box()).topRight());
 
 				// Left
-				preserve(gap, new Box(0, 0.5, 0.5, 0.5)).render();
+				preserve(
+						gap,
+						new Box(0, 0.5, 0.5, 0.5)
+				).render();
 
 				// Right
-				preserve(gap.translate(1, 0), new Box(0.5, 0.5, 1, 0.5)).render();
+				preserve(
+						gap.translate(1, 0),
+						new Box(0.5, 0.5, 1, 0.5)
+				).render();
 			}
 		}
 
@@ -439,7 +465,7 @@ public class Flat extends Basic {
 		public void render() {
 			if (!isRenderable()) return;
 
-			switch (rectangleMode()) {
+			switch (mode()) {
 				case NORMAL -> renderNormal();
 				case TILING -> renderTiling();
 				case FIXED_CORNERS -> renderFixedCorners();
@@ -703,10 +729,10 @@ public class Flat extends Basic {
 		public class Outlined implements Renderable {
 			// Constructors
 
-			public Outlined(Vector expansion, OutliningMode outliningMode, OutliningStyle outliningStyle) {
+			public Outlined(Vector expansion, OutliningMode mode, OutliningStyle style) {
 				this.expansion = expansion;
-				this.outliningMode = outliningMode;
-				this.outliningStyle = outliningStyle;
+				this.mode = mode;
+				this.style = style;
 			}
 
 			public Outlined(Vector expansion) {
@@ -724,8 +750,8 @@ public class Flat extends Basic {
 			}
 
 			private final Vector expansion;
-			private final OutliningMode outliningMode;
-			private final OutliningStyle outliningStyle;
+			private final OutliningMode mode;
+			private final OutliningStyle style;
 
 			// Accessors
 
@@ -733,44 +759,44 @@ public class Flat extends Basic {
 				return expansion;
 			}
 
-			public OutliningMode outliningMode() {
-				return outliningMode;
+			public OutliningMode mode() {
+				return mode;
 			}
 
-			public OutliningStyle outliningStyle() {
-				return outliningStyle;
+			public OutliningStyle style() {
+				return style;
 			}
 
 			// Mutators
 
 			public Outlined parent(UnaryOperator<Rectangle> rectangle) {
-				return rectangle.apply(Rectangle.this).new Outlined(expansion(), outliningMode(), outliningStyle());
+				return rectangle.apply(Rectangle.this).new Outlined(expansion(), mode(), style());
 			}
 
 			public Outlined expansion(Vector expansion) {
-				return new Outlined(expansion, outliningMode(), outliningStyle());
+				return new Outlined(expansion, mode(), style());
 			}
 
-			public Outlined outliningMode(OutliningMode outliningMode) {
-				return new Outlined(expansion(), outliningMode, outliningStyle());
+			public Outlined mode(OutliningMode mode) {
+				return new Outlined(expansion(), mode, style());
 			}
 
-			public Outlined outliningStyle(OutliningStyle outliningStyle) {
-				return new Outlined(expansion(), outliningMode(), outliningStyle);
+			public Outlined style(OutliningStyle style) {
+				return new Outlined(expansion(), mode(), style);
 			}
 
 			// Interface Implementations
 
 			@Override
 			public boolean isRenderable() {
-				return outliningMode() == OutliningMode.NORMAL ? Rectangle.this.isRenderable() : (Renderable.isLegal(box()) && hasColor());
+				return mode() == OutliningMode.NORMAL ? Rectangle.this.isRenderable() : (Renderable.isLegal(box()) && hasColor());
 			}
 
 			@Override
 			public void render() {
 				if (!isRenderable()) return;
 
-				if (outliningMode() == OutliningMode.NORMAL) {
+				if (mode() == OutliningMode.NORMAL) {
 					Rectangle.this.render();
 				}
 
@@ -786,7 +812,7 @@ public class Flat extends Basic {
 				AccurateColor bottomRight, 	bottomRightBottom, 	bottomRightTop, bottomRightDiagonal;
 				AccurateColor topRight, 	topRightBottom, 	topRightTop, 	topRightDiagonal;
 
-				switch (outliningStyle) {
+				switch (style) {
 					case CLAMPED -> {
 						topLeft 				= colorTopLeft();
 						topLeftTop 				= colorAt(xCornerScalar, 0);
@@ -924,18 +950,27 @@ public class Flat extends Basic {
 	public class Oval implements Renderable {
 		// Constructors
 
-		public Oval(double offset, double radians, double innerRadiusFactor, AccurateColor colorCenter, Map<Double, AccurateColor> colorMap, ColorStandard.MixMode mixMode, OvalMode ovalMode) {
-			this.offset = offset;
-			this.radians = radians;
-			this.innerRadiusFactor = innerRadiusFactor;
-			this.colorCenter = colorCenter;
-			this.colorMap = ImmutableMap.copyOf(sortColorMap(colorMap));
+		public Oval(
+				double offset, double radians, double breadth,
+				@Nullable AccurateColor colorCenter, @Nullable ColorTable colors,
+				double opacityMultiplier,
+				ColorStandard.MixMode mixMode, VertexProvider outline, OvalMode mode
+		) {
+			this.offset = Theory.mod(offset, 2 * Math.PI);
+			this.radians = Theory.clamp(radians, -2 * Math.PI, 2 * Math.PI);
+			this.breadth = breadth;
+
+			this.colorCenter = AccurateColor.notnull(colorCenter);
+			this.colors = colors == null ? new ColorTable(null) : colors;
+
+			this.opacityMultiplier = Theory.clamp(opacityMultiplier, 0, 1);
 			this.mixMode = mixMode;
-			this.ovalMode = ovalMode;
+			this.outline = outline;
+			this.mode = mode;
 		}
 
-		public Oval(double offset, double radians, AccurateColor accurateColor) {
-			this(offset, radians, 0, accurateColor, ImmutableMap.of(), ColorStandard.MixMode.BLEND, OvalMode.GRADIANT_OUT);
+		public Oval(double offset, double radians, AccurateColor color) {
+			this(offset, radians, 0, color, null, 1, ColorStandard.MixMode.BLEND, VertexProvider.NONE, OvalMode.FILL);
 		}
 
 		public Oval(AccurateColor color) {
@@ -948,22 +983,193 @@ public class Flat extends Basic {
 
 		// Fields
 
+		public enum VertexProvider {
+			NONE(
+					(box, offset, breadth) -> box.center(),
+					(box, offset, breadth) -> box.center().add(Vector.fromCartesian(
+							Math.cos(offset) * (box.w() / 2),
+							Math.sin(offset) * (box.h() / 2)
+					))
+			),
+			INNER(
+					(box, offset, breadth) -> box.center().add(Vector.fromCartesian(
+							Math.cos(offset) * (box.w() / 2 - breadth),
+							Math.sin(offset) * (box.h() / 2 - breadth)
+					)),
+					NONE.outerVertexFunction
+			),
+			OUTER(
+					NONE.outerVertexFunction,
+					(box, offset, breadth) -> box.center().add(Vector.fromCartesian(
+							Math.cos(offset) * (box.w() / 2 + breadth),
+							Math.sin(offset) * (box.h() / 2 + breadth)
+					))
+			),
+			BOTH(
+					(box, offset, breadth) -> box.center().add(Vector.fromCartesian(
+							Math.cos(offset) * (box.w() / 2 - breadth / 2),
+							Math.sin(offset) * (box.h() / 2 - breadth / 2)
+					)),
+					(box, offset, breadth) -> box.center().add(Vector.fromCartesian(
+							Math.cos(offset) * (box.w() / 2 + breadth / 2),
+							Math.sin(offset) * (box.h() / 2 + breadth / 2)
+					))
+			);
+
+			@FunctionalInterface
+			interface VertexFunction {
+				@NotNull Vector vertexAt(Box box, double offset, double breadth);
+			}
+
+			private final VertexFunction innerVertexFunction, outerVertexFunction;
+
+			VertexProvider(VertexFunction innerVertexFunction, VertexFunction outerVertexFunction) {
+				this.innerVertexFunction = innerVertexFunction;
+				this.outerVertexFunction = outerVertexFunction;
+			}
+
+			public @NotNull Vector innerVertexAt(Box box, double offset, double breadth) {
+				return innerVertexFunction.vertexAt(box, offset, breadth);
+			}
+
+			public @NotNull Vector outerVertexAt(Box box, double offset, double breadth) {
+				return outerVertexFunction.vertexAt(box, offset, breadth);
+			}
+		}
+		
+		public static class ColorTable {
+			public static @NotNull LinkedHashMap<Double, @NotNull AccurateColor> sort(@Nullable LinkedHashMap<Double, @NotNull AccurateColor> colors) {
+				if (colors == null) {
+					return new LinkedHashMap<>();
+				}
+
+				LinkedHashMap<Double, @NotNull AccurateColor> sorted = new LinkedHashMap<>();
+
+				colors.entrySet().stream()
+						.sorted(Map.Entry.comparingByKey())
+						.map(ColorTable::check)
+						.forEachOrdered(entry -> sorted.put(entry.getKey(), entry.getValue()));
+
+				return sorted;
+			}
+
+			public static @NotNull Map.Entry<Double, @NotNull AccurateColor> check(@NotNull Map.Entry<Double, @NotNull AccurateColor> entry) {
+				return new AbstractMap.SimpleEntry<>(modOffset(entry.getKey()), entry.getValue());
+			}
+
+			private static double modOffset(double offset) {
+				return Theory.mod(Theory.mod(offset, 2 * Math.PI) + 2 * Math.PI, 2 * Math.PI);
+			}
+
+			public ColorTable(@Nullable Map<Double, @NotNull AccurateColor> colors) {
+				this.colors = colors == null ? ImmutableMap.of() : ImmutableMap.copyOf(sort(new LinkedHashMap<>(colors)));
+			}
+			
+			public ColorTable() {
+				this(null);
+			}
+
+			private final @NotNull ImmutableMap<Double, @NotNull AccurateColor> colors;
+
+			public @NotNull ImmutableMap<Double, @NotNull AccurateColor> colors() {
+				return colors;
+			}
+
+			public boolean hasColor() {
+				return !colors().isEmpty();
+			}
+
+			public ColorTable putColor(double offset, @Nullable AccurateColor color) {
+				color = AccurateColor.notnull(color);
+
+				Map<Double, @NotNull AccurateColor> colors = new HashMap<>(colors());
+				colors.put(offset, color);
+
+				return new ColorTable(colors);
+			}
+
+			public @Nullable Map.Entry<Double, @NotNull AccurateColor> previous(double offset) {
+				if (!hasColor()) return null;
+				assert !colors().isEmpty();
+
+				final double targetOffset = modOffset(offset);
+
+				Optional<Map.Entry<Double, @NotNull AccurateColor>> previous = colors().entrySet().stream()
+																					   .filter(entry -> entry.getKey() <= targetOffset)
+																					   .reduce((first, second) -> second)
+																					   .stream()
+																					   .findFirst();
+
+				Map.Entry<Double, @NotNull AccurateColor> last = colors().entrySet().stream()
+																		 .reduce((first, second) -> second)
+																		 .stream().
+																		 findFirst()
+																		 .orElse(null);
+
+				return previous.orElse(last);
+			}
+
+			public @Nullable Map.Entry<Double, @NotNull AccurateColor> next(double offset) {
+				if (!hasColor()) return null;
+				assert !colors().isEmpty();
+
+				final double targetOffset = modOffset(offset);
+
+				Optional<Map.Entry<Double, @NotNull AccurateColor>> next = colors().entrySet().stream()
+																				   .filter(entry -> entry.getKey() >= targetOffset)
+																				   .findFirst();
+
+				Map.Entry<Double, @NotNull AccurateColor> first = colors().entrySet().stream()
+																		  .findFirst()
+																		  .orElse(null);
+
+				return next.orElse(first);
+			}
+
+			public @NotNull AccurateColor colorAt(double offset, ColorStandard.MixMode mixMode) {
+				if (!hasColor()) return Palette.TRANSPARENT;
+				offset = modOffset(offset);
+
+				@Nullable Map.Entry<Double, @NotNull AccurateColor>
+						previous = previous(offset),
+						next = next(offset);
+
+				if (previous == null || next == null) {
+					if (previous == null && next == null) {
+						return Palette.TRANSPARENT;
+					} else return Objects.requireNonNullElse(previous, next).getValue();
+				}
+
+				double
+						previousOffset = previous.getKey(),
+						nextOffset = next.getKey(),
+						previousDistance = Math.abs(previousOffset + (previousOffset >= offset ? -2 * Math.PI : 0) - offset),
+						nextDistance = Math.abs(nextOffset + (nextOffset <= offset ? 2 * Math.PI : 0) - offset),
+						totalDistance = previousDistance + nextDistance;
+
+				double ratio = totalDistance != 0 ? previousDistance / totalDistance : 0;
+
+				return previous.getValue().mix(next.getValue(), ratio, mixMode);
+			}
+		}
+
 		public enum OvalMode {
-			FILL((oval, offset, radiusFactor) -> oval.colorAt(offset)),
+			FILL((oval, offset1, radiusFactor) -> oval.colorCenter()),
+			GRADIANT((oval, offset, radiusFactor) -> oval.colorAt(offset)),
 			GRADIANT_OUT((oval, offset, radiusFactor) ->
 								 oval.colorCenter().mix(oval.colorAt(offset), radiusFactor, oval.mixMode())),
 			GRADIANT_IN((oval, offset, radiusFactor) ->
 								oval.colorAt(offset).mix(oval.colorCenter(), radiusFactor, oval.mixMode())),
 			FILL_GRADIANT_OUT((oval, offset, radiusFactor) -> Theory.looseEquals(radiusFactor, 1)
-																			  ? FILL.getColor(oval, offset, radiusFactor)
+																			  ? GRADIANT.colorAt(oval, offset, radiusFactor)
 																			  : oval.colorCenter()),
 			FILL_GRADIANT_IN((oval, offset, radiusFactor) -> !Theory.looseEquals(radiusFactor, 1)
-																			 ? FILL.getColor(oval, offset, radiusFactor)
+																			 ? GRADIANT.colorAt(oval, offset, radiusFactor)
 																			 : oval.colorCenter());
 
 			@FunctionalInterface
 			interface ColorFunction {
-				AccurateColor getColor(Oval oval, double offset, double radiusFactor);
+				@NotNull AccurateColor getColor(Oval oval, double offset, double radiusFactor);
 			}
 
 			private final ColorFunction colorFunction;
@@ -972,16 +1178,18 @@ public class Flat extends Basic {
 				this.colorFunction = colorFunction;
 			}
 
-			public AccurateColor getColor(Oval oval, double offset, double radiusFactor) {
+			public @NotNull AccurateColor colorAt(Oval oval, double offset, double radiusFactor) {
 				return colorFunction.getColor(oval, offset, radiusFactor);
 			}
 		}
 
-		private final double offset, radians, innerRadiusFactor;
-		private final AccurateColor colorCenter;
-		private final ImmutableMap<Double, AccurateColor> colorMap;
+		private final double offset, radians, breadth;
+		private final @NotNull AccurateColor colorCenter;
+		private final @NotNull ColorTable colors;
+		private final double opacityMultiplier;
 		private final ColorStandard.MixMode mixMode;
-		private final OvalMode ovalMode;
+		private final VertexProvider outline;
+		private final OvalMode mode;
 
 		// Accessors
 
@@ -993,175 +1201,108 @@ public class Flat extends Basic {
 			return radians;
 		}
 
-		public double innerRadiusFactor() {
-			return innerRadiusFactor;
+		public double breadth() {
+			return breadth;
 		}
 
-		public AccurateColor colorCenter() {
+		public @NotNull AccurateColor colorCenter() {
 			return colorCenter;
 		}
 
-		private static LinkedHashMap<Double, AccurateColor> sortColorMap(Map<Double, AccurateColor> colorMap) {
-			return new LinkedHashMap<>(colorMap.entrySet()
-											   .stream()
-											   .sorted(Map.Entry.comparingByKey())
-											   .collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, Map.Entry::getValue)));
+		public @NotNull ColorTable colors() {
+			return colors;
 		}
 
-		public ImmutableMap<Double, AccurateColor> colorMap() {
-			return ImmutableMap.copyOf(colorMap);
-		}
-
-		public Map<Double, AccurateColor> colorMapMutableCopy() {
-			return sortColorMap(colorMap);
-		}
-
-		public AccurateColor firstColor() {
-			return !colorMap().isEmpty()
-						   ? colorMap().values().stream().findFirst().orElse(Palette.TRANSPARENT)
-						   : existsColor()
-									 ? colorCenter()
-									 : Palette.TRANSPARENT;
-		}
-
-		public AccurateColor lastColor() {
-			return !colorMap().isEmpty()
-						   ? colorMap().values().stream().reduce((first, second) -> second).orElse(Palette.TRANSPARENT)
-						   : existsColor()
-									 ? colorCenter()
-									 : Palette.TRANSPARENT;
-		}
-
-		public ImmutableMap<Double, AccurateColor> colorMapSafe() {
-			Map<Double, AccurateColor> originalMap = colorMapMutableCopy();
-
-			if (firstColor() != lastColor()) {
-				if (!colorMap().containsKey(0.0) && !colorMap().containsKey(2 * Math.PI)) {
-					AccurateColor color = firstColor();
-
-					double firstOffset = originalMap.keySet().stream().findFirst().orElse(0.0);
-					double offset = Math.abs(firstOffset - originalMap.keySet().stream().reduce((first, second) -> second).orElse(0.0));
-					double factor = Theory.isZero(offset) ? 0 : (firstOffset / offset);
-					color = color.mix(lastColor(), factor, mixMode());
-
-					originalMap.put(0.0, color);
-					originalMap.put(2 * Math.PI, color);
-				} else if (colorMap().containsKey(0.0)) {
-					originalMap.put(2 * Math.PI, colorMap().get(0.0));
-				} else if (colorMap().containsKey(2 * Math.PI)) {
-					originalMap.put(0.0, colorMap().get(2 * Math.PI));
-				}
-			}
-
-			return ImmutableMap.copyOf(sortColorMap(originalMap));
+		public double opacityMultiplier() {
+			return opacityMultiplier;
 		}
 
 		public ColorStandard.MixMode mixMode() {
 			return mixMode;
 		}
 
-		public OvalMode ovalMode() {
-			return ovalMode;
+		public VertexProvider outline() {
+			return outline;
+		}
+
+		public OvalMode mode() {
+			return mode;
 		}
 
 		// Mutators
 
 		public Oval parent(UnaryOperator<Flat> flat) {
-			return flat.apply(Flat.this).new Oval(offset(), radians(), innerRadiusFactor(), colorCenter(), colorMap(), mixMode(), ovalMode());
+			return flat.apply(Flat.this).new Oval(offset(), radians(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
 		public Oval offset(double offset) {
-			return new Oval(offset, radians(), innerRadiusFactor(), colorCenter(), colorMap(), mixMode(), ovalMode());
+			return new Oval(offset, radians(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
 		public Oval radians(double radians) {
-			return new Oval(offset(), radians, innerRadiusFactor(), colorCenter(), colorMap(), mixMode(), ovalMode());
+			return new Oval(offset(), radians, breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
-		public Oval innerRadiusFactor(double innerRadiusFactor) {
-			return new Oval(offset(), radians(), innerRadiusFactor, colorCenter(), colorMap(), mixMode(), ovalMode());
+		public Oval breadth(double breadth) {
+			return new Oval(offset(), radians(), breadth, colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
-		public Oval colorCenter(AccurateColor colorCenter) {
-			return new Oval(offset(), radians(), innerRadiusFactor(), colorCenter, colorMap(), mixMode(), ovalMode());
+		public Oval colorCenter(@Nullable AccurateColor colorCenter) {
+			return new Oval(offset(), radians(), breadth(), colorCenter, colors(), opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
-		public Oval colorMap(Map<Double, AccurateColor> colorMap) {
-			return new Oval(offset(), radians(), innerRadiusFactor(), colorCenter(), colorMap, mixMode(), ovalMode());
+		public Oval colors(@Nullable ColorTable colors) {
+			return new Oval(offset(), radians(), breadth(), colorCenter(), colors, opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
-		public Oval addColor(double at, AccurateColor color) {
-			return colorMap(ImmutableMap.<Double, AccurateColor>builder()
-									.putAll(colorMap())
-									.put(modOffset(at), color)
-									.build());
+		public Oval addColor(double offset, @Nullable AccurateColor color) {
+			return new Oval(offset(), radians(), breadth(), colorCenter(), colors().putColor(offset, color), opacityMultiplier(), mixMode(), outline(), mode());
+		}
+
+		public Oval opacityMultiplier(double opacityMultiplier) {
+			return new Oval(offset(), radians(), breadth(), colorCenter(), colors(), opacityMultiplier, mixMode(), outline(), mode());
 		}
 
 		public Oval mixMode(ColorStandard.MixMode mixMode) {
-			return new Oval(offset(), radians(), innerRadiusFactor(), colorCenter(), colorMap(), mixMode, ovalMode());
+			return new Oval(offset(), radians(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode, outline(), mode());
 		}
 
-		public Oval ovalMode(OvalMode ovalMode) {
-			return new Oval(offset(), radians(), innerRadiusFactor(), colorCenter(), colorMap(), mixMode(), ovalMode);
+		public Oval outline(VertexProvider outline) {
+			return new Oval(offset(), radians(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline, mode());
+		}
+
+		public Oval outline(VertexProvider outline, double breadth) {
+			return outline(outline).breadth(breadth);
+		}
+
+		public Oval mode(OvalMode mode) {
+			return new Oval(offset(), radians(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode);
 		}
 
 		// Properties
 
-		private static double modOffset(double offset) {
-			return Theory.mod(offset, 2 * Math.PI);
+		public @NotNull AccurateColor colorAt(double offset) {
+			if (!hasColor()) return Palette.TRANSPARENT;
+
+			return colors().colorAt(offset, mixMode());
 		}
 
-		public Map.Entry<Double, AccurateColor> nearestPrevious(double offset) {
-			AbstractMap.SimpleEntry<Double, AccurateColor> fallback = new AbstractMap.SimpleEntry<>(0.0, existsColor() ? colorCenter() : Palette.TRANSPARENT);
-
-			return !colorMapSafe().isEmpty()
-						   ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() <= modOffset(offset)).reduce((first, second) -> second).orElse(fallback)
-						   : fallback;
+		private @NotNull Vector innerVertexAt(double offset) {
+			return outline().innerVertexAt(box(), offset, radians());
 		}
 
-		public Map.Entry<Double, AccurateColor> nearestNext(double offset) {
-			AbstractMap.SimpleEntry<Double, AccurateColor> fallback = new AbstractMap.SimpleEntry<>(2 * Math.PI, existsColor() ? colorCenter() : Palette.TRANSPARENT);
-
-			return !colorMapSafe().isEmpty()
-						   ? colorMapSafe().entrySet().stream().filter(entry -> entry.getKey() >= modOffset(offset)).findFirst().orElse(fallback)
-						   : fallback;
+		private @NotNull Vector outerVertexAt(double offset) {
+			return outline().outerVertexAt(box(), offset, radians());
 		}
 
-		public AccurateColor colorAt(double offset) {
-			if (!existsColor()) {
-				return Palette.TRANSPARENT;
-			}
-
-			if (colorMap().isEmpty()) {
-				return colorCenter();
-			}
-
-			if (colorMapSafe().containsKey(offset)) {
-				return colorMapSafe().get(offset);
-			}
-
-			offset = modOffset(offset);
-
-			final Map.Entry<Double, AccurateColor> prev = nearestPrevious(offset), next = nearestNext(offset);
-			if (prev.getValue().approximates(next.getValue())) {
-				return prev.getValue();
-			}
-
-			double weight = (offset - prev.getKey()) / Math.abs(next.getKey() - prev.getKey());
-
-			return prev.getValue().mix(next.getValue(), weight, mixMode());
+		public boolean hasCenter() {
+			return colorCenter().hasColor();
 		}
 
-		private Vector vertexAt(double offset, double radiusFactor) {
-			offset = modOffset(offset);
-			return box().center().add(Vector.fromCartesian(
-					radiusFactor * box().w() / 2 * Math.cos(offset),
-					radiusFactor * box().h() / 2 * Math.sin(offset)
-			));
-		}
+		public boolean hasColor() {
+			if (!Theory.looseGreater(opacityMultiplier(), 0)) return false;
 
-		public boolean existsColor() {
-			return colorCenter().hasColor() || colorMap().values().stream().anyMatch(AccurateColor::hasColor);
+			return colors().hasColor();
 		}
 
 		public double eccentricity() {
@@ -1174,24 +1315,49 @@ public class Flat extends Basic {
 					.next();
 		}
 
-		private void renderVertex(BufferBuilder builder, Matrix4f matrix, double offset, double radiusFactor, AccurateColor color, float z) {
-			renderVertex(builder, matrix, vertexAt(offset, radiusFactor), color, z);
+		private void renderInnerVertex(BufferBuilder builder, Matrix4f matrix, double offset, AccurateColor color, float z) {
+			renderVertex(builder, matrix, innerVertexAt(offset), color, z);
+		}
+
+		private void renderOuterVertex(BufferBuilder builder, Matrix4f matrix, double offset, AccurateColor color, float z) {
+			renderVertex(builder, matrix, outerVertexAt(offset), color, z);
+		}
+
+		private double delta() {
+			double maxLength = Math.max(box().w(), box().h());
+			return Math.max(0.01, 1 / (maxLength / 2 * 2 * Math.PI)); // Approximately 1 pixel per segment
+		}
+
+		private double clampOffset(double offset) {
+			return Theory.clamp(offset, -radians(), radians());
+		}
+
+		private double nextOffset(double offset) {
+			boolean positive = radians() >= 0;
+
+			if (positive) {
+				return offset + delta();
+			} else {
+				return offset - delta();
+			}
+		}
+
+		private boolean isOffsetLegal(double offset) {
+			return radians() >= 0 ? offset <= radians() + delta() : offset >= radians() - delta();
 		}
 
 		// Interface Implementations
 
-		private static final double delta = 0.01;
-
 		@Override
 		public boolean isRenderable() {
-			return Renderable.isLegal(box()) && Theory.looseGreater(radians(), 0) && existsColor();
+			return (hasCenter() || hasColor()) && !Theory.looseEquals(radians(), 0) && Renderable.isLegal(box());
 		}
 
 		@Override
 		public void render() {
 			if (!isRenderable()) return;
 
-			if (Theory.looseEquals(innerRadiusFactor(), 1)) return;
+			if (outline() != VertexProvider.NONE && Theory.looseEquals(breadth(), 1)) return;
 
 			RenderSystem.enableBlend();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -1202,17 +1368,30 @@ public class Flat extends Basic {
 
 			builder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
 
-			for (double offset = offset(); offset < offset() + radians() + delta; offset += delta) {
-				double clampedOffset = Math.min(offset, offset() + radians()); // Prevents offset from exceeding the end of the arc
-				Vector vertex = vertexAt(clampedOffset, 1);
+			for (
+					double offset = offset();
+					isOffsetLegal(offset);
+					offset = nextOffset(offset)
+			) {
+				double clampedOffset = clampOffset(offset); // Prevents offset from exceeding the end of the arc
+
+				Vector
+						edge = VertexProvider.NONE.outerVertexAt(box(), clampedOffset, breadth()),
+						innerEdge = innerVertexAt(clampedOffset),
+						outerEdge = outerVertexAt(clampedOffset);
+				double
+						radius = edge.distanceTo(box().center()),
+						radiusFactor = 1 - (edge.distanceTo(innerEdge) + edge.distanceTo(outerEdge)) / radius;
 
 				// Render the inner (center) vertex
-				renderVertex(builder, matrix, vertexAt(clampedOffset, innerRadiusFactor()),
-						ovalMode().getColor(this, clampedOffset - offset(), innerRadiusFactor()), z());
+				renderVertex(builder, matrix, innerEdge,
+						mode().colorAt(this, clampedOffset - offset(), radiusFactor)
+								.multiplyOpacity(opacityMultiplier()), z());
 
 				// Render the outer vertex
-				renderVertex(builder, matrix, vertex,
-						ovalMode().getColor(this, clampedOffset - offset(), 1), z());
+				renderVertex(builder, matrix, outerEdge,
+						mode().colorAt(this, clampedOffset - offset(), 1)
+								.multiplyOpacity(opacityMultiplier()), z());
 			}
 
 			BufferRenderer.drawWithShader(builder.end());
@@ -1227,7 +1406,7 @@ public class Flat extends Basic {
 	public class Text implements Renderable {
 		// Constructors
 
-		public Text(Section section, @Nullable AccurateColor color, @Nullable TextRenderer textRenderer, Section.Alignment verticalAlignment, Paragraph.Alignment horizontalAlignment, boolean shadowed, boolean culled) {
+		public Text(@NotNull Section section, @Nullable AccurateColor color, @Nullable TextRenderer textRenderer, Section.Alignment verticalAlignment, Paragraph.Alignment horizontalAlignment, boolean shadowed, boolean culled) {
 			this.section = section;
 			this.color = color;
 			this.textRenderer = textRenderer == null ? MinecraftClient.getInstance().textRenderer : textRenderer;
@@ -1237,7 +1416,7 @@ public class Flat extends Basic {
 			this.culled = culled;
 		}
 
-		public Text(Section section, @Nullable AccurateColor color, Section.Alignment verticalAlignment, Paragraph.Alignment horizontalAlignment, boolean shadowed) {
+		public Text(@NotNull Section section, @Nullable AccurateColor color, Section.Alignment verticalAlignment, Paragraph.Alignment horizontalAlignment, boolean shadowed) {
 			this(section, color, null, verticalAlignment, horizontalAlignment, shadowed, false);
 		}
 
@@ -1247,26 +1426,24 @@ public class Flat extends Basic {
 
 		// Fields
 
-		private final Section section;
-		@Nullable
-		private final AccurateColor color;
-		private final TextRenderer textRenderer;
+		private final @NotNull Section section;
+		private final @Nullable AccurateColor color;
+		private final @NotNull TextRenderer textRenderer;
 		private final Section.Alignment verticalAlignment;
 		private final Paragraph.Alignment horizontalAlignment;
 		private final boolean shadowed, culled;
 
 		// Accessors
 
-		public Section section() {
+		public @NotNull Section section() {
 			return section;
 		}
 
-		@Nullable
-		public AccurateColor color() {
+		public @Nullable AccurateColor color() {
 			return color;
 		}
 
-		public TextRenderer textRenderer() {
+		public @NotNull TextRenderer textRenderer() {
 			return textRenderer;
 		}
 
@@ -1296,7 +1473,7 @@ public class Flat extends Basic {
 			return parent(flat -> flat.box(box));
 		}
 
-		public Text section(Section section) {
+		public Text section(@NotNull Section section) {
 			return new Text(section, color(), textRenderer(), verticalAlignment(), horizontalAlignment(), shadowed(), culled());
 		}
 
@@ -1492,33 +1669,33 @@ public class Flat extends Basic {
 	public class Item implements Renderable {
 		// Constructors
 
-		public Item(ItemStack itemStack, @Nullable Quaternion modifier, boolean leftHanded) {
+		public Item(@NotNull ItemStack itemStack, @Nullable Quaternion modifier, boolean leftHanded) {
 			this.itemStack = itemStack;
 			this.modifier = modifier == null ? new Quaternion() : modifier;
 			this.leftHanded = leftHanded;
 		}
 
-		public Item(ItemStack itemStack, boolean leftHanded) {
+		public Item(@NotNull ItemStack itemStack, boolean leftHanded) {
 			this(itemStack, null, leftHanded);
 		}
 
-		public Item(ItemStack itemStack) {
+		public Item(@NotNull ItemStack itemStack) {
 			this(itemStack, false);
 		}
 
 		// Fields
 
-		private final ItemStack itemStack;
-		private final Quaternion modifier;
+		private final @NotNull ItemStack itemStack;
+		private final @NotNull Quaternion modifier;
 		private final boolean leftHanded;
 
 		// Accessors
 
-		public ItemStack itemStack() {
+		public @NotNull ItemStack itemStack() {
 			return itemStack;
 		}
 
-		public Quaternion modifier() {
+		public @NotNull Quaternion modifier() {
 			return modifier;
 		}
 
@@ -1532,11 +1709,11 @@ public class Flat extends Basic {
 			return flat.apply(Flat.this).new Item(itemStack(), modifier(), leftHanded());
 		}
 
-		public Item model(ItemStack itemStack) {
+		public Item model(@NotNull ItemStack itemStack) {
 			return new Item(itemStack, modifier(), leftHanded());
 		}
 
-		public Item modifier(Quaternion modifier) {
+		public Item modifier(@Nullable Quaternion modifier) {
 			return new Item(itemStack(), modifier, leftHanded());
 		}
 
@@ -1622,50 +1799,48 @@ public class Flat extends Basic {
 	public class Block implements Renderable {
 		// Constructors
 
-		public Block(BlockState blockState, @Nullable AccurateColor color, @Nullable Quaternion modifier) {
+		public Block(@NotNull BlockState blockState, @Nullable AccurateColor color, @Nullable Quaternion modifier) {
 			this.blockState = blockState;
 			this.color = color;
 			this.modifier = modifier == null ? new Quaternion() : modifier;
 		}
 
-		public Block(BlockState blockState, @Nullable AccurateColor color) {
+		public Block(@NotNull BlockState blockState, @Nullable AccurateColor color) {
 			this(blockState, color, null);
 		}
 
-		public Block(BlockState blockState, BlockPos blockPos, @Nullable Quaternion modifier) {
+		public Block(@NotNull BlockState blockState, BlockPos blockPos, @Nullable Quaternion modifier) {
 			this.blockState = blockState;
 			this.color = AccurateColor.fromARGB(RenderManager.getBlockColorAt(blockState, MinecraftClient.getInstance().world, blockPos));
 			this.modifier = modifier == null ? new Quaternion() : modifier;
 		}
 
-		public Block(BlockState blockState, BlockPos blockPos) {
+		public Block(@NotNull BlockState blockState, BlockPos blockPos) {
 			this(blockState, blockPos, null);
 		}
 
-		public Block(BlockState blockState) {
+		public Block(@NotNull BlockState blockState) {
 			this(blockState, (AccurateColor) null);
 		}
 
 		// Fields
 
-		private final BlockState blockState;
-		// FIXME: 2023/7/12 Not very useful for rendering
-		@Nullable
-		private final AccurateColor color;
-		private final Quaternion modifier;
+		private final @NotNull BlockState blockState;
+		// FIXME: 2023/7/12 Not very useful when rendering
+		private final @Nullable AccurateColor color;
+		private final @NotNull Quaternion modifier;
 
 		// Accessors
 
-		public BlockState blockState() {
+		public @NotNull BlockState blockState() {
 			return blockState;
 		}
 
-		@Nullable
-		public AccurateColor color() {
+		public @Nullable AccurateColor color() {
 			return color;
 		}
 
-		public Quaternion modifier() {
+		public @NotNull Quaternion modifier() {
 			return modifier;
 		}
 
@@ -1675,11 +1850,11 @@ public class Flat extends Basic {
 			return flat.apply(Flat.this).new Block(blockState(), color(), modifier());
 		}
 
-		public Block model(BlockState blockState) {
+		public Block model(@NotNull BlockState blockState) {
 			return new Block(blockState, color(), modifier());
 		}
 
-		public Block modifier(Quaternion modifier) {
+		public Block modifier(@Nullable Quaternion modifier) {
 			return new Block(blockState(), color(), modifier);
 		}
 
@@ -1707,7 +1882,7 @@ public class Flat extends Basic {
 			renderBlockModel: {
 				BlockState blockState = blockState();
 
-				if (blockState == null || blockState.getRenderType() == BlockRenderType.INVISIBLE) break renderBlockModel;
+				if (blockState.getRenderType() == BlockRenderType.INVISIBLE) break renderBlockModel;
 
 				RenderSystem.enableBlend();
 				RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);

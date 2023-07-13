@@ -9,6 +9,8 @@ public class Theory {
 	 * A small margin of error for comparing doubles. The value is {@code 1e-6}, which equals to {@code 0.000001}.
 	 */
 	public static final double EPSILON = 1e-6;
+	
+	public static final double TAU = 2 * Math.PI;
 
 	/**
 	 * <h1>{@code a ≈ b}</h1>
@@ -129,18 +131,60 @@ public class Theory {
 	}
 
 	/**
-	 * Clamps a double between a minimum and maximum value.
+	 * Clamps a double to the range {@code [min, max]}.
 	 * @param value	The double to clamp.
 	 * @param min	The minimum value.
 	 * @param max	The maximum value.
 	 * @return	The clamped double.
 	 */
 	public static double clamp(double value, double min, double max) {
+		if (min > max) {
+			return clamp(value, max, min);
+		} else if (min == max) {
+			return min;
+		}
+
 		return Math.max(min, Math.min(max, value));
 	}
 
 	/**
-	 * Modulos a double.
+	 * Clamps a double to the range {@code (min, max]}.
+	 * @param value	The double to clamp.
+	 * @param min	The minimum value.
+	 * @param max	The maximum value.
+	 * @return	The clamped double.
+	 */
+	public static double clampGreater(double value, double min, double max) {
+		if (min > max) {
+			return clampGreater(value, max, min);
+		} else if (min == max) {
+			return min;
+		}
+
+		double clamped = clamp(value, min, max);
+		return clamped <= min ? max : clamped;
+	}
+
+	/**
+	 * Clamps a double to the range {@code [min, max)}.
+	 * @param value	The double to clamp.
+	 * @param min	The minimum value.
+	 * @param max	The maximum value.
+	 * @return	The clamped double.
+	 */
+	public static double clampLess(double value, double min, double max) {
+		if (min > max) {
+			return clampLess(value, max, min);
+		} else if (min == max) {
+			return min;
+		}
+
+		double clamped = clamp(value, min, max);
+		return clamped >= max ? min : clamped;
+	}
+
+	/**
+	 * Modulos a double to the range {@code [0, mod)}.
 	 * @param value	The double to mod.
 	 * @param mod	The modulus.
 	 * @return	The modulated double.
