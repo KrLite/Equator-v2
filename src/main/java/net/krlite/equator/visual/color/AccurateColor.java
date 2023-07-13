@@ -47,7 +47,7 @@ public class AccurateColor {
 	protected AccurateColor(Colorspace colorspace, double[] color, double opacity, boolean transparent) {
 		this.colorspace = colorspace;
 		this.color = color;
-		this.opacity = opacity;
+		this.opacity = Theory.clamp(opacity, 0, 1);
 		this.transparent = transparent;
 	}
 
@@ -229,7 +229,7 @@ public class AccurateColor {
 	}
 
 	public AccurateColor color(double[] color) {
-		return color() == color ? this : new AccurateColor(colorspace(), color, opacity());
+		return new AccurateColor(colorspace(), color, opacity());
 	}
 
 	public AccurateColor color(double[] color, Colorspace colorspace) {
@@ -237,7 +237,11 @@ public class AccurateColor {
 	}
 
 	public AccurateColor opacity(double opacity) {
-		return opacity() == opacity ? this : new AccurateColor(colorspace(), color(), opacity);
+		return new AccurateColor(colorspace(), color(), opacity);
+	}
+
+	public AccurateColor multiplyOpacity(double opacity) {
+		return opacity(opacity() * opacity);
 	}
 
 	// Mutators: RGB Components
