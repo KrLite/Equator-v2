@@ -836,7 +836,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		if (rotationCount % 2 == 0) {
 			return this;
 		}
-		return size(size().angle(Math.PI * 2 - size().angle()));
+		return size(size().angle(2 * Math.PI - size().angle()));
 	}
 
 	/**

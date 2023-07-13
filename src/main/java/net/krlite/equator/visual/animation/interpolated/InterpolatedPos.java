@@ -15,13 +15,13 @@ public class InterpolatedPos {
 		}
 
 		@Override
-		public Pos interpolate(Pos value, Pos target) {
-			return value.interpolate(target, ratio());
+		public boolean isCompleted() {
+			return value().distanceTo(target()) <= Theory.EPSILON;
 		}
 
 		@Override
-		public boolean isCompleted() {
-			return value().distanceTo(target()) <= Theory.EPSILON;
+		public Pos interpolate(Pos value, Pos target) {
+			return value.interpolate(target, ratio());
 		}
 	}
 
@@ -35,13 +35,13 @@ public class InterpolatedPos {
 		}
 
 		@Override
-		public Pos interpolate(Pos value, Pos target) {
-			return value.sphericalInterpolate(target, ratio());
+		public boolean isCompleted() {
+			return value().distanceTo(target()) <= Theory.EPSILON;
 		}
 
 		@Override
-		public boolean isCompleted() {
-			return value().distanceTo(target()) <= Theory.EPSILON;
+		public Pos interpolate(Pos value, Pos target) {
+			return value.sphericalInterpolate(target, ratio());
 		}
 	}
 }

@@ -105,7 +105,7 @@ public class CanvasScreen extends Screen {
 								   .appendSubtitle("SUBTITLE")
 								   .append("§aTooltips are cool!")
 								   .appendTitle("§fTITLE")
-		).color(Palette.rainbow(interpolation.value() * Math.PI * 2))
+		).color(Palette.rainbow(interpolation.value() * 2 * Math.PI))
 				.horizontalAlignment(horizontal).verticalAlignment(vertical).enableCulling().new Tooltip(Flat.Text.Tooltip.TooltipSnap.BOTH).render();
 	}
 }

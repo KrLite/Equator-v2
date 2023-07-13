@@ -74,7 +74,7 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	 * @param magnitude	The magnitude.
 	 */
 	public Vector(double theta, double magnitude) {
-		this.theta = theta % (Math.PI * 2) + (magnitude < 0 ? Math.PI : 0);
+		this.theta = theta % (2 * Math.PI) + (magnitude < 0 ? Math.PI : 0);
 		this.magnitude = Math.abs(magnitude);
 	}
 
@@ -85,7 +85,7 @@ public record Vector(double theta, double magnitude) implements Convertible.Scal
 	 */
 	@Override
 	public double theta() {
-		return theta % (Math.PI * 2);
+		return theta % (2 * Math.PI);
 	}
 
 	/**

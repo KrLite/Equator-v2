@@ -1030,7 +1030,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 		if (rotationCount % 2 == 0) {
 			return this;
 		}
-		return size(size().theta(Math.PI * 2 - size().theta()));
+		return size(size().theta(2 * Math.PI - size().theta()));
 	}
 
 	/**

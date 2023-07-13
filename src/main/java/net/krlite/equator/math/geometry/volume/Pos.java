@@ -53,8 +53,7 @@ public record Pos(@Nullable RegistryKey<World> dimension, double x, double y, do
 
 	// Accessors
 
-	@Nullable
-	public RegistryKey<World> dimension() {
+	public @Nullable RegistryKey<World> dimension() {
 		return dimension;
 	}
 
