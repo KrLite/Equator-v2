@@ -7,13 +7,17 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 import static net.krlite.equator.visual.color.Colorspace.*;
-import static net.krlite.equator.visual.color.Palette.TRANSPARENT;
+import static net.krlite.equator.visual.color.Palette.*;
 
 public class AccurateColor {
 	// Static Constructors
 
 	public static @NotNull AccurateColor notnull(@Nullable AccurateColor color) {
 		return color == null ? TRANSPARENT : color;
+	}
+
+	public static @NotNull Colorspace notnull(@Nullable Colorspace colorspace) {
+		return colorspace == null ? RGB : colorspace;
 	}
 
 	public static AccurateColor fromARGB(long argb) {
@@ -28,8 +32,8 @@ public class AccurateColor {
 		return fromRGB(red, green, blue, 255);
 	}
 
-	public static AccurateColor fromColor(Color color) {
-		return new AccurateColor(RGB.fromColor(color), color.getAlpha() / 255.0);
+	public static AccurateColor fromColor(@Nullable Color color) {
+		return color == null ? TRANSPARENT : new AccurateColor(RGB.fromColor(color), color.getAlpha() / 255.0);
 	}
 
 	public static AccurateColor fromHexString(String hexString) {
@@ -39,14 +43,14 @@ public class AccurateColor {
 
 	// Constructors
 
-	protected AccurateColor(Colorspace colorspace, double[] color, double opacity, boolean transparent) {
-		this.colorspace = colorspace;
+	protected AccurateColor(@Nullable Colorspace colorspace, double[] color, double opacity, boolean transparent) {
+		this.colorspace = notnull(colorspace);
 		this.color = color;
 		this.opacity = Theory.clamp(opacity, 0, 1);
 		this.transparent = transparent;
 	}
 
-	public AccurateColor(Colorspace colorspace, double[] color, double opacity) {
+	public AccurateColor(@Nullable Colorspace colorspace, double[] color, double opacity) {
 		this(colorspace, color, opacity, false);
 	}
 
@@ -74,8 +78,8 @@ public class AccurateColor {
 		this(gray, 1);
 	}
 
-	public AccurateColor(AccurateColor another, Colorspace colorspace) {
-		this(colorspace, colorspace.from(another.color(), another.colorspace()), another.opacity(), !another.hasColor());
+	public AccurateColor(@Nullable AccurateColor another, @Nullable Colorspace colorspace) {
+		this(colorspace, notnull(colorspace).from(notnull(another).color(), notnull(another).colorspace()), notnull(another).opacity(), !notnull(another).hasColor());
 	}
 
 	// Fields
@@ -219,7 +223,7 @@ public class AccurateColor {
 
 	// Mutators
 
-	public AccurateColor colorspace(Colorspace colorspace) {
+	public AccurateColor colorspace(@Nullable Colorspace colorspace) {
 		return colorspace() == colorspace ? this : new AccurateColor(this, colorspace);
 	}
 
