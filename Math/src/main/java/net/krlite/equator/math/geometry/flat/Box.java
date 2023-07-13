@@ -7,7 +7,7 @@ import net.krlite.equator.render.frame.FrameInfo;
 
 /**
  * <h1>Box</h1>
- * Represents a rectangle in the {@link FrameInfo.Convertor Scaled Coordinate}
+ * Represents a rectangle in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}
  * and is not rotatable.
  * @see Vector
  * @param origin	The top left corner.
@@ -1056,28 +1056,28 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	// Interface Implementations
 
 	/**
-	 * @return	A new box fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
+	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Box fitToScreen() {
 		return FrameInfo.Convertor.scaledToScreen(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Box fitToOpenGL() {
 		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
+	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Box fitFromScreen() {
 		return FrameInfo.Convertor.screenToScaled(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Box fitFromOpenGL() {
 		return FrameInfo.Convertor.openGLToScaled(this);

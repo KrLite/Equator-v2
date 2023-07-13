@@ -7,7 +7,7 @@ import net.minecraft.util.math.Vec2f;
 
 /**
  * <h1>Vector</h1>
- * Represents a vector in the {@link FrameInfo.Convertor Scaled Coordinate} and is
+ * Represents a vector in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate} and is
  * stored in polar form.
  * @param angle		The angle <b>in radians.</b>
  * @param magnitude	The magnitude, which is always positive.
