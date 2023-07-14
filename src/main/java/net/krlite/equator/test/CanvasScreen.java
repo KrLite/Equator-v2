@@ -181,6 +181,8 @@ public class CanvasScreen extends Screen {
 								.addColor(0, Palette.WHITE)
 								.addColor(Math.PI, Palette.CYAN)
 								.outline(Flat.Oval.VertexProvider.NONE, 5)
+								.offset(-0.5)
+								.radians(1)
 		);
 	}
 }
