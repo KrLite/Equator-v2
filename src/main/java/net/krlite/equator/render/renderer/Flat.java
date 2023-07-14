@@ -1329,7 +1329,7 @@ public class Flat extends Basic {
 		}
 
 		private double clampOffset(double offset) {
-			return Theory.clamp(offset, -radians(), radians());
+			return Theory.clamp(offset, offset() - radians(), offset() + radians());
 		}
 
 		private double nextOffset(double offset) {
@@ -1343,7 +1343,7 @@ public class Flat extends Basic {
 		}
 
 		private boolean isOffsetLegal(double offset) {
-			return radians() >= 0 ? offset <= radians() + delta() : offset >= radians() - delta();
+			return radians() >= 0 ? offset <= offset() + radians() + delta() : offset >= offset() + radians() - delta();
 		}
 
 		// Interface Implementations
