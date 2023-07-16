@@ -45,9 +45,9 @@ public abstract class Interpolation<I> implements Runnable {
 	}
 
 	public interface Callbacks {
-		interface Complete {
-			Event<Complete> EVENT = EventFactory.createArrayBacked(Complete.class, (listeners) -> (interpolation) -> {
-				for (Complete listener : listeners) {
+		interface Completion {
+			Event<Completion> EVENT = EventFactory.createArrayBacked(Completion.class, (listeners) -> (interpolation) -> {
+				for (Completion listener : listeners) {
 					listener.onCompletion(interpolation);
 				}
 			});
@@ -85,14 +85,14 @@ public abstract class Interpolation<I> implements Runnable {
 			void onFrameStart(Interpolation<?> interpolation);
 		}
 
-		interface FrameComplete {
-			Event<FrameComplete> EVENT = EventFactory.createArrayBacked(FrameComplete.class, (listeners) -> (interpolation) -> {
-				for (FrameComplete listener : listeners) {
-					listener.onFrameComplete(interpolation);
+		interface FrameEnd {
+			Event<FrameEnd> EVENT = EventFactory.createArrayBacked(FrameEnd.class, (listeners) -> (interpolation) -> {
+				for (FrameEnd listener : listeners) {
+					listener.onFrameEnd(interpolation);
 				}
 			});
 
-			void onFrameComplete(Interpolation<?> interpolation);
+			void onFrameEnd(Interpolation<?> interpolation);
 		}
 	}
 
@@ -207,8 +207,8 @@ public abstract class Interpolation<I> implements Runnable {
 		Callbacks.FrameStart.EVENT.invoker().onFrameStart(this);
 
 		if (isCompleted() && !states.completed()) {
-			Callbacks.Complete.EVENT.invoker().onCompletion(this);
 			completed(true);
+			Callbacks.Completion.EVENT.invoker().onCompletion(this);
 		} else completed(false);
 
 		if (value() != null && target() != null) {
@@ -216,7 +216,7 @@ public abstract class Interpolation<I> implements Runnable {
 			value(interpolate(value(), target()));
 		}
 
-		Callbacks.FrameComplete.EVENT.invoker().onFrameComplete(this);
+		Callbacks.FrameEnd.EVENT.invoker().onFrameEnd(this);
 	}
 
 	public abstract I interpolate(I value, I target);
@@ -242,7 +242,7 @@ public abstract class Interpolation<I> implements Runnable {
 	}
 
 	public void onCompletion(Runnable runnable) {
-		Callbacks.Complete.EVENT.register((interpolation) -> {
+		Callbacks.Completion.EVENT.register((interpolation) -> {
 			if (interpolation == this) runnable.run();
 		});
 	}
@@ -265,8 +265,8 @@ public abstract class Interpolation<I> implements Runnable {
 		});
 	}
 
-	public void onFrameComplete(Runnable runnable) {
-		Callbacks.FrameComplete.EVENT.register((interpolation) -> {
+	public void onFrameEnd(Runnable runnable) {
+		Callbacks.FrameEnd.EVENT.register((interpolation) -> {
 			if (interpolation == this) runnable.run();
 		});
 	}
