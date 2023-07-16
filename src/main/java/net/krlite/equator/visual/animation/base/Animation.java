@@ -70,24 +70,24 @@ public abstract class Animation<A> implements Runnable {
 	}
 
 	public interface Callbacks {
-		interface Start {
-			Event<Start> EVENT = EventFactory.createArrayBacked(Start.class, (listeners) -> (animation) -> {
-				for (Start listener : listeners) {
-					listener.onStart(animation);
+		interface Play {
+			Event<Play> EVENT = EventFactory.createArrayBacked(Play.class, (listeners) -> (animation) -> {
+				for (Play listener : listeners) {
+					listener.onPlay(animation);
 				}
 			});
 
-			void onStart(Animation<?> animation);
+			void onPlay(Animation<?> animation);
 		}
 
-		interface Complete {
-			Event<Complete> EVENT = EventFactory.createArrayBacked(Complete.class, (listeners) -> (animation) -> {
-				for (Complete listener : listeners) {
-					listener.onCompletion(animation);
+		interface Termination {
+			Event<Termination> EVENT = EventFactory.createArrayBacked(Termination.class, (listeners) -> (animation) -> {
+				for (Termination listener : listeners) {
+					listener.onTermination(animation);
 				}
 			});
 
-			void onCompletion(Animation<?> animation);
+			void onTermination(Animation<?> animation);
 		}
 
 		interface Pause {
@@ -113,11 +113,11 @@ public abstract class Animation<A> implements Runnable {
 		interface Loop {
 			Event<Loop> EVENT = EventFactory.createArrayBacked(Loop.class, (listeners) -> (animation) -> {
 				for (Loop listener : listeners) {
-					listener.onLooping(animation);
+					listener.onLoop(animation);
 				}
 			});
 
-			void onLooping(Animation<?> animation);
+			void onLoop(Animation<?> animation);
 		}
 
 		interface FrameStart {
@@ -130,14 +130,14 @@ public abstract class Animation<A> implements Runnable {
 			void onFrameStart(Animation<?> animation);
 		}
 
-		interface FrameComplete {
-			Event<FrameComplete> EVENT = EventFactory.createArrayBacked(FrameComplete.class, (listeners) -> (animation) -> {
-				for (FrameComplete listener : listeners) {
-					listener.onFrameComplete(animation);
+		interface FrameEnd {
+			Event<FrameEnd> EVENT = EventFactory.createArrayBacked(FrameEnd.class, (listeners) -> (animation) -> {
+				for (FrameEnd listener : listeners) {
+					listener.onFrameEnd(animation);
 				}
 			});
 
-			void onFrameComplete(Animation<?> animation);
+			void onFrameEnd(Animation<?> animation);
 		}
 	}
 
@@ -378,18 +378,18 @@ public abstract class Animation<A> implements Runnable {
 
 		if (isCompleted()) {
 			if (looping()) {
-				Callbacks.Loop.EVENT.invoker().onLooping(this);
 				reset();
+				Callbacks.Loop.EVENT.invoker().onLoop(this);
 				progress(animate(progress()));
 			} else {
-				Callbacks.Complete.EVENT.invoker().onCompletion(this);
 				terminate();
+				Callbacks.Termination.EVENT.invoker().onTermination(this);
 			}
 		} else {
 			progress(animate(progress()));
 		}
 
-		Callbacks.FrameComplete.EVENT.invoker().onFrameComplete(this);
+		Callbacks.FrameEnd.EVENT.invoker().onFrameEnd(this);
 	}
 
 	protected double animate(double progress) {
@@ -420,7 +420,7 @@ public abstract class Animation<A> implements Runnable {
 	public void play() {
 		if (!isPlaying()) {
 			reset();
-			Callbacks.Start.EVENT.invoker().onStart(this);
+			Callbacks.Play.EVENT.invoker().onPlay(this);
 			future(AnimationThreadPoolExecutor.join(this, 0));
 		}
 	}
@@ -439,14 +439,14 @@ public abstract class Animation<A> implements Runnable {
 		play();
 	}
 
-	public void onStart(Runnable runnable) {
-		Callbacks.Start.EVENT.register((animation) -> {
+	public void onPlay(Runnable runnable) {
+		Callbacks.Play.EVENT.register((animation) -> {
 			if (animation == this) runnable.run();
 		});
 	}
 
-	public void onCompletion(Runnable runnable) {
-		Callbacks.Complete.EVENT.register((animation) -> {
+	public void onTermination(Runnable runnable) {
+		Callbacks.Termination.EVENT.register((animation) -> {
 			if (animation == this) runnable.run();
 		});
 	}
@@ -463,7 +463,7 @@ public abstract class Animation<A> implements Runnable {
 		});
 	}
 
-	public void onLooping(Runnable runnable) {
+	public void onLoop(Runnable runnable) {
 		Callbacks.Loop.EVENT.register((animation) -> {
 			if (animation == this) runnable.run();
 		});
@@ -475,8 +475,8 @@ public abstract class Animation<A> implements Runnable {
 		});
 	}
 
-	public void onFrameComplete(Runnable runnable) {
-		Callbacks.FrameComplete.EVENT.register((animation) -> {
+	public void onFrameEnd(Runnable runnable) {
+		Callbacks.FrameEnd.EVENT.register((animation) -> {
 			if (animation == this) runnable.run();
 		});
 	}
@@ -487,8 +487,8 @@ public abstract class Animation<A> implements Runnable {
 		});
 	}
 
-	public void onFrameComplete(double atProgress, Runnable runnable) {
-		onFrameComplete(() -> {
+	public void onFrameEnd(double atProgress, Runnable runnable) {
+		onFrameEnd(() -> {
 			if (isPassing(atProgress)) runnable.run();
 		});
 	}

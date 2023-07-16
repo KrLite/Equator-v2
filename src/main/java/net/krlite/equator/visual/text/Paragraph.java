@@ -110,6 +110,8 @@ public record Paragraph(Text text, double scalar) {
 						.newLine(NEWLINE)
 						.includeExtraWordChars("0123456789")
 						.includeExtraWordChars("§")
+						.includeExtraWordChars("()[]{}<>!?:;\"'.,~·")
+						.includeExtraWordChars("（）【】「」《》！？：；“”‘’、，。—～·")
 						.stringWidth(charSequence -> fontSize * scalar() * MinecraftClient.getInstance().textRenderer.getWidth(
 								Text.literal(FORMATTING_PATTERN.matcher(charSequence).replaceAll("")).setStyle(text().getStyle()))
 						).wrap()

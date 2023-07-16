@@ -30,8 +30,33 @@ public class CanvasScreen extends Screen {
 	private Box box = Box.fromCartesian(0, 0, 0, 0);
 	private Paragraph.Alignment horizontal = Paragraph.Alignment.LEFT;
 	private Section.Alignment vertical = Section.Alignment.TOP;
-	private final AnimatedDouble animation = new AnimatedDouble(1, 1.1, 100, Curves.Sinusoidal.EASE);
+	private final AnimatedDouble animation = new AnimatedDouble(1, 2, 500, Curves.Back.IN);
+	private boolean a = false, b = false;
 
+	{
+		animation.speedNegate();
+		animation.sensitive(true);
+
+		animation.onTermination(() -> {
+			if (a != b) {
+				a = b;
+				animation.speedNegate();
+			}
+		});
+
+		Mouse.Callbacks.Click.EVENT.register(((button, action, modifiers) -> {
+			if (MinecraftClient.getInstance().currentScreen != this) return;
+
+			if (button == Mouse.LEFT) {
+				if (action.isPress()) {
+					b = !b;
+					animation.speedNegate();
+				}
+			}
+		}));
+	}
+
+	/*
 	{
 		animation.sensitive(true);
 		animation.speedNegate();
@@ -83,6 +108,8 @@ public class CanvasScreen extends Screen {
 		});
 	}
 
+	 */
+
 	@Override
 	protected void init() {
 	}
@@ -93,7 +120,7 @@ public class CanvasScreen extends Screen {
 
 		//VanillaWidgets.Tooltip.render(context, box);
 
-		Box another = FrameInfo.scaled().topLeft(box.bottomRight()).squareInner().alignBottomRight(FrameInfo.scaled());
+		Box another = FrameInfo.scaled().topLeft(box.bottomRight()).alignBottomRight(FrameInfo.scaled());
 
 		/*
 		new Flat(context, 0, another).new Oval()
@@ -154,7 +181,7 @@ public class CanvasScreen extends Screen {
 		box.render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
 		 */
 
-		// FrameInfo.scaled().scaleCenter(0.5 * animation.value()).render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
+		FrameInfo.scaled().scaleCenter(0.3 * animation.value()).render(context, flat -> flat.new Rectangle().colors(Palette.MAGENTA));
 
 		/*
 		FrameInfo.scaled().squareInner().scale(0.4).scale(animation.value()).leftCenter(FrameInfo.scaled().scaleCenter(0.7)).render(context,
@@ -175,6 +202,7 @@ public class CanvasScreen extends Screen {
 
 		 */
 
+		/*
 		box.render(context,
 				flat -> flat.new Oval(Palette.CORAL)
 								.mode(Flat.Oval.OvalMode.GRADIANT_OUT)
@@ -184,5 +212,7 @@ public class CanvasScreen extends Screen {
 								.offset(-0.5)
 								.radians(1)
 		);
+
+		 */
 	}
 }
