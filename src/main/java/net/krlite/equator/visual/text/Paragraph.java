@@ -105,7 +105,7 @@ public record Paragraph(Text text, double scalar) {
 		return isSpacing() ? new Text[] { text() } : Arrays.stream(concatFormatting(NEWLINE_PATTERN.matcher(
 				WordWrap.from(text().getString())
 						.breakWords(true)
-						.insertHyphens(true)
+						.insertHyphens(false)
 						.maxWidth(width)
 						.newLine(NEWLINE)
 						.includeExtraWordChars("0123456789")
