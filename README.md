@@ -2,7 +2,7 @@
 
 <h3><br /></h3>
 
-![Banner](https://github.com/KrLite/Equator-v2/blob/artwork/Banner.png)
+![Banner](https://github.com/KrLite/Equator-v2/blob/artwork/Banner.png?raw=true)
 
 <p align="center">
   <sup>
