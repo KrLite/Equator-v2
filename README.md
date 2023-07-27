@@ -18,4 +18,4 @@
 
 ## License
 
-**Equator** is available under the **[GNU Public License.](LICENSE)**
+**Equator** is licensed under the **[GNU General Public License v3.](LICENSE)**
