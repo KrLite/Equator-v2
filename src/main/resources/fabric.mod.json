@@ -16,7 +16,7 @@
   "license": "GPL-3.0",
   "icon": "assets/equator/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
       "net.krlite.equator.Equator"
@@ -32,5 +32,11 @@
     "minecraft": "~1.19.4"
   },
   "suggests": {
+  },
+
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ]
+    }
   }
 }
