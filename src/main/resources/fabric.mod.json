@@ -32,5 +32,11 @@
     "minecraft": "~1.19.3"
   },
   "suggests": {
+  },
+
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ]
+    }
   }
 }
