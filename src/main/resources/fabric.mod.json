@@ -32,5 +32,11 @@
     "minecraft": ["~1.18", "~1.18.1", "~1.18.2"]
   },
   "suggests": {
+  },
+
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ]
+    }
   }
 }
