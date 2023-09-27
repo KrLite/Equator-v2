@@ -2,7 +2,7 @@
 
 ![Banner](https://github.com/KrLite/Equator-v2/blob/artwork/Banner.png?raw=true)
 
-### Equator for `1.20`
+### Equator for Fabric `1.20`
 
 > [!WARNING]
 > This version of **Equator** is outdated. Newer modifies will only be made to the latst few versions.
