@@ -45,8 +45,24 @@ java {
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${base.archivesName.get()}"}
+		rename { "${it}_${project.archivesBaseName}"}
 	}
+}
+
+tasks.register('collectJars', Copy) {
+	group = 'build'
+
+	def destinationFolder = file("$buildDir/libs/latest")
+
+	from("$buildDir/libs/${base.archivesBaseName}-${project.version}.jar")
+	from("$buildDir/libs/${base.archivesBaseName}-${project.version}-sources.jar")
+
+	subprojects { subproject ->
+		from("$subproject.buildDir/libs/${subproject.archivesBaseName}-${project.version}.jar")
+		from("$subproject.buildDir/libs/${subproject.archivesBaseName}-${project.version}-sources.jar")
+	}
+
+	into(destinationFolder)
 }
 
 publishing {
