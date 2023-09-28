@@ -5,4 +5,4 @@
 ### Equator for Fabric `1.20`
 
 > [!WARNING]
-> This version of **Equator** is outdated. Newer modifies will only be made to the latst few versions.
+> This version of **Equator** is outdated. Newer modifications will only be made to the latst few versions.
