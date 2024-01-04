@@ -5,7 +5,7 @@
 ![Banner](https://github.com/KrLite/Equator-v2/blob/artwork/Banner.png?raw=true)
 
 <p align="center">
-  <code>A Powerful Rendering Library for Minecraft</code>
+  <code>A powerful rendering library for Minecraft</code>
 </p>
 
 <h3><br /></h3>
