@@ -4,10 +4,13 @@ import net.krlite.equator.base.Exceptions;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.render.frame.Convertible;
 import net.krlite.equator.render.frame.FrameInfo;
+import net.minecraft.client.gui.DrawContext;
+
+import java.util.function.Function;
 
 /**
  * <h1>Box</h1>
- * Represents a rectangle in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}
+ * Represents a rectangle in the {@link FrameInfo.Convertor Scaled Coordinate}
  * and is not rotatable.
  * @see Vector
  * @param origin	The top left corner.
@@ -601,7 +604,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose top edge is shifted by the given offset.
 	 */
 	public Box shiftTop(double yOffset) {
-		return shiftTopLeft(Vector.fromCartesian(topLeft().x(), yOffset));
+		return shiftTopLeft(Vector.fromCartesian(0, yOffset));
 	}
 
 	/**
@@ -612,7 +615,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose bottom edge is shifted by the given offset.
 	 */
 	public Box shiftBottom(double yOffset) {
-		return shiftBottomLeft(Vector.fromCartesian(bottomLeft().x(), yOffset));
+		return shiftBottomLeft(Vector.fromCartesian(0, yOffset));
 	}
 
 	/**
@@ -623,7 +626,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose left edge is shifted by the given offset.
 	 */
 	public Box shiftLeft(double xOffset) {
-		return shiftTopLeft(Vector.fromCartesian(xOffset, topLeft().y()));
+		return shiftTopLeft(Vector.fromCartesian(xOffset, 0));
 	}
 
 	/**
@@ -634,7 +637,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose right edge is shifted by the given offset.
 	 */
 	public Box shiftRight(double xOffset) {
-		return shiftTopRight(Vector.fromCartesian(xOffset, topRight().y()));
+		return shiftTopRight(Vector.fromCartesian(xOffset, 0));
 	}
 
 
@@ -1056,28 +1059,28 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	// Interface Implementations
 
 	/**
-	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
+	 * @return	A new box fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Box fitToScreen() {
 		return FrameInfo.Convertor.scaledToScreen(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	A new box fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Box fitToOpenGL() {
 		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
+	 * @return	A new box fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Box fitFromScreen() {
 		return FrameInfo.Convertor.screenToScaled(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link net.krlite.equator.render.frame.FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	A new box fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Box fitFromOpenGL() {
 		return FrameInfo.Convertor.openGLToScaled(this);

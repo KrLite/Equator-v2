@@ -607,7 +607,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose top edge is shifted by the given offset.
 	 */
 	public Box shiftTop(double yOffset) {
-		return shiftTopLeft(Vector.fromCartesian(topLeft().x(), yOffset));
+		return shiftTopLeft(Vector.fromCartesian(0, yOffset));
 	}
 
 	/**
@@ -618,7 +618,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose bottom edge is shifted by the given offset.
 	 */
 	public Box shiftBottom(double yOffset) {
-		return shiftBottomLeft(Vector.fromCartesian(bottomLeft().x(), yOffset));
+		return shiftBottomLeft(Vector.fromCartesian(0, yOffset));
 	}
 
 	/**
@@ -629,7 +629,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose left edge is shifted by the given offset.
 	 */
 	public Box shiftLeft(double xOffset) {
-		return shiftTopLeft(Vector.fromCartesian(xOffset, topLeft().y()));
+		return shiftTopLeft(Vector.fromCartesian(xOffset, 0));
 	}
 
 	/**
@@ -640,7 +640,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * @return	A new box whose right edge is shifted by the given offset.
 	 */
 	public Box shiftRight(double xOffset) {
-		return shiftTopRight(Vector.fromCartesian(xOffset, topRight().y()));
+		return shiftTopRight(Vector.fromCartesian(xOffset, 0));
 	}
 
 
