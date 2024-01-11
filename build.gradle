@@ -65,6 +65,14 @@ tasks.register('collectJars', Copy) {
 	into(destinationFolder)
 }
 
+tasks.register("deleteCollectedJars", Delete) {
+	group = 'build'
+
+	file("$buildDir/libs/latest").deleteDir()
+
+	onlyIf { destinationFolder.exists() }
+}
+
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
