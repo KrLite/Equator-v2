@@ -953,13 +953,13 @@ public class Flat extends Basic {
 		// Constructors
 
 		public Oval(
-				double offset, double radians, double breadth,
+				double offset, double arc, Breadth breadth,
 				@Nullable AccurateColor colorCenter, @Nullable ColorTable colors,
 				double opacityMultiplier,
 				ColorStandard.MixMode mixMode, VertexProvider outline, OvalMode mode
 		) {
 			this.offset = Theory.mod(offset, 2 * Math.PI);
-			this.radians = Theory.clamp(radians, -2 * Math.PI, 2 * Math.PI);
+			this.arc = Theory.clamp(arc, -2 * Math.PI, 2 * Math.PI);
 			this.breadth = breadth;
 
 			this.colorCenter = AccurateColor.notnull(colorCenter);
@@ -971,8 +971,8 @@ public class Flat extends Basic {
 			this.mode = mode;
 		}
 
-		public Oval(double offset, double radians, AccurateColor color) {
-			this(offset, radians, 0, color, null, 1, ColorStandard.MixMode.BLEND, VertexProvider.NONE, OvalMode.FILL);
+		public Oval(double offset, double arc, AccurateColor color) {
+			this(offset, arc, new Breadth.Constant(0), color, null, 1, ColorStandard.MixMode.BLEND, VertexProvider.NONE, OvalMode.FILL);
 		}
 
 		public Oval(AccurateColor color) {
@@ -985,42 +985,69 @@ public class Flat extends Basic {
 
 		// Fields
 
+		public abstract static class Breadth {
+			public abstract double breadth(double radius);
+
+			public Vector vertexAt(Box box, double offset, double multiplier) {
+				double
+						x = Math.cos(offset) * (box.w() / 2),
+						y = Math.sin(offset) * (box.h() / 2),
+						radius = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+
+				return box.center().add(Vector.fromCartesian(
+						Math.cos(offset) * (box.w() / 2 + breadth(radius) * multiplier),
+						Math.sin(offset) * (box.h() / 2 + breadth(radius) * multiplier)
+				));
+			}
+
+			public static class Constant extends Breadth {
+				private final double breadth;
+
+				public Constant(double breadth) {
+					this.breadth = breadth;
+				}
+
+				@Override
+				public double breadth(double radius) {
+					return breadth;
+				}
+			}
+
+			public static class Dynamic extends Breadth {
+				private final double scalar;
+
+				public Dynamic(double scalar) {
+					this.scalar = scalar;
+				}
+
+				@Override
+				public double breadth(double radius) {
+					return radius * scalar;
+				}
+			}
+		}
+
 		public enum VertexProvider {
 			NONE(
 					(box, offset, breadth) -> box.center(),
-					(box, offset, breadth) -> box.center().add(Vector.fromCartesian(
-							Math.cos(offset) * (box.w() / 2),
-							Math.sin(offset) * (box.h() / 2)
-					))
+					(box, offset, breadth) -> breadth.vertexAt(box, offset, 0)
 			),
 			INNER(
-					(box, offset, breadth) -> box.center().add(Vector.fromCartesian(
-							Math.cos(offset) * (box.w() / 2 - breadth),
-							Math.sin(offset) * (box.h() / 2 - breadth)
-					)),
+					(box, offset, breadth) -> breadth.vertexAt(box, offset, -1),
 					NONE.outerVertexFunction
 			),
 			OUTER(
 					NONE.outerVertexFunction,
-					(box, offset, breadth) -> box.center().add(Vector.fromCartesian(
-							Math.cos(offset) * (box.w() / 2 + breadth),
-							Math.sin(offset) * (box.h() / 2 + breadth)
-					))
+					(box, offset, breadth) -> breadth.vertexAt(box, offset, 1)
 			),
 			BOTH(
-					(box, offset, breadth) -> box.center().add(Vector.fromCartesian(
-							Math.cos(offset) * (box.w() / 2 - breadth / 2),
-							Math.sin(offset) * (box.h() / 2 - breadth / 2)
-					)),
-					(box, offset, breadth) -> box.center().add(Vector.fromCartesian(
-							Math.cos(offset) * (box.w() / 2 + breadth / 2),
-							Math.sin(offset) * (box.h() / 2 + breadth / 2)
-					))
+					(box, offset, breadth) -> breadth.vertexAt(box, offset, -0.5),
+					(box, offset, breadth) -> breadth.vertexAt(box, offset, 0.5)
 			);
 
 			@FunctionalInterface
-			interface VertexFunction {
-				@NotNull Vector vertexAt(Box box, double offset, double breadth);
+			public interface VertexFunction {
+				@NotNull Vector vertexAt(Box box, double offset, Breadth breadth);
 			}
 
 			private final VertexFunction innerVertexFunction, outerVertexFunction;
@@ -1030,11 +1057,11 @@ public class Flat extends Basic {
 				this.outerVertexFunction = outerVertexFunction;
 			}
 
-			public @NotNull Vector innerVertexAt(Box box, double offset, double breadth) {
+			public @NotNull Vector innerVertexAt(Box box, double offset, Breadth breadth) {
 				return innerVertexFunction.vertexAt(box, offset, breadth);
 			}
 
-			public @NotNull Vector outerVertexAt(Box box, double offset, double breadth) {
+			public @NotNull Vector outerVertexAt(Box box, double offset, Breadth breadth) {
 				return outerVertexFunction.vertexAt(box, offset, breadth);
 			}
 		}
@@ -1185,7 +1212,8 @@ public class Flat extends Basic {
 			}
 		}
 
-		private final double offset, radians, breadth;
+		private final double offset, arc;
+		private final Breadth breadth;
 		private final @NotNull AccurateColor colorCenter;
 		private final @NotNull ColorTable colors;
 		private final double opacityMultiplier;
@@ -1199,11 +1227,11 @@ public class Flat extends Basic {
 			return offset;
 		}
 
-		public double radians() {
-			return radians;
+		public double arc() {
+			return arc;
 		}
 
-		public double breadth() {
+		public Breadth breadth() {
 			return breadth;
 		}
 
@@ -1234,51 +1262,59 @@ public class Flat extends Basic {
 		// Mutators
 
 		public Oval parent(UnaryOperator<Flat> flat) {
-			return flat.apply(Flat.this).new Oval(offset(), radians(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode());
+			return flat.apply(Flat.this).new Oval(offset(), arc(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
 		public Oval offset(double offset) {
-			return new Oval(offset, radians(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode());
+			return new Oval(offset, arc(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
-		public Oval radians(double radians) {
+		public Oval arc(double radians) {
 			return new Oval(offset(), radians, breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
-		public Oval breadth(double breadth) {
-			return new Oval(offset(), radians(), breadth, colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode());
+		public Oval breadth(Breadth breadth) {
+			return new Oval(offset(), arc(), breadth, colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
 		public Oval colorCenter(@Nullable AccurateColor colorCenter) {
-			return new Oval(offset(), radians(), breadth(), colorCenter, colors(), opacityMultiplier(), mixMode(), outline(), mode());
+			return new Oval(offset(), arc(), breadth(), colorCenter, colors(), opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
 		public Oval colors(@Nullable ColorTable colors) {
-			return new Oval(offset(), radians(), breadth(), colorCenter(), colors, opacityMultiplier(), mixMode(), outline(), mode());
+			return new Oval(offset(), arc(), breadth(), colorCenter(), colors, opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
 		public Oval addColor(double offset, @Nullable AccurateColor color) {
-			return new Oval(offset(), radians(), breadth(), colorCenter(), colors().putColor(offset, color), opacityMultiplier(), mixMode(), outline(), mode());
+			return new Oval(offset(), arc(), breadth(), colorCenter(), colors().putColor(offset, color), opacityMultiplier(), mixMode(), outline(), mode());
 		}
 
 		public Oval opacityMultiplier(double opacityMultiplier) {
-			return new Oval(offset(), radians(), breadth(), colorCenter(), colors(), opacityMultiplier, mixMode(), outline(), mode());
+			return new Oval(offset(), arc(), breadth(), colorCenter(), colors(), opacityMultiplier, mixMode(), outline(), mode());
 		}
 
 		public Oval mixMode(ColorStandard.MixMode mixMode) {
-			return new Oval(offset(), radians(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode, outline(), mode());
+			return new Oval(offset(), arc(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode, outline(), mode());
 		}
 
 		public Oval outline(VertexProvider outline) {
-			return new Oval(offset(), radians(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline, mode());
+			return new Oval(offset(), arc(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline, mode());
 		}
 
-		public Oval outline(VertexProvider outline, double breadth) {
+		public Oval outline(VertexProvider outline, Breadth breadth) {
 			return outline(outline).breadth(breadth);
 		}
 
+		public Oval outlineConstant(VertexProvider outline, double breadth) {
+			return outline(outline).breadth(new Breadth.Constant(breadth));
+		}
+
+		public Oval outlineDynamic(VertexProvider outline, double scalar) {
+			return outline(outline).breadth(new Breadth.Dynamic(scalar));
+		}
+
 		public Oval mode(OvalMode mode) {
-			return new Oval(offset(), radians(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode);
+			return new Oval(offset(), arc(), breadth(), colorCenter(), colors(), opacityMultiplier(), mixMode(), outline(), mode);
 		}
 
 		// Properties
@@ -1290,11 +1326,11 @@ public class Flat extends Basic {
 		}
 
 		private @NotNull Vector innerVertexAt(double offset) {
-			return outline().innerVertexAt(box(), offset, radians());
+			return outline().innerVertexAt(box(), offset, breadth());
 		}
 
 		private @NotNull Vector outerVertexAt(double offset) {
-			return outline().outerVertexAt(box(), offset, radians());
+			return outline().outerVertexAt(box(), offset, breadth());
 		}
 
 		public boolean hasCenter() {
@@ -1331,11 +1367,11 @@ public class Flat extends Basic {
 		}
 
 		private double clampOffset(double offset) {
-			return Theory.clamp(offset, offset() - radians(), offset() + radians());
+			return Theory.clamp(offset, offset() - arc(), offset() + arc());
 		}
 
 		private double nextOffset(double offset) {
-			boolean positive = radians() >= 0;
+			boolean positive = arc() >= 0;
 
 			if (positive) {
 				return offset + delta();
@@ -1345,21 +1381,19 @@ public class Flat extends Basic {
 		}
 
 		private boolean isOffsetLegal(double offset) {
-			return radians() >= 0 ? offset <= offset() + radians() + delta() : offset >= offset() + radians() - delta();
+			return arc() >= 0 ? offset <= offset() + arc() + delta() : offset >= offset() + arc() - delta();
 		}
 
 		// Interface Implementations
 
 		@Override
 		public boolean isRenderable() {
-			return (hasCenter() || hasColor()) && !Theory.looseEquals(radians(), 0) && Renderable.isLegal(box());
+			return (hasCenter() || hasColor()) && !Theory.looseEquals(arc(), 0) && Renderable.isLegal(box());
 		}
 
 		@Override
 		public void render() {
 			if (!isRenderable()) return;
-
-			if (outline() != VertexProvider.NONE && Theory.looseEquals(breadth(), 1)) return;
 
 			RenderSystem.enableBlend();
 			RenderSystem.setShader(GameRenderer::getPositionColorProgram);

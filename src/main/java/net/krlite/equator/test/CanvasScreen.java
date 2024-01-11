@@ -1,26 +1,18 @@
 package net.krlite.equator.test;
 
-import net.krlite.equator.input.Keyboard;
 import net.krlite.equator.input.Mouse;
 import net.krlite.equator.math.algebra.Curves;
-import net.krlite.equator.math.algebra.Quaternion;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.render.frame.FrameInfo;
 import net.krlite.equator.render.renderer.Flat;
 import net.krlite.equator.visual.animation.animated.AnimatedDouble;
-import net.krlite.equator.visual.color.AccurateColor;
 import net.krlite.equator.visual.color.Palette;
 import net.krlite.equator.visual.text.Paragraph;
 import net.krlite.equator.visual.text.Section;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-
-import java.util.Map;
 
 public class CanvasScreen extends Screen {
 	public CanvasScreen() {
@@ -181,7 +173,7 @@ public class CanvasScreen extends Screen {
 		box.render(context, flat -> flat.new Rectangle().colors(AccurateColor.MAGENTA));
 		 */
 
-		FrameInfo.scaled().scaleCenter(0.3 * animation.value()).render(context, flat -> flat.new Rectangle().colors(Palette.MAGENTA));
+		// FrameInfo.scaled().scaleCenter(0.3 * animation.value()).render(context, flat -> flat.new Rectangle().colors(Palette.MAGENTA));
 
 		/*
 		FrameInfo.scaled().squareInner().scale(0.4).scale(animation.value()).leftCenter(FrameInfo.scaled().scaleCenter(0.7)).render(context,
@@ -202,17 +194,13 @@ public class CanvasScreen extends Screen {
 
 		 */
 
-		/*
-		box.render(context,
-				flat -> flat.new Oval(Palette.CORAL)
-								.mode(Flat.Oval.OvalMode.GRADIANT_OUT)
-								.addColor(0, Palette.WHITE)
-								.addColor(Math.PI, Palette.CYAN)
-								.outline(Flat.Oval.VertexProvider.NONE, 5)
-								.offset(-0.5)
-								.radians(1)
+		FrameInfo.scaled().scaleCenter(0.5).render(context, flat -> flat.new Oval(Palette.CORAL)
+				.mode(Flat.Oval.OvalMode.FILL_GRADIANT_OUT)
+				.addColor(0, Palette.WHITE)
+				.addColor(Math.PI, Palette.CYAN)
+				.outlineDynamic(Flat.Oval.VertexProvider.INNER, 0.25)
+				//.offset(-0.5)
+				.arc(2 * Curves.Sinusoidal.EASE.apply(-Math.PI, Math.PI, System.currentTimeMillis() / 1000.0))
 		);
-
-		 */
 	}
 }
