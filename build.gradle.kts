@@ -55,6 +55,31 @@ tasks {
 			rename { "${it}_${base.archivesName}" }
 		}
 	}
+
+	register("collectJars", Copy::class.java) {
+		group = "build"
+
+		val destination = file("${layout.buildDirectory.get()}/libs/latest")
+
+		from("${layout.buildDirectory.get()}/libs/${base.archivesName.get()}-$version.jar")
+		from("${layout.buildDirectory.get()}/libs/${base.archivesName.get()}-$version-sources.jar")
+
+		subprojects.forEach {
+			from("${it.layout.buildDirectory.get()}/libs/${it.base.archivesName.get()}-$version.jar")
+			from("${it.layout.buildDirectory.get()}/libs/${it.base.archivesName.get()}-$version-sources.jar")
+		}
+
+		into(destination)
+	}
+
+	register("deleteCollectedJars", Delete::class.java) {
+		group = "build"
+
+		val destination = file("${layout.buildDirectory.get()}/libs/latest")
+		destination.delete()
+
+		onlyIf { destination.exists() }
+	}
 }
 
 publishing {
