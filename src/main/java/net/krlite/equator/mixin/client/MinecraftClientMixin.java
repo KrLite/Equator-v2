@@ -1,9 +1,11 @@
 package net.krlite.equator.mixin.client;
 
 import net.fabricmc.fabric.impl.client.indigo.renderer.render.BlockRenderContext;
+import net.krlite.equator.Equator;
 import net.krlite.equator.input.Keyboard;
 import net.krlite.equator.input.Mouse;
 import net.krlite.equator.input.Window;
+import net.krlite.equator.render.RenderManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -32,5 +34,10 @@ public class MinecraftClientMixin {
 		Keyboard.initCallbacks(MinecraftClient.getInstance().getWindow().getHandle());
 		Mouse.initCallbacks(MinecraftClient.getInstance().getWindow().getHandle());
 		Window.initCallbacks(MinecraftClient.getInstance().getWindow().getHandle());
+	}
+
+	@Inject(method = "render", at = @At("RETURN"))
+	private void render(boolean bl, CallbackInfo ci) {
+		Equator.updateFrame(System.currentTimeMillis());
 	}
 }

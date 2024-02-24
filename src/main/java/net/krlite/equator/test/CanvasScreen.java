@@ -1,5 +1,6 @@
 package net.krlite.equator.test;
 
+import net.krlite.equator.Equator;
 import net.krlite.equator.input.Mouse;
 import net.krlite.equator.math.algebra.Curves;
 import net.krlite.equator.math.geometry.flat.Box;
@@ -194,6 +195,7 @@ public class CanvasScreen extends Screen {
 
 		 */
 
+		/*
 		FrameInfo.scaled().scaleCenter(0.5).render(context, flat -> flat.new Oval(Palette.CORAL)
 				.mode(Flat.Oval.OvalMode.FILL_GRADIANT_OUT)
 				.addColor(0, Palette.WHITE)
@@ -201,6 +203,13 @@ public class CanvasScreen extends Screen {
 				.outlineDynamic(Flat.Oval.VertexProvider.INNER, 0.25)
 				//.offset(-0.5)
 				.arc(2 * Curves.Sinusoidal.EASE.apply(-Math.PI, Math.PI, System.currentTimeMillis() / 1000.0))
+		);
+		 */
+
+		FrameInfo.scaled().render(context, flat -> flat.new Text()
+				.section(section -> section.append(String.format("%.2f", Equator.fps().orElse(0.0))))
+				.horizontalAlignment(Paragraph.Alignment.CENTER)
+				.verticalAlignment(Section.Alignment.CENTER)
 		);
 	}
 }

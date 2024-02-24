@@ -741,6 +741,10 @@ public class Flat extends Basic {
 				this(expansion, OutliningMode.NORMAL, OutliningStyle.CLAMPED);
 			}
 
+			public Outlined() {
+				this(Vector.ZERO);
+			}
+
 			// Fields
 
 			public enum OutliningMode {
@@ -1458,6 +1462,10 @@ public class Flat extends Basic {
 
 		public Text(UnaryOperator<Section> builder) {
 			this(builder.apply(Section.DEFAULT), Palette.WHITE, null, Section.Alignment.TOP, Paragraph.Alignment.LEFT, false, false);
+		}
+
+		public Text() {
+			this(UnaryOperator.identity());
 		}
 
 		// Fields
