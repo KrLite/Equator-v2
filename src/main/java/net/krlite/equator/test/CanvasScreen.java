@@ -206,6 +206,14 @@ public class CanvasScreen extends Screen {
 		);
 		 */
 
+		for (int i = 0; i < 100; i++) {
+			FrameInfo.scaled().squareInner().scaleCenter(1 - i / 100.0).render(context, flat -> flat.new Oval(Palette.CORAL)
+					.mode(Flat.Oval.OvalMode.FILL_GRADIANT_OUT)
+					.addColor(0, Palette.CYAN)
+					.addColor(Math.PI, Palette.CRIMSON)
+			);
+		}
+
 		FrameInfo.scaled().render(context, flat -> flat.new Text()
 				.section(section -> section.append(String.format("%.2f", Equator.fps().orElse(0.0))))
 				.horizontalAlignment(Paragraph.Alignment.CENTER)
