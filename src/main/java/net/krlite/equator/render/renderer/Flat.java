@@ -8,6 +8,7 @@ import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.math.geometry.flat.Box;
 import net.krlite.equator.math.geometry.flat.Vector;
 import net.krlite.equator.render.RenderManager;
+import net.krlite.equator.render.base.DispatchRenderingThreadPoolExecutor;
 import net.krlite.equator.render.base.Renderable;
 import net.krlite.equator.render.base.Scissor;
 import net.krlite.equator.render.frame.FrameInfo;
@@ -41,6 +42,7 @@ import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
+import java.util.concurrent.ScheduledFuture;
 import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -1403,38 +1405,43 @@ public class Flat extends Basic {
 			RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 			RenderSystem.disableCull(); // Prevents triangles from being culled
 
-			BufferBuilder builder = Tessellator.getInstance().getBuffer();
-			Matrix4f matrix = matrixStack().peek().getPositionMatrix();
+			Thread thread = new Thread(() -> {
+				System.out.println(1);
+				BufferBuilder builder = Tessellator.getInstance().getBuffer();
+				Matrix4f matrix = matrixStack().peek().getPositionMatrix();
 
-			builder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
+				builder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
 
-			for (
-					double offset = offset();
-					isOffsetLegal(offset);
-					offset = nextOffset(offset)
-			) {
-				double clampedOffset = clampOffset(offset); // Prevents offset from exceeding the end of the arc
+				for (
+						double offset = offset();
+						isOffsetLegal(offset);
+						offset = nextOffset(offset)
+				) {
+					double clampedOffset = clampOffset(offset); // Prevents offset from exceeding the end of the arc
 
-				Vector
-						edge = VertexProvider.NONE.outerVertexAt(box(), clampedOffset, breadth()),
-						innerEdge = innerVertexAt(clampedOffset),
-						outerEdge = outerVertexAt(clampedOffset);
-				double
-						radius = edge.distanceTo(box().center()),
-						radiusFactor = 1 - (edge.distanceTo(innerEdge) + edge.distanceTo(outerEdge)) / radius;
+					Vector
+							edge = VertexProvider.NONE.outerVertexAt(box(), clampedOffset, breadth()),
+							innerEdge = innerVertexAt(clampedOffset),
+							outerEdge = outerVertexAt(clampedOffset);
+					double
+							radius = edge.distanceTo(box().center()),
+							radiusFactor = 1 - (edge.distanceTo(innerEdge) + edge.distanceTo(outerEdge)) / radius;
 
-				// Render the inner (center) vertex
-				renderVertex(builder, matrix, innerEdge,
-						mode().colorAt(this, clampedOffset - offset(), radiusFactor)
-								.multiplyOpacity(opacityMultiplier()), z());
+					// Render the inner (center) vertex
+					renderVertex(builder, matrix, innerEdge,
+							mode().colorAt(this, clampedOffset - offset(), radiusFactor)
+									.multiplyOpacity(opacityMultiplier()), z());
 
-				// Render the outer vertex
-				renderVertex(builder, matrix, outerEdge,
-						mode().colorAt(this, clampedOffset - offset(), 1)
-								.multiplyOpacity(opacityMultiplier()), z());
-			}
+					// Render the outer vertex
+					renderVertex(builder, matrix, outerEdge,
+							mode().colorAt(this, clampedOffset - offset(), 1)
+									.multiplyOpacity(opacityMultiplier()), z());
+				}
 
-			BufferRenderer.drawWithGlobalProgram(builder.end());
+				BufferRenderer.drawWithGlobalProgram(builder.end());
+			});
+
+			thread.start();
 
 			RenderSystem.disableBlend();
 			RenderSystem.enableCull();

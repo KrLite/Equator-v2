@@ -22,7 +22,9 @@ dependencies {
 	mappings(libs.yarn)
 	modImplementation(libs.bundles.fabric)
 
-	implementation(libs.mixbox)
+	implementation(libs.mixbox)?.let {
+		include(it)
+	}
 }
 
 java {
