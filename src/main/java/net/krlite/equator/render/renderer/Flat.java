@@ -1369,7 +1369,7 @@ public class Flat extends Basic {
 
 		private double delta() {
 			double maxLength = Math.max(box().w(), box().h());
-			return Math.max(0.01, 1 / (maxLength / 2 * 2 * Math.PI)); // Approximately 1 pixel per segment
+			return Math.max(0.1, 10 / (maxLength * Math.PI)); // Approximately 10 pixels per segment
 		}
 
 		private double clampOffset(double offset) {
@@ -1405,43 +1405,46 @@ public class Flat extends Basic {
 			RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 			RenderSystem.disableCull(); // Prevents triangles from being culled
 
-			Thread thread = new Thread(() -> {
-				System.out.println(1);
-				BufferBuilder builder = Tessellator.getInstance().getBuffer();
-				Matrix4f matrix = matrixStack().peek().getPositionMatrix();
+			BufferBuilder builder = Tessellator.getInstance().getBuffer();
+			Matrix4f matrix = matrixStack().peek().getPositionMatrix();
 
+			if (outline() == VertexProvider.NONE) { // Full circle
+				builder.begin(VertexFormat.DrawMode.TRIANGLE_FAN, VertexFormats.POSITION_COLOR);
+
+				renderVertex(builder, matrix, box().center(), colorCenter(), z());
+			} else { // Ring
 				builder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
+			}
 
-				for (
-						double offset = offset();
-						isOffsetLegal(offset);
-						offset = nextOffset(offset)
-				) {
-					double clampedOffset = clampOffset(offset); // Prevents offset from exceeding the end of the arc
+			for (
+					double offset = offset();
+					isOffsetLegal(offset);
+					offset = nextOffset(offset)
+			) {
+				double clampedOffset = clampOffset(offset); // Prevents offset from exceeding the end of the arc
 
-					Vector
-							edge = VertexProvider.NONE.outerVertexAt(box(), clampedOffset, breadth()),
-							innerEdge = innerVertexAt(clampedOffset),
-							outerEdge = outerVertexAt(clampedOffset);
-					double
-							radius = edge.distanceTo(box().center()),
-							radiusFactor = 1 - (edge.distanceTo(innerEdge) + edge.distanceTo(outerEdge)) / radius;
+				Vector
+						edge = VertexProvider.NONE.outerVertexAt(box(), clampedOffset, breadth()),
+						innerEdge = innerVertexAt(clampedOffset),
+						outerEdge = outerVertexAt(clampedOffset);
+				double
+						radius = edge.distanceTo(box().center()),
+						radiusFactor = 1 - (edge.distanceTo(innerEdge) + edge.distanceTo(outerEdge)) / radius;
 
+				if (outline() != VertexProvider.NONE) { // Ring
 					// Render the inner (center) vertex
 					renderVertex(builder, matrix, innerEdge,
 							mode().colorAt(this, clampedOffset - offset(), radiusFactor)
 									.multiplyOpacity(opacityMultiplier()), z());
-
-					// Render the outer vertex
-					renderVertex(builder, matrix, outerEdge,
-							mode().colorAt(this, clampedOffset - offset(), 1)
-									.multiplyOpacity(opacityMultiplier()), z());
 				}
 
-				BufferRenderer.drawWithGlobalProgram(builder.end());
-			});
+				// Render the outer vertex
+				renderVertex(builder, matrix, outerEdge,
+						mode().colorAt(this, clampedOffset - offset(), 1)
+								.multiplyOpacity(opacityMultiplier()), z());
+			}
 
-			thread.start();
+			BufferRenderer.drawWithGlobalProgram(builder.end());
 
 			RenderSystem.disableBlend();
 			RenderSystem.enableCull();

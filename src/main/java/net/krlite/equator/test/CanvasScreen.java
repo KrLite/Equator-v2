@@ -207,11 +207,16 @@ public class CanvasScreen extends Screen {
 		 */
 
 		for (int i = 0; i < 100; i++) {
+			int speed = i + 1;
 			FrameInfo.scaled().squareInner().scaleCenter(1 - i / 100.0).render(context, flat -> flat.new Oval(Palette.CORAL)
+					.outline(Flat.Oval.VertexProvider.INNER)
+					.breadth(new Flat.Oval.Breadth.Dynamic(0.1))
 					.mode(Flat.Oval.OvalMode.FILL_GRADIANT_OUT)
 					.addColor(0, Palette.CYAN)
 					.addColor(Math.PI, Palette.CRIMSON)
+					.offset(2 * Curves.Sinusoidal.EASE.apply(-Math.PI, Math.PI, System.currentTimeMillis() / 1000.0 * speed / 100.0))
 			);
+
 		}
 
 		FrameInfo.scaled().render(context, flat -> flat.new Text()
