@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface Renderable {
 	void render();
+
 	boolean isRenderable();
 
 	static boolean isLegal(@Nullable Box box) {

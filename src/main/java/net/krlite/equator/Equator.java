@@ -1,12 +1,12 @@
 package net.krlite.equator;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public class Equator implements ModInitializer {
+public class Equator implements ClientModInitializer {
 	public static final String NAME = "Equator", ID = "equator";
 	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 	public static final boolean DEBUG = true;
@@ -14,7 +14,7 @@ public class Equator implements ModInitializer {
 	private static long lastFrame = 0, frameDiff = 0;
 
 	@Override
-	public void onInitialize() {
+	public void onInitializeClient() {
 	}
 
 	public static void updateFrame(long currentFrame) {
