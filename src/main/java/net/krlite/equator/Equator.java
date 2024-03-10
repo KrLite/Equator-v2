@@ -9,7 +9,7 @@ import java.util.Optional;
 public class Equator implements ClientModInitializer {
 	public static final String NAME = "Equator", ID = "equator";
 	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	private static long lastFrame = 0, frameDiff = 0;
 
