@@ -76,7 +76,7 @@ tasks {
 		group = "build"
 
 		val destination = file("${layout.buildDirectory.get()}/libs/latest")
-		destination.delete()
+		delete(destination)
 
 		onlyIf { destination.exists() }
 	}
