@@ -10,7 +10,7 @@ import java.util.concurrent.ScheduledFuture;
 /**
  * <h1>Interpolation</h1>
  * Handles the interpolation between two values.
- * @param <I>	The type of the interpolated value.
+ * @param <I>	the type of the interpolated value.
  */
 public abstract class Interpolation<I> implements Runnable {
 	public static class Any<I> {

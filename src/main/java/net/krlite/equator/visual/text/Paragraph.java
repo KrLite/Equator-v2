@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 /**
  * <h1>Paragraph</h1>
  * Represents a paragraph of text.
- * @param text		The text of the paragraph.
- * @param scalar	The scalar to multiply the font size by.
+ * @param text		the text of the paragraph.
+ * @param scalar	the scalar to multiply the font size by.
  */
 public record Paragraph(Text text, double scalar) {
 	public enum Alignment implements Cyclic.Enum<Alignment> {

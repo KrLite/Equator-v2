@@ -36,8 +36,8 @@ public class Curves {
 	public static class Stairs {
 		/**
 		 * <b>Stair (up) Generator</b>
-		 * @param steps	The number of steps.
-		 * @return	A {@code stair} curve that goes <b>up.</b>
+		 * @param steps	the number of steps.
+		 * @return	a {@code stair} curve that goes <b>up.</b>
 		 */
 		public static Slice up(int steps) {
 			return (start, end, progress) -> start + (end - start) * (progress * steps);
@@ -45,8 +45,8 @@ public class Curves {
 
 		/**
 		 * <b>Stair (down) Generator</b>
-		 * @param steps	The number of steps.
-		 * @return	A {@code stair} curve that goes <b>down.</b>
+		 * @param steps	the number of steps.
+		 * @return	a {@code stair} curve that goes <b>down.</b>
 		 */
 		public static Slice down(int steps) {
 			return (start, end, progress) -> start + (end - start) * (1 - (1 - progress) * steps);
@@ -54,8 +54,8 @@ public class Curves {
 
 		/**
 		 * <b>Stair (both) Generator</b>
-		 * @param steps	The number of steps.
-		 * @return	A {@code stair} curve that goes <b>up then down.</b>
+		 * @param steps	the number of steps.
+		 * @return	a {@code stair} curve that goes <b>up then down.</b>
 		 */
 		public static Slice both(int steps) {
 			return (start, end, progress) -> {
@@ -75,10 +75,10 @@ public class Curves {
 	public static class Switch {
 		/**
 		 * <b>Switch (on) Generator</b>
-		 * @param on		The slice to use when the progress is <b>above</b> the threshold.
-		 * @param off		The slice to use when the progress is <b>below or equivalent</b> the threshold.
-		 * @param threshold	The threshold.
-		 * @return	A {@code switch} curve that <b>turns on.</b>
+		 * @param on		the slice to use when the progress is <b>above</b> the threshold.
+		 * @param off		the slice to use when the progress is <b>below or equivalent</b> the threshold.
+		 * @param threshold	the threshold.
+		 * @return	a {@code switch} curve that <b>turns on.</b>
 		 */
 		public static Slice on(Slice on, Slice off, double threshold) {
 			return (start, end, progress) -> {
@@ -98,8 +98,8 @@ public class Curves {
 		 *     <br />
 		 *     <code>Off: <b>{@link #ZERO}</b></code>
 		 * </p>
-		 * @param threshold	The threshold.
-		 * @return	A {@code switch} curve that <b>turns on.</b>
+		 * @param threshold	the threshold.
+		 * @return	a {@code switch} curve that <b>turns on.</b>
 		 */
 		public static Slice on(double threshold) {
 			return on(ONE, ZERO, threshold);
@@ -107,10 +107,10 @@ public class Curves {
 
 		/**
 		 * <b>Switch (off) Generator</b>
-		 * @param on		The slice to use when the progress is <b>above</b> the threshold.
-		 * @param off		The slice to use when the progress is <b>below or equivalent</b> the threshold.
-		 * @param threshold	The threshold.
-		 * @return	A {@code switch} curve that <b>turns off.</b>
+		 * @param on		the slice to use when the progress is <b>above</b> the threshold.
+		 * @param off		the slice to use when the progress is <b>below or equivalent</b> the threshold.
+		 * @param threshold	the threshold.
+		 * @return	a {@code switch} curve that <b>turns off.</b>
 		 */
 		public static Slice off(Slice on, Slice off, double threshold) {
 			return (start, end, progress) -> {
@@ -130,8 +130,8 @@ public class Curves {
 		 *     <br />
 		 *     {@code Off: <b>{@link #ZERO}</b>}
 		 * </p>
-		 * @param threshold	The threshold.
-		 * @return	A {@code switch} curve that <b>turns off.</b>
+		 * @param threshold	the threshold.
+		 * @return	a {@code switch} curve that <b>turns off.</b>
 		 */
 		public static Slice off(double threshold) {
 			return off(ONE, ZERO, threshold);
@@ -190,8 +190,8 @@ public class Curves {
 		/**
 		 * <b>Exponential (fade-in) Generator</b>
 		 * <h2><code>f(x) = x<sup>n</sup></code></h2>
-		 * @param n	The exponent.
-		 * @return	A <b>fade-in</b> {@code exponential} curve.
+		 * @param n	the exponent.
+		 * @return	a <b>fade-in</b> {@code exponential} curve.
 		 */
 		public static Slice in(double n) {
 			return Slice.map(progress -> Math.pow(progress, n));
@@ -200,8 +200,8 @@ public class Curves {
 		/**
 		 * <b>Exponential (fade-out) Generator</b>
 		 * <h2><code>f(x) = 1 - (1 - x)<sup>n</sup></code></h2>
-		 * @param n	The exponent.
-		 * @return	A <b>fade-out</b> {@code exponential} curve.
+		 * @param n	the exponent.
+		 * @return	a <b>fade-out</b> {@code exponential} curve.
 		 */
 		public static Slice out(double n) {
 			return Slice.map(progress -> 1 - Math.pow(1 - progress, n));
@@ -210,8 +210,8 @@ public class Curves {
 		/**
 		 * <b>Exponential Generator</b>
 		 * <h2><code>f(x) = x<sup>n</sup> / 2</code></h2>
-		 * @param n	The exponent.
-		 * @return	An {@code exponential} curve.
+		 * @param n	the exponent.
+		 * @return	an {@code exponential} curve.
 		 */
 		public static Slice ease(double n) {
 			return Slice.map(progress -> {
@@ -339,9 +339,9 @@ public class Curves {
 	public static class Back {
 		/**
 		 * <b>Back (fade-in) Generator</b>
-		 * @param overshoot	The amount to overshoot.
+		 * @param overshoot	the amount to overshoot.
 		 *                  <p><code>Default: <b>1.70158</b></code></p>
-		 * @return A <b>fade-in</b> {@code back} curve.
+		 * @return a <b>fade-in</b> {@code back} curve.
 		 */
 		public static Slice in(double overshoot) {
 			return Slice.map(progress -> progress * progress * ((overshoot + 1) * progress - overshoot));
@@ -349,9 +349,9 @@ public class Curves {
 
 		/**
 		 * <b>Back (fade-out) Generator</b>
-		 * @param overshoot	The amount to overshoot.
+		 * @param overshoot	the amount to overshoot.
 		 *                  <p><code>Default: <b>1.70158</b></code></p>
-		 * @return A <b>fade-out</b> {@code back} curve.
+		 * @return a <b>fade-out</b> {@code back} curve.
 		 */
 		public static Slice out(double overshoot) {
 			return Slice.map(progress -> --progress * progress * ((overshoot + 1) * progress + overshoot) + 1);
@@ -359,9 +359,9 @@ public class Curves {
 
 		/**
 		 * <b>Back Generator</b>
-		 * @param overshoot	The amount to overshoot.
+		 * @param overshoot	the amount to overshoot.
 		 *                  <p><code>Default: <b>1.70158</b></code></p>
-		 * @return A {@code back} curve.
+		 * @return a {@code back} curve.
 		 */
 		public static Slice ease(double overshoot) {
 			return Slice.map(progress -> {
@@ -406,11 +406,11 @@ public class Curves {
 	public static class Elastic {
 		/**
 		 * <b>Elastic (fade-in) Generator</b>
-		 * @param amplitude	The amplitude of the oscillation.
+		 * @param amplitude	the amplitude of the oscillation.
 		 *                  <p><code>Default: <b>1</b></code></p>
-		 * @param period	The period of the oscillation.
+		 * @param period	the period of the oscillation.
 		 *                  <p><code>Default: <b>0.3</b></code></p>
-		 * @return A <b>fade-in</b> {@code elastic} curve.
+		 * @return a <b>fade-in</b> {@code elastic} curve.
 		 */
 		public static Slice in(double amplitude, double period) {
 			return Slice.map(progress -> {
@@ -427,11 +427,11 @@ public class Curves {
 
 		/**
 		 * <b>Elastic (fade-out) Generator</b>
-		 * @param amplitude	The amplitude of the oscillation.
+		 * @param amplitude	the amplitude of the oscillation.
 		 *                  <p><code>Default: <b>1</b></code></p>
-		 * @param period	The period of the oscillation.
+		 * @param period	the period of the oscillation.
 		 *                  <p><code>Default: <b>0.3</b></code></p>
-		 * @return A <b>fade-out</b> {@code elastic} curve.
+		 * @return a <b>fade-out</b> {@code elastic} curve.
 		 */
 		public static Slice out(double amplitude, double period) {
 			return Slice.map(progress -> {
@@ -448,11 +448,11 @@ public class Curves {
 
 		/**
 		 * <b>Elastic Generator</b>
-		 * @param amplitude	The amplitude of the oscillation.
+		 * @param amplitude	the amplitude of the oscillation.
 		 *                  <p><code>Default: <b>1</b></code></p>
-		 * @param period	The period of the oscillation.
+		 * @param period	the period of the oscillation.
 		 *                  <p><code>Default: <b>0.3</b></code></p>
-		 * @return An {@code elastic} curve.
+		 * @return an {@code elastic} curve.
 		 */
 		public static Slice ease(double amplitude, double period) {
 			return Slice.map(progress -> {
@@ -546,21 +546,21 @@ public class Curves {
 		 * <h2><code>f(x) = 1 - cos(x * π / 2)</code></h2>
 		 * A <b>fade-in</b> {@code sinusoidal} curve.
 		 */
-		public static final Slice IN	= Slice.map(progress -> 1 - Math.cos(progress * Math.PI / 2));
+		public static final Slice IN = Slice.map(progress -> 1 - Math.cos(progress * Math.PI / 2));
 
 		/**
 		 * <b>Sinusoidal (fade-out)</b>
 		 * <h2><code>f(x) = sin(x * π / 2)</code></h2>
 		 * A <b>fade-out</b> {@code sinusoidal} curve.
 		 */
-		public static final Slice OUT	= Slice.map(progress -> Math.sin(progress * Math.PI / 2));
+		public static final Slice OUT = Slice.map(progress -> Math.sin(progress * Math.PI / 2));
 
 		/**
 		 * <b>Sinusoidal</b>
 		 * <h2><code>f(x) = (1 - cos(x * π)) / 2</code></h2>
 		 * A {@code sinusoidal} curve.
 		 */
-		public static final Slice EASE	= Slice.map(progress -> (1 - Math.cos(progress * Math.PI)) / 2);
+		public static final Slice EASE = Slice.map(progress -> (1 - Math.cos(progress * Math.PI)) / 2);
 	}
 
 	/**
@@ -573,14 +573,14 @@ public class Curves {
 		 * <h2><code>f(x) = 2<sup>10 * (x - 1)</sup></code></h2>
 		 * A <b>fade-in</b> {@code exponential} curve.
 		 */
-		public static final Slice IN	= Slice.map(progress -> Math.pow(2, 10 * (progress - 1)));
+		public static final Slice IN = Slice.map(progress -> Math.pow(2, 10 * (progress - 1)));
 
 		/**
 		 * <b>2-Based Exponential (fade-out)</b>
 		 * <h2><code>f(x) = -2<sup>-10 * x</sup> + 1</code></h2>
 		 * A <b>fade-out</b> {@code exponential} curve.
 		 */
-		public static final Slice OUT	= Slice.map(progress -> -Math.pow(2, -10 * progress) + 1);
+		public static final Slice OUT = Slice.map(progress -> -Math.pow(2, -10 * progress) + 1);
 
 		/**
 		 * <b>2-Based Exponential</b>
@@ -591,7 +591,7 @@ public class Curves {
 		 * </code></h2>
 		 * An {@code exponential} curve.
 		 */
-		public static final Slice EASE	= Slice.map(progress -> {
+		public static final Slice EASE = Slice.map(progress -> {
 			if (progress < 0.5) {
 				return Math.pow(2, 10 * (progress * 2 - 1)) / 2;
 			} else {
@@ -610,14 +610,14 @@ public class Curves {
 		 * <h2><code>f(x) = 1 - sqrt(1 - x<sup>2</sup>)</code></h2>
 		 * A <b>fade-in</b> {@code circular} curve.
 		 */
-		public static final Slice IN	= Slice.map(progress -> 1 - Math.sqrt(1 - Math.pow(progress, 2)));
+		public static final Slice IN = Slice.map(progress -> 1 - Math.sqrt(1 - Math.pow(progress, 2)));
 
 		/**
 		 * <b>Circular (fade-out)</b>
 		 * <h2><code>f(x) = sqrt(1 - (x - 1)<sup>2</sup>)</code></h2>
 		 * A <b>fade-out</b> {@code circular} curve.
 		 */
-		public static final Slice OUT	= Slice.map(progress -> Math.sqrt(1 - Math.pow(progress - 1, 2)));
+		public static final Slice OUT = Slice.map(progress -> Math.sqrt(1 - Math.pow(progress - 1, 2)));
 
 		/**
 		 * <b>Circular</b>
@@ -628,7 +628,7 @@ public class Curves {
 		 * </code></h2>
 		 * A {@code circular} curve.
 		 */
-		public static final Slice EASE	= Slice.map(progress -> {
+		public static final Slice EASE = Slice.map(progress -> {
 			if (progress < 0.5) {
 				return (1 - Math.sqrt(1 - Math.pow(progress * 2, 2))) / 2;
 			} else {

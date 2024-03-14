@@ -10,12 +10,12 @@ import java.util.function.UnaryOperator;
 /**
  * <h1>Scissor</h1>
  * Represents a scissor in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Screen Coordinate}.
- * @param box	The scissor box.
+ * @param box	the scissor box.
  */
 public record Scissor(Box box) {
 	/**
 	 * Gets the scissor box.
-	 * @return	The scissor box.
+	 * @return	the scissor box.
 	 */
 	@Override
 	public Box box() {
@@ -24,8 +24,8 @@ public record Scissor(Box box) {
 
 	/**
 	 * Mutates the scissor box.
-	 * @param box	The scissor box.
-	 * @return	A new scissor with the given scissor box.
+	 * @param box	the scissor box.
+	 * @return	a new scissor with the given scissor box.
 	 */
 	public Scissor box(Box box) {
 		return new Scissor(box);
@@ -33,8 +33,8 @@ public record Scissor(Box box) {
 
 	/**
 	 * Mutates the scissor box by applying the given operator.
-	 * @param box	The operator to apply.
-	 * @return	A new scissor with the mutated scissor box.
+	 * @param box	the operator to apply.
+	 * @return	a new scissor with the mutated scissor box.
 	 */
 	public Scissor box(UnaryOperator<Box> box) {
 		return new Scissor(box.apply(box()));

@@ -4,17 +4,14 @@ import net.krlite.equator.base.Exceptions;
 import net.krlite.equator.math.algebra.Theory;
 import net.krlite.equator.render.frame.Convertible;
 import net.krlite.equator.render.frame.FrameInfo;
-import net.minecraft.client.gui.DrawContext;
-
-import java.util.function.Function;
 
 /**
  * <h1>Box</h1>
  * Represents a rectangle in the {@link FrameInfo.Convertor Scaled Coordinate}
  * and is not rotatable.
  * @see Vector
- * @param origin	The top left corner.
- * @param size		The size.
+ * @param origin	the top left corner.
+ * @param size		the size.
  */
 public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box> {
 	// Constants
@@ -303,14 +300,14 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	// Properties
 
 	/**
-	 * @return	The area.
+	 * @return	the area.
 	 */
 	public double area() {
 		return w() * h();
 	}
 
 	/**
-	 * @return	The perimeter.
+	 * @return	the perimeter.
 	 */
 	public double perimeter() {
 		return w() * 2 + h() * 2;
@@ -365,7 +362,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	// Operations
 
 	/**
-	 * @return	The smallest square that contains this box, whose center is the same.
+	 * @return	the smallest square that contains this box, whose center is the same.
 	 */
 	public Box squareOuter() {
 		double max = width().magnitudeMax(height());
@@ -373,7 +370,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	}
 	
 	/**
-	 * @return	The largest square that is contained by this box, whose center is the same.
+	 * @return	the largest square that is contained by this box, whose center is the same.
 	 */
 	public Box squareInner() {
 		double min = width().magnitudeMin(height());
@@ -390,9 +387,9 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * stays fixed.
 	 * <br />
 	 * <b>Note well that the positive x-axis points right while the positive y-axis points down.</b>
-	 * @param xFactor	The factor by which to translate the x-coordinate of the top left corner.
-	 * @param yFactor	The factor by which to translate the y-coordinate of the top left corner.
-	 * @return	A new box whose top left corner is translated by the given factors.
+	 * @param xFactor	the factor by which to translate the x-coordinate of the top left corner.
+	 * @param yFactor	the factor by which to translate the y-coordinate of the top left corner.
+	 * @return	a new box whose top left corner is translated by the given factors.
 	 */
 	public Box translateTopLeft(double xFactor, double yFactor) {
 		return topLeft(topLeft().add(width().scale(xFactor)).add(height().scale(yFactor)));
@@ -407,9 +404,9 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * stays fixed.
 	 * <br />
 	 * <b>Note well that the positive x-axis points right while the positive y-axis points up.</b>
-	 * @param xFactor	The factor by which to translate the x-coordinate of the bottom left corner.
-	 * @param yFactor	The factor by which to translate the y-coordinate of the bottom left corner.
-	 * @return	A new box whose bottom left corner is translated by the given factors.
+	 * @param xFactor	the factor by which to translate the x-coordinate of the bottom left corner.
+	 * @param yFactor	the factor by which to translate the y-coordinate of the bottom left corner.
+	 * @return	a new box whose bottom left corner is translated by the given factors.
 	 */
 	public Box translateBottomLeft(double xFactor, double yFactor) {
 		return bottomLeft(bottomLeft().add(width().scale(xFactor)).add(height().scale(yFactor)));
@@ -424,9 +421,9 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * stays fixed.
 	 * <br />
 	 * <b>Note well that the positive x-axis points left while the positive y-axis points up.</b>
-	 * @param xFactor	The factor by which to translate the x-coordinate of the bottom right corner.
-	 * @param yFactor	The factor by which to translate the y-coordinate of the bottom right corner.
-	 * @return	A new box whose bottom right corner is translated by the given factors.
+	 * @param xFactor	the factor by which to translate the x-coordinate of the bottom right corner.
+	 * @param yFactor	the factor by which to translate the y-coordinate of the bottom right corner.
+	 * @return	a new box whose bottom right corner is translated by the given factors.
 	 */
 	public Box translateBottomRight(double xFactor, double yFactor) {
 		return bottomRight(bottomRight().add(width().scale(xFactor)).add(height().scale(yFactor)));
@@ -441,9 +438,9 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * stays fixed.
 	 * <br />
 	 * <b>Note well that the positive x-axis points left while the positive y-axis points down.</b>
-	 * @param xFactor	The factor by which to translate the x-coordinate of the top right corner.
-	 * @param yFactor	The factor by which to translate the y-coordinate of the top right corner.
-	 * @return	A new box whose top right corner is translated by the given factors.
+	 * @param xFactor	the factor by which to translate the x-coordinate of the top right corner.
+	 * @param yFactor	the factor by which to translate the y-coordinate of the top right corner.
+	 * @return	a new box whose top right corner is translated by the given factors.
 	 */
 	public Box translateTopRight(double xFactor, double yFactor) {
 		return topRight(topRight().add(width().scale(xFactor)).add(height().scale(yFactor)));
@@ -458,8 +455,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * {@code 10} units down, while the bottom edge stays fixed.
 	 * <br />
 	 * <b>Note well that the positive y-axis points down.</b>
-	 * @param yFactor	The factor by which to translate the y-coordinate of the top edge.
-	 * @return	A new box whose top edge is translated by the given factor.
+	 * @param yFactor	the factor by which to translate the y-coordinate of the top edge.
+	 * @return	a new box whose top edge is translated by the given factor.
 	 */
 	public Box translateTop(double yFactor) {
 		return top(top() + h() * yFactor);
@@ -473,8 +470,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * {@code 10} units up, while the top edge stays fixed.
 	 * <br />
 	 * <b>Note well that the positive y-axis points up.</b>
-	 * @param yFactor	The factor by which to translate the y-coordinate of the bottom edge.
-	 * @return	A new box whose bottom edge is translated by the given factor.
+	 * @param yFactor	the factor by which to translate the y-coordinate of the bottom edge.
+	 * @return	a new box whose bottom edge is translated by the given factor.
 	 */
 	public Box translateBottom(double yFactor) {
 		return bottom(bottom() + h() * yFactor);
@@ -488,8 +485,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * {@code 10} units right, while the right edge stays fixed.
 	 * <br />
 	 * <b>Note well that the positive x-axis points right.</b>
-	 * @param xFactor	The factor by which to translate the x-coordinate of the left edge.
-	 * @return	A new box whose left edge is translated by the given factor.
+	 * @param xFactor	the factor by which to translate the x-coordinate of the left edge.
+	 * @return	a new box whose left edge is translated by the given factor.
 	 */
 	public Box translateLeft(double xFactor) {
 		return left(left() + w() * xFactor);
@@ -503,8 +500,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * {@code 10} units left, while the left edge stays fixed.
 	 * <br />
 	 * <b>Note well that the positive x-axis points left.</b>
-	 * @param xFactor	The factor by which to translate the x-coordinate of the right edge.
-	 * @return	A new box whose right edge is translated by the given factor.
+	 * @param xFactor	the factor by which to translate the x-coordinate of the right edge.
+	 * @return	a new box whose right edge is translated by the given factor.
 	 */
 	public Box translateRight(double xFactor) {
 		return right(right() + w() * xFactor);
@@ -513,8 +510,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Translates the width by the given factor. That is, the width is multiplied by the given factor.
-	 * @param factor	The factor by which to scale the width.
-	 * @return	A new box whose width is multiplied by the given factor.
+	 * @param factor	the factor by which to scale the width.
+	 * @return	a new box whose width is multiplied by the given factor.
 	 */
 	public Box translateWidth(double factor) {
 		return width(w() + width().scale(factor).magnitude());
@@ -522,8 +519,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Translates the height by the given factor. That is, the height is multiplied by the given factor.
-	 * @param factor	The factor by which to scale the height.
-	 * @return	A new box whose height is multiplied by the given factor.
+	 * @param factor	the factor by which to scale the height.
+	 * @return	a new box whose height is multiplied by the given factor.
 	 */
 	public Box translateHeight(double factor) {
 		return height(h() + height().scale(factor).magnitude());
@@ -537,9 +534,9 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * box is moved {@code 10} units right and {@code 10} units down.
 	 * <br />
 	 * <b>Note well that the positive x-axis points right while the positive y-axis points down.</b>
-	 * @param xFactor	The factor by which to translate the x-coordinate.
-	 * @param yFactor	The factor by which to translate the y-coordinate.
-	 * @return	A new box translated by the given factors.
+	 * @param xFactor	the factor by which to translate the x-coordinate.
+	 * @param yFactor	the factor by which to translate the y-coordinate.
+	 * @return	a new box translated by the given factors.
 	 */
 	public Box translate(double xFactor, double yFactor) {
 		return center(center().add(width().scale(xFactor)).add(height().scale(yFactor)));
@@ -552,8 +549,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * offset.
 	 * <br />
 	 * For example, if the offset is {@code 5, 5}, then the top left corner is added by the vector {@code (5, 5)}.
-	 * @param offset	The offset by which to shift the top left corner.
-	 * @return	A new box whose top left corner is shifted by the given offset.
+	 * @param offset	the offset by which to shift the top left corner.
+	 * @return	a new box whose top left corner is shifted by the given offset.
 	 */
 	public Box shiftTopLeft(Vector offset) {
 		return topLeft(topLeft().add(offset));
@@ -564,8 +561,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * offset.
 	 * <br />
 	 * For example, if the offset is {@code 5, 5}, then the bottom left corner is added by the vector {@code (5, 5)}.
-	 * @param offset	The offset by which to shift the bottom left corner.
-	 * @return	A new box whose bottom left corner is shifted by the given offset.
+	 * @param offset	the offset by which to shift the bottom left corner.
+	 * @return	a new box whose bottom left corner is shifted by the given offset.
 	 */
 	public Box shiftBottomLeft(Vector offset) {
 		return bottomLeft(bottomLeft().add(offset));
@@ -576,8 +573,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * given offset.
 	 * <br />
 	 * For example, if the offset is {@code 5, 5}, then the bottom right corner is added by the vector {@code (5, 5)}.
-	 * @param offset	The offset by which to shift the bottom right corner.
-	 * @return	A new box whose bottom right corner is shifted by the given offset.
+	 * @param offset	the offset by which to shift the bottom right corner.
+	 * @return	a new box whose bottom right corner is shifted by the given offset.
 	 */
 	public Box shiftBottomRight(Vector offset) {
 		return bottomRight(bottomRight().add(offset));
@@ -588,8 +585,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * offset.
 	 * <br />
 	 * For example, if the offset is {@code 5, 5}, then the top right corner is added by the vector {@code (5, 5)}.
-	 * @param offset	The offset by which to shift the top right corner.
-	 * @return	A new box whose top right corner is shifted by the given offset.
+	 * @param offset	the offset by which to shift the top right corner.
+	 * @return	a new box whose top right corner is shifted by the given offset.
 	 */
 	public Box shiftTopRight(Vector offset) {
 		return topRight(topRight().add(offset));
@@ -600,8 +597,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * Shifts the top edge by the given offset. That is, the top edge is moved by the given offset.
 	 * <br />
 	 * For example, if the offset is {@code 5}, then the y-coordinate of the top edge is added by {@code 5}.
-	 * @param yOffset	The offset by which to shift the y-coordinate of the top edge.
-	 * @return	A new box whose top edge is shifted by the given offset.
+	 * @param yOffset	the offset by which to shift the y-coordinate of the top edge.
+	 * @return	a new box whose top edge is shifted by the given offset.
 	 */
 	public Box shiftTop(double yOffset) {
 		return shiftTopLeft(Vector.fromCartesian(0, yOffset));
@@ -611,8 +608,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * Shifts the bottom edge by the given offset. That is, the bottom edge is moved by the given offset.
 	 * <br />
 	 * For example, if the offset is {@code 5}, then the y-coordinate of the bottom edge is added by {@code 5}.
-	 * @param yOffset	The offset by which to shift the y-coordinate of the bottom edge.
-	 * @return	A new box whose bottom edge is shifted by the given offset.
+	 * @param yOffset	the offset by which to shift the y-coordinate of the bottom edge.
+	 * @return	a new box whose bottom edge is shifted by the given offset.
 	 */
 	public Box shiftBottom(double yOffset) {
 		return shiftBottomLeft(Vector.fromCartesian(0, yOffset));
@@ -622,8 +619,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * Shifts the left edge by the given offset. That is, the left edge is moved by the given offset.
 	 * <br />
 	 * For example, if the offset is {@code 5}, then the x-coordinate of the left edge is added by {@code 5}.
-	 * @param xOffset	The offset by which to shift the x-coordinate of the left edge.
-	 * @return	A new box whose left edge is shifted by the given offset.
+	 * @param xOffset	the offset by which to shift the x-coordinate of the left edge.
+	 * @return	a new box whose left edge is shifted by the given offset.
 	 */
 	public Box shiftLeft(double xOffset) {
 		return shiftTopLeft(Vector.fromCartesian(xOffset, 0));
@@ -633,8 +630,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * Shifts the right edge by the given offset. That is, the right edge is moved by the given offset.
 	 * <br />
 	 * For example, if the offset is {@code 5}, then the x-coordinate of the right edge is added by {@code 5}.
-	 * @param xOffset	The offset by which to shift the x-coordinate of the right edge.
-	 * @return	A new box whose right edge is shifted by the given offset.
+	 * @param xOffset	the offset by which to shift the x-coordinate of the right edge.
+	 * @return	a new box whose right edge is shifted by the given offset.
 	 */
 	public Box shiftRight(double xOffset) {
 		return shiftTopRight(Vector.fromCartesian(xOffset, 0));
@@ -646,8 +643,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * <br />
 	 * For example, if the offset is {@code 5, 5}, then the coordinates are added by the vector
 	 * {@code (5, 5)}.
-	 * @param offset	The offset by which to shift the box.
-	 * @return	A new box shifted by the given offset.
+	 * @param offset	the offset by which to shift the box.
+	 * @return	a new box shifted by the given offset.
 	 */
 	public Box shift(Vector offset) {
 		return center(center().add(offset));
@@ -658,9 +655,9 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * <br />
 	 * For example, if the offset is {@code 5, 5}, then the coordinates are added by the vector
 	 * {@code (5, 5)}.
-	 * @param xOffset	The offset by which to shift the x-coordinate.
-	 * @param yOffset	The offset by which to shift the y-coordinate.
-	 * @return	A new box shifted by the given offset.
+	 * @param xOffset	the offset by which to shift the x-coordinate.
+	 * @param yOffset	the offset by which to shift the y-coordinate.
+	 * @return	a new box shifted by the given offset.
 	 * @see #shift(Vector)
 	 */
 	public Box shift(double xOffset, double yOffset) {
@@ -670,8 +667,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the top left corner to the given vector without modifying the size.
-	 * @param topLeft	The vector to which to align the top left corner to.
-	 * @return	A new box whose top left corner is aligned with the given vector.
+	 * @param topLeft	the vector to which to align the top left corner to.
+	 * @return	a new box whose top left corner is aligned with the given vector.
 	 */
 	public Box alignTopLeft(Vector topLeft) {
 		return new Box(topLeft, size());
@@ -679,8 +676,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the bottom left corner to the given vector without modifying the size.
-	 * @param bottomLeft	The vector to which to align the bottom left corner to.
-	 * @return	A new box whose bottom left corner is aligned with the given vector.
+	 * @param bottomLeft	the vector to which to align the bottom left corner to.
+	 * @return	a new box whose bottom left corner is aligned with the given vector.
 	 */
 	public Box alignBottomLeft(Vector bottomLeft) {
 		return Box.fromVector(bottomLeft.subtract(height()), bottomLeft.add(width()));
@@ -688,8 +685,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the bottom right corner to the given vector without modifying the size.
-	 * @param bottomRight	The vector to which to align the bottom right corner to.
-	 * @return	A new box whose bottom right corner is aligned with the given vector.
+	 * @param bottomRight	the vector to which to align the bottom right corner to.
+	 * @return	a new box whose bottom right corner is aligned with the given vector.
 	 */
 	public Box alignBottomRight(Vector bottomRight) {
 		return Box.fromVector(bottomRight.subtract(size()), bottomRight);
@@ -697,8 +694,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the top right corner to the given vector without modifying the size.
-	 * @param topRight	The vector to which to align the top right corner to.
-	 * @return	A new box whose top right corner is aligned with the given vector.
+	 * @param topRight	the vector to which to align the top right corner to.
+	 * @return	a new box whose top right corner is aligned with the given vector.
 	 */
 	public Box alignTopRight(Vector topRight) {
 		return Box.fromVector(topRight.subtract(width()), topRight.add(height()));
@@ -708,7 +705,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	/**
 	 * Aligns the top edge to the given y-coordinate without modifying the size.
 	 * @param y	{@code y} to which to align the top edge to.
-	 * @return	A new box whose top edge is aligned with the given {@code y}.
+	 * @return	a new box whose top edge is aligned with the given {@code y}.
 	 */
 	public Box alignTop(double y) {
 		return alignTopLeft(Vector.fromCartesian(topLeft().x(), y));
@@ -717,7 +714,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	/**
 	 * Aligns the bottom edge to the given y-coordinate without modifying the size.
 	 * @param y	{@code y} to which to align the bottom edge to.
-	 * @return	A new box whose bottom edge is aligned with the given {@code y}.
+	 * @return	a new box whose bottom edge is aligned with the given {@code y}.
 	 */
 	public Box alignBottom(double y) {
 		return alignBottomLeft(Vector.fromCartesian(bottomLeft().x(), y));
@@ -726,7 +723,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	/**
 	 * Aligns the left edge to the given x-coordinate without modifying the size.
 	 * @param x	{@code x} to which to align the left edge to.
-	 * @return	A new box whose left edge is aligned with the given {@code x}.
+	 * @return	a new box whose left edge is aligned with the given {@code x}.
 	 */
 	public Box alignLeft(double x) {
 		return alignTopLeft(Vector.fromCartesian(x, topLeft().y()));
@@ -735,7 +732,7 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	/**
 	 * Aligns the right edge to the given x-coordinate without modifying the size.
 	 * @param x	{@code x} to which to align the right edge to.
-	 * @return	A new box whose right edge is aligned with the given {@code x}.
+	 * @return	a new box whose right edge is aligned with the given {@code x}.
 	 */
 	public Box alignRight(double x) {
 		return alignTopRight(Vector.fromCartesian(x, topRight().y()));
@@ -744,8 +741,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the top left corner to the top left corner of the given box without modifying the size.
-	 * @param another	The box to which to align the top left corner to.
-	 * @return	A new box whose top left corner is aligned with the top left corner of the given box.
+	 * @param another	the box to which to align the top left corner to.
+	 * @return	a new box whose top left corner is aligned with the top left corner of the given box.
 	 * @see #alignTopLeft(Vector)
 	 */
 	public Box alignTopLeft(Box another) {
@@ -754,8 +751,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the bottom left corner to the bottom left corner of the given box without modifying the size.
-	 * @param another	The box to which to align the bottom left corner to.
-	 * @return	A new box whose bottom left corner is aligned with the bottom left corner of the given box.
+	 * @param another	the box to which to align the bottom left corner to.
+	 * @return	a new box whose bottom left corner is aligned with the bottom left corner of the given box.
 	 * @see #alignBottomLeft(Vector)
 	 */
 	public Box alignBottomLeft(Box another) {
@@ -764,8 +761,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the bottom right corner to the bottom right corner of the given box without modifying the size.
-	 * @param another	The box to which to align the bottom right corner to.
-	 * @return	A new box whose bottom right corner is aligned with the bottom right corner of the given box.
+	 * @param another	the box to which to align the bottom right corner to.
+	 * @return	a new box whose bottom right corner is aligned with the bottom right corner of the given box.
 	 * @see #alignBottomRight(Vector)
 	 */
 	public Box alignBottomRight(Box another) {
@@ -774,8 +771,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the top right corner to the top right corner of the given box without modifying the size.
-	 * @param another	The box to which to align the top right corner to.
-	 * @return	A new box whose top right corner is aligned with the top right corner of the given box.
+	 * @param another	the box to which to align the top right corner to.
+	 * @return	a new box whose top right corner is aligned with the top right corner of the given box.
 	 * @see #alignTopRight(Vector)
 	 */
 	public Box alignTopRight(Box another) {
@@ -785,8 +782,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the top edge to the top edge of the given box without modifying the size.
-	 * @param another	The box to which to align the top edge to.
-	 * @return	A new box whose top edge is aligned with the top edge of the given box.
+	 * @param another	the box to which to align the top edge to.
+	 * @return	a new box whose top edge is aligned with the top edge of the given box.
 	 * @see #alignTop(double)
 	 */
 	public Box alignTop(Box another) {
@@ -795,8 +792,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the bottom edge to the bottom edge of the given box without modifying the size.
-	 * @param another	The box to which to align the bottom edge to.
-	 * @return	A new box whose bottom edge is aligned with the bottom edge of the given box.
+	 * @param another	the box to which to align the bottom edge to.
+	 * @return	a new box whose bottom edge is aligned with the bottom edge of the given box.
 	 * @see #alignBottom(double)
 	 */
 	public Box alignBottom(Box another) {
@@ -805,8 +802,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the left edge to the left edge of the given box without modifying the size.
-	 * @param another	The box to which to align the left edge to.
-	 * @return	A new box whose left edge is aligned with the left edge of the given box.
+	 * @param another	the box to which to align the left edge to.
+	 * @return	a new box whose left edge is aligned with the left edge of the given box.
 	 * @see #alignLeft(double)
 	 */
 	public Box alignLeft(Box another) {
@@ -815,8 +812,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Aligns the right edge to the right edge of the given box without modifying the size.
-	 * @param another	The box to which to align the right edge to.
-	 * @return	A new box whose right edge is aligned with the right edge of the given box.
+	 * @param another	the box to which to align the right edge to.
+	 * @return	a new box whose right edge is aligned with the right edge of the given box.
 	 * @see #alignRight(double)
 	 */
 	public Box alignRight(Box another) {
@@ -826,8 +823,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Rotates the box by the given number of right angles (90 degrees).
-	 * @param rotationCount	The number of right angles by which to rotate the box.
-	 * @return	A new box rotated by the given number of right angles.
+	 * @param rotationCount	the number of right angles by which to rotate the box.
+	 * @return	a new box rotated by the given number of right angles.
 	 */
 	public Box rotateByRightAngle(int rotationCount) {
 		if (rotationCount % 2 == 0) {
@@ -838,8 +835,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Rotates the box by the given number of right angles (90 degrees) without modifying the center.
-	 * @param rotationCount	The number of right angles by which to rotate the box.
-	 * @return	A new box rotated by the given number of right angles.
+	 * @param rotationCount	the number of right angles by which to rotate the box.
+	 * @return	a new box rotated by the given number of right angles.
 	 * @see #rotateByRightAngle(int)
 	 */
 	public Box rotateByRightAngleCentered(int rotationCount) {
@@ -848,9 +845,9 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Scales the box by the given scalars.
-	 * @param xScalar	The scalar by which to scale the width.
-	 * @param yScalar	The scalar by which to scale the height.
-	 * @return	A new box scaled by the given scalars.
+	 * @param xScalar	the scalar by which to scale the width.
+	 * @param yScalar	the scalar by which to scale the height.
+	 * @return	a new box scaled by the given scalars.
 	 */
 	public Box scale(double xScalar, double yScalar) {
 		return width(w() * xScalar).height(h() * yScalar);
@@ -858,8 +855,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Scales the box by the given scalar.
-	 * @param scalar	The scalar by which to scale the width and height.
-	 * @return	A new box scaled by the given scalar.
+	 * @param scalar	the scalar by which to scale the width and height.
+	 * @return	a new box scaled by the given scalar.
 	 */
 	public Box scale(double scalar) {
 		return scale(scalar, scalar);
@@ -867,9 +864,9 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Scales the box by the given scalars without modifying the center.
-	 * @param xScalar	The scalar by which to scale the width.
-	 * @param yScalar	The scalar by which to scale the height.
-	 * @return	A new box scaled by the given scalars.
+	 * @param xScalar	the scalar by which to scale the width.
+	 * @param yScalar	the scalar by which to scale the height.
+	 * @return	a new box scaled by the given scalars.
 	 * @see #scale(double, double)
 	 */
 	public Box scaleCenter(double xScalar, double yScalar) {
@@ -878,8 +875,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 
 	/**
 	 * Scales the box by the given scalar without modifying the center.
-	 * @param scalar	The scalar by which to scale the width and height.
-	 * @return	A new box scaled by the given scalar.
+	 * @param scalar	the scalar by which to scale the width and height.
+	 * @return	a new box scaled by the given scalar.
 	 * @see #scale(double)
 	 */
 	public Box scaleCenter(double scalar) {
@@ -890,8 +887,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * Expands the box by the given expansion. For example, if the box is {@code [(0, 0), (1, 1)]} and the expansion is
 	 * {@code (1, 2)}, the result is {@code [(-1, -2), (2, 3)]}. That is, the top left corner is subtracted by the
 	 * given expansion and the bottom right corner is added by the given expansion.
-	 * @param expansion	The expansion to apply to the box.
-	 * @return	A new box expanded by the given expansion.
+	 * @param expansion	the expansion to apply to the box.
+	 * @return	a new box expanded by the given expansion.
 	 */
 	public Box expand(Vector expansion) {
 		return Box.fromVector(topLeft().subtract(expansion), bottomRight().add(expansion));
@@ -901,9 +898,9 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * Expands the box by the given expansion. For example, if the box is {@code [(0, 0), (1, 1)]} and the expansion is
 	 * {@code (1, 2)}, the result is {@code [(-1, -2), (2, 3)]}. That is, the top left corner is subtracted by the
 	 * given expansion and the bottom right corner is added by the given expansion.
-	 * @param xExpansion	The expansion to apply to the box in the x-axis.
-	 * @param yExpansion	The expansion to apply to the box in the y-axis.
-	 * @return	A new box expanded by the given expansion.
+	 * @param xExpansion	the expansion to apply to the box in the x-axis.
+	 * @param yExpansion	the expansion to apply to the box in the y-axis.
+	 * @return	a new box expanded by the given expansion.
 	 * @see #expand(Vector)
 	 */
 	public Box expand(double xExpansion, double yExpansion) {
@@ -914,8 +911,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * Expands the box by the given expansion. For example, if the box is {@code [(0, 0, 1, 1)} and the expansion is
 	 * {@code (1, 2)}, the result is {@code [(-1, -2, 2, 3)}. That is, the top left corner is subtracted by the
 	 * given expansion and the bottom right corner is added by the given expansion.
-	 * @param expansion	The expansion to apply to the box.
-	 * @return	A new box expanded by the given expansion.
+	 * @param expansion	the expansion to apply to the box.
+	 * @return	a new box expanded by the given expansion.
 	 * @see #expand(Vector)
 	 */
 	public Box expand(double expansion) {
@@ -927,8 +924,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * {@code [(2, 2, 4, 4)}, the result is {@code [(-1, -1, 2, 2)}. That is, the box is scaled as how the given
 	 * box is scaled to the unit box, and moved so that the relative position of this box to the given box is preserved
 	 * between the scaled box and the unit box.
-	 * @param another	The box to normal by.
-	 * @return	A new box normalized by the given box.
+	 * @param another	the box to normal by.
+	 * @return	a new box normalized by the given box.
 	 */
 	public Box normalizeBy(Box another) {
 		return scaleCenter(1 / another.w(), 1 / another.h())
@@ -939,8 +936,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 * <h1>{@code a ∩ b}</h1>
 	 * Gets a box which is the intersection of this box and the given box. If the boxes do not intersect, the result is
 	 * {@link Box#ZERO}.
-	 * @param another	The box to intersect with.
-	 * @return	A new box which is the intersection of this box and the given box.
+	 * @param another	the box to intersect with.
+	 * @return	a new box which is the intersection of this box and the given box.
 	 */
 	public Box min(Box another) {
 		if (!intersects(another)) return Box.ZERO;
@@ -952,8 +949,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	/**
 	 * <h1>{@code a ∪ b}</h1>
 	 * Gets a box which is the minimum box which contains both this box and the given box.
-	 * @param another	The box to union with.
-	 * @return	A new box which is the union of this box and the given box.
+	 * @param another	the box to union with.
+	 * @return	a new box which is the union of this box and the given box.
 	 */
 	public Box max(Box another) {
 		return Box.fromVector(topLeft().min(another.topLeft()), bottomRight().max(another.bottomRight()));
@@ -1003,9 +1000,9 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 *         <td>{@code [(5, 8), (5, 2)]}</td>
 	 *     </tr>
 	 * </table>
-	 * @param xStep	The step in the x-direction.
-	 * @param yStep	The step in the y-direction.
-	 * @return	A grid (2D array) of boxes with the given steps.
+	 * @param xStep	the step in the x-direction.
+	 * @param yStep	the step in the y-direction.
+	 * @return	a grid (2D array) of boxes with the given steps.
 	 */
 	public Box[][] grid(int xStep, int yStep) {
 		if (xStep <= 0 || yStep <= 0) {
@@ -1044,8 +1041,8 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	 *         <td>{@code [(5, 5), (5, 5)]}</td>
 	 *     </tr>
 	 * </table>
-	 * @param step	The step in both the x-direction and the y-direction.
-	 * @return	A grid (2D array) of boxes with the given step.
+	 * @param step	the step in both the x-direction and the y-direction.
+	 * @return	a grid (2D array) of boxes with the given step.
 	 * @see #grid(int, int)
 	 */
 	public Box[][] grid(int step) {
@@ -1059,28 +1056,28 @@ public record Box(Vector origin, Vector size) implements Convertible.Scaled<Box>
 	// Interface Implementations
 
 	/**
-	 * @return	A new box fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
+	 * @return	a new box fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Box fitToScreen() {
 		return FrameInfo.Convertor.scaledToScreen(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	a new box fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Box fitToOpenGL() {
 		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
+	 * @return	a new box fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Box fitFromScreen() {
 		return FrameInfo.Convertor.screenToScaled(this);
 	}
 
 	/**
-	 * @return	A new box fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	a new box fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Box fitFromOpenGL() {
 		return FrameInfo.Convertor.openGLToScaled(this);

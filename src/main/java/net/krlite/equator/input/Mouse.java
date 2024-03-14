@@ -157,9 +157,9 @@ public enum Mouse {
 
 			/**
 			 * Called when a mouse button is pressed or released.
-			 * @param button	The mouse button that was pressed or released.
-			 * @param action	The action that was performed.
-			 * @param modifiers	The modifiers that were pressed.
+			 * @param button	the mouse button that was pressed or released.
+			 * @param action	the action that was performed.
+			 * @param modifiers	the modifiers that were pressed.
 			 */
 			void onClick(Mouse button, Action action, Keyboard.Modifier[] modifiers);
 		}
@@ -178,7 +178,7 @@ public enum Mouse {
 
 			/**
 			 * Called when the mouse wheel is scrolled.
-			 * @param scroll	The scroll amount, in the
+			 * @param scroll	the scroll amount, in the
 			 *                  {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
 			 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
 			 */
@@ -199,8 +199,8 @@ public enum Mouse {
 
 			/**
 			 * Called when the mouse is dragged.
-			 * @param button	The mouse button that is being dragged.
-			 * @param position	The position of the mouse, in the
+			 * @param button	the mouse button that is being dragged.
+			 * @param position	the position of the mouse, in the
 			 * 					{@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
 			 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
 			 */
@@ -219,8 +219,8 @@ public enum Mouse {
 
 			/**
 			 * Called when files are dropped onto the window.
-			 * @param count	The number of files dropped.
-			 * @param paths	The paths of the files dropped.
+			 * @param count	the number of files dropped.
+			 * @param paths	the paths of the files dropped.
 			 */
 			void onDrop(int count, Path[] paths);
 		}
@@ -239,7 +239,7 @@ public enum Mouse {
 
 			/**
 			 * Called when the mouse is moved.
-			 * @param position	The position of the mouse, in the
+			 * @param position	the position of the mouse, in the
 			 * 					{@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
 			 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
 			 */
@@ -258,7 +258,7 @@ public enum Mouse {
 
 			/**
 			 * Called when the mouse enters or leaves the window.
-			 * @param entered	Whether the mouse entered the window.
+			 * @param entered	whether the mouse entered the window.
 			 */
 			void onEnter(boolean entered);
 		}

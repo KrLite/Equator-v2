@@ -17,7 +17,7 @@ import static net.krlite.equator.visual.color.ColorConvertor.*;
  *     <li>{@link Colorspace#CMYK}	&ensp;<code>- cyan,			magenta,		yellow,			black</code></li>
  *     <li>{@link Colorspace#XYZ}	&emsp;<code>- x-axis,		y-axis,			z-axis			(CIE 1931 XYZ COLORSPACE)</code></li>
  *     <li>{@link Colorspace#LAB}	&emsp;<code>- Lightness*,	green-magenta*,	blue-yellow*	(CIELAB COLORSPACE)</code></li>
- *     <li>{@link Colorspace#LCH}	&emsp;<code>- Luminance*,	Chroma*,		hue*		(CLELCh COLORSPACE)</code></li>
+ *     <li>{@link Colorspace#LCH}	&emsp;<code>- Luminance*,	Chroma*,		hue*			(CLELCh COLORSPACE)</code></li>
  * </ul>
  */
 public enum Colorspace implements ColorStandard {

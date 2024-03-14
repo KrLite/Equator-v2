@@ -15,8 +15,8 @@ public class Theory {
 	/**
 	 * <h1>{@code a ≈ b}</h1>
 	 * Checks if the two doubles are equal within a small margin of error.
-	 * @param a	The first double.
-	 * @param b	The second double.
+	 * @param a	the first double.
+	 * @param b	the second double.
 	 * @return	{@code true} if the two doubles are equal within a small margin of error,
 	 * 			{@code false} otherwise.
 	 * @see #EPSILON
@@ -28,8 +28,8 @@ public class Theory {
 	/**
 	 * <h1>{@code a ≠ b}</h1>
 	 * Checks if the two doubles are not equal within a small margin of error.
-	 * @param a	The first double.
-	 * @param b	The second double.
+	 * @param a	the first double.
+	 * @param b	the second double.
 	 * @return	{@code true} if the two doubles are not equal within a small margin of error,
 	 * 			{@code false} otherwise.
 	 * @see #EPSILON
@@ -41,8 +41,8 @@ public class Theory {
 	/**
 	 * <h1>{@code a > b}</h1>
 	 * Checks if the first double is greater than the second double within a small margin of error.
-	 * @param a	The first double.
-	 * @param b	The second double.
+	 * @param a	the first double.
+	 * @param b	the second double.
 	 * @return	{@code true} if the first double is greater than the second double within a small margin of error,
 	 * 			{@code false} otherwise.
 	 * @see #EPSILON
@@ -54,8 +54,8 @@ public class Theory {
 	/**
 	 * <h1>{@code a ≥ b}</h1>
 	 * Checks if the first double is greater than or equal to the second double within a small margin of error.
-	 * @param a	The first double.
-	 * @param b	The second double.
+	 * @param a	the first double.
+	 * @param b	the second double.
 	 * @return	{@code true} if the first double is greater than or equal to the second double within a small margin of error,
 	 * 			{@code false} otherwise.
 	 * @see #EPSILON
@@ -67,8 +67,8 @@ public class Theory {
 	/**
 	 * <h1>{@code a < b}</h1>
 	 * Checks if the first double is less than the second double within a small margin of error.
-	 * @param a	The first double.
-	 * @param b	The second double.
+	 * @param a	the first double.
+	 * @param b	the second double.
 	 * @return	{@code true} if the first double is less than the second double within a small margin of error,
 	 * 			{@code false} otherwise.
 	 * @see #EPSILON
@@ -80,8 +80,8 @@ public class Theory {
 	/**
 	 * <h1>{@code a ≤ b}</h1>
 	 * Checks if the first double is less than or equal to the second double within a small margin of error.
-	 * @param a	The first double.
-	 * @param b	The second double.
+	 * @param a	the first double.
+	 * @param b	the second double.
 	 * @return	{@code true} if the first double is less than or equal to the second double within a small margin of error,
 	 * 			{@code false} otherwise.
 	 * @see #EPSILON
@@ -93,9 +93,9 @@ public class Theory {
 	/**
 	 * <h1>{@code x ∈ (a, b)}</h1>
 	 * Checks if a double is between the left and right bound within a small margin of error.
-	 * @param x	The value to check.
-	 * @param a	The left bound.
-	 * @param b	The right bound.
+	 * @param x	the value to check.
+	 * @param a	the left bound.
+	 * @param b	the right bound.
 	 * @return	{@code true} if the value is between the left and right bound within a small margin of error,
 	 * 			{@code false} otherwise.
 	 * @see #EPSILON
@@ -107,9 +107,9 @@ public class Theory {
 	/**
 	 * <h1>{@code x ∈ [a, b]}</h1>
 	 * Checks if a double is between or equal to the left and right bound within a small margin of error.
-	 * @param x	The double to check.
-	 * @param a	The left bound.
-	 * @param b	The right bound.
+	 * @param x	the double to check.
+	 * @param a	the left bound.
+	 * @param b	the right bound.
 	 * @return	{@code true} if the double is between or equal to the left and right bound within a small margin of error,
 	 * 			{@code false} otherwise.
 	 * @see #EPSILON
@@ -121,7 +121,7 @@ public class Theory {
 	/**
 	 * <h1>{@code value ≈ 0}</h1>
 	 * Checks if a double is zero within a small margin of error.
-	 * @param value	The double to check.
+	 * @param value	the double to check.
 	 * @return	{@code true} if the double is zero within a small margin of error,
 	 * 			{@code false} otherwise.
 	 * @see #EPSILON
@@ -132,9 +132,9 @@ public class Theory {
 
 	/**
 	 * Clamps a double to the range {@code [min, max]}.
-	 * @param value	The double to clamp.
-	 * @param min	The minimum value.
-	 * @param max	The maximum value.
+	 * @param value	the double to clamp.
+	 * @param min	the minimum value.
+	 * @param max	the maximum value.
 	 * @return	The clamped double.
 	 */
 	public static double clamp(double value, double min, double max) {
@@ -149,9 +149,9 @@ public class Theory {
 
 	/**
 	 * Clamps a double to the range {@code (min, max]}.
-	 * @param value	The double to clamp.
-	 * @param min	The minimum value.
-	 * @param max	The maximum value.
+	 * @param value	the double to clamp.
+	 * @param min	the minimum value.
+	 * @param max	the maximum value.
 	 * @return	The clamped double.
 	 */
 	public static double clampGreater(double value, double min, double max) {
@@ -167,9 +167,9 @@ public class Theory {
 
 	/**
 	 * Clamps a double to the range {@code [min, max)}.
-	 * @param value	The double to clamp.
-	 * @param min	The minimum value.
-	 * @param max	The maximum value.
+	 * @param value	the double to clamp.
+	 * @param min	the minimum value.
+	 * @param max	the maximum value.
 	 * @return	The clamped double.
 	 */
 	public static double clampLess(double value, double min, double max) {
@@ -185,8 +185,8 @@ public class Theory {
 
 	/**
 	 * Modulos a double to the range {@code [0, mod)}.
-	 * @param value	The double to mod.
-	 * @param mod	The modulus.
+	 * @param value	the double to mod.
+	 * @param mod	the modulus.
 	 * @return	The modulated double.
 	 */
 	public static double mod(double value, double mod) {
@@ -195,10 +195,10 @@ public class Theory {
 
 	/**
 	 * Linearly interpolates between two values.
-	 * @param a	The first double.
-	 * @param b	The second double.
-	 * @param t	The interpolation value.
-	 * @return	The interpolated double.
+	 * @param a	the first double.
+	 * @param b	the second double.
+	 * @param t	the interpolation value.
+	 * @return	the interpolated double.
 	 */
 	public static double lerp(double a, double b, double t) {
 		return a + (b - a) * t;
@@ -224,7 +224,7 @@ public class Theory {
 	 *         <td>{@code x ∈ (-∞, 0)}</td>
 	 *     </tr>
 	 * </table>
-	 * @return	The approximated value.
+	 * @return	the approximated value.
 	 */
 	public static double approximation(double x, double yMax, double k) {
 		if (Theory.looseEquals(x, 0)) return 0;

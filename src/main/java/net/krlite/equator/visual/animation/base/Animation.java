@@ -15,7 +15,7 @@ import java.util.function.UnaryOperator;
 /**
  * <h1>Animation</h1>
  * Handles the animation between two values.
- * @param <A>	The type of the animated value.
+ * @param <A>	the type of the animated value.
  */
 public abstract class Animation<A> implements Runnable {
 	public static class Any<A> {

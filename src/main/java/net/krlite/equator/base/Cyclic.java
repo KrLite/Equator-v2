@@ -3,13 +3,13 @@ package net.krlite.equator.base;
 public interface Cyclic<T> {
 	/**
 	 * Cycle to the next element.
-	 * @return	The next element.
+	 * @return	the next element.
 	 */
 	T next();
 
 	/**
 	 * Cycle to the previous element.
-	 * @return	The previous element.
+	 * @return	the previous element.
 	 */
 	T previous();
 
@@ -17,7 +17,7 @@ public interface Cyclic<T> {
 	 * Cycle to the next element if {@code reverse} is {@code false}, or the previous
 	 * element if {@code reverse} is {@code true}.
 	 * @param reverse	{@code true} to cycle to the previous element, {@code false} to cycle to the next element.
-	 * @return	The next element if {@code reverse} is {@code false}, or the previous
+	 * @return	the next element if {@code reverse} is {@code false}, or the previous
 	 * 			element if {@code reverse} is {@code true}.
 	 */
 	default T fromBoolean(boolean reverse) {
@@ -27,7 +27,7 @@ public interface Cyclic<T> {
 	interface Enum<T extends java.lang.Enum<T>> extends Cyclic<T> {
 		/**
 		 * Cycle to the next enum constant.
-		 * @return	The next enum constant.
+		 * @return	the next enum constant.
 		 */
 		@Override
 		default T next() {
@@ -37,7 +37,7 @@ public interface Cyclic<T> {
 
 		/**
 		 * Cycle to the previous enum constant.
-		 * @return	The previous enum constant.
+		 * @return	the previous enum constant.
 		 */
 		@Override
 		default T previous() {

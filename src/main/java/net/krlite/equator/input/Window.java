@@ -103,7 +103,7 @@ public class Window {
 
 			/**
 			 * Called when the window is moved.
-			 * @param position	The new position of the window, in the
+			 * @param position	the new position of the window, in the
 			 * 					{@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate}.
 			 * @see net.krlite.equator.render.frame.FrameInfo.Convertor
 			 */
@@ -124,8 +124,7 @@ public class Window {
 
 			/**
 			 * Called when the window is resized.
-			 * @param width		The new width of the window.
-			 * @param height	The new height of the window.
+			 * @param window	The new size of the window.
 			 */
 			void onResize(Box window);
 		}
@@ -142,8 +141,8 @@ public class Window {
 
 			/**
 			 * Called when the window's content scale is changed.
-			 * @param xScaling	The new {@code x-scaling} of the window.
-			 * @param yScaling	The new {@code y-scaling} of the window.
+			 * @param xScaling	the new {@code x-scaling} of the window.
+			 * @param yScaling	the new {@code y-scaling} of the window.
 			 */
 			void onContentScale(float xScaling, float yScaling);
 		}

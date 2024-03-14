@@ -318,10 +318,10 @@ public enum Keyboard {
 
 			/**
 			 * Called when a key is pressed, released or repeated.
-			 * @param key		The key that was pressed, released or repeated.
-			 * @param scanCode	The system-specific scancode of the key.
-			 * @param action	The action that was performed.
-			 * @param modifiers	The modifiers that were pressed.
+			 * @param key		the key that was pressed, released or repeated.
+			 * @param scanCode	the system-specific scancode of the key.
+			 * @param action	the action that was performed.
+			 * @param modifiers	the modifiers that were pressed.
 			 */
 			void onKey(Keyboard key, int scanCode, Action action, Modifier[] modifiers);
 		}
@@ -338,8 +338,8 @@ public enum Keyboard {
 
 			/**
 			 * Called when a character is input.
-			 * @param chars		The characters that were input.
-			 * @param modifiers	The modifiers that were pressed.
+			 * @param chars		the characters that were input.
+			 * @param modifiers	the modifiers that were pressed.
 			 */
 			void onChar(char[] chars, Modifier[] modifiers);
 		}

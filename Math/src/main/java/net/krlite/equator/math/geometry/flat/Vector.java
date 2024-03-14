@@ -7,10 +7,10 @@ import net.minecraft.util.math.Vec2f;
 
 /**
  * <h1>Vector</h1>
- * Represents a vector in the {@link net.krlite.equator.render.frame.FrameInfo.Convertor Scaled Coordinate} and is
+ * Represents a vector in the {@link FrameInfo.Convertor Scaled Coordinate} and is
  * stored in polar form.
- * @param angle		The angle <b>in radians.</b>
- * @param magnitude	The magnitude, which is always positive.
+ * @param angle		the angle <b>in radians.</b>
+ * @param magnitude	the magnitude, which is always positive.
  */
 public record Vector(double angle, double magnitude) implements Convertible.Scaled<Vector> {
 	// Constants
@@ -97,7 +97,7 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	}
 
 	/**
-	 * @param another	The other vector.
+	 * @param another	the other vector.
 	 * @return	{@code true -} if the two vectors are parallel.
 	 * <br />	{@code false -} otherwise.
 	 */
@@ -106,7 +106,7 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	}
 
 	/**
-	 * @param another	The other vector.
+	 * @param another	the other vector.
 	 * @return	{@code true -} if the two vectors are perpendicular.
 	 * <br />	{@code false -} otherwise.
 	 */
@@ -115,16 +115,16 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	}
 
 	/**
-	 * @param another	The other vector.
-	 * @return	The angle between the two vectors <b>in radians.</b>
+	 * @param another	the other vector.
+	 * @return	the angle between the two vectors <b>in radians.</b>
 	 */
 	public double angleTo(Vector another) {
 		return Math.acos(normalize().dot(another.normalize()));
 	}
 
 	/**
-	 * @param another	The other vector.
-	 * @return	The angle between the two vectors <b>in degrees.</b>
+	 * @param another	the other vector.
+	 * @return	the angle between the two vectors <b>in degrees.</b>
 	 * @see #angleTo(Vector)
 	 */
 	public double angleDegreesTo(Vector another) {
@@ -133,8 +133,8 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 
 	/**
 	 * <h1>{@code a · b}</h1>
-	 * @param another	The other vector.
-	 * @return	The dot-product of the two vectors.
+	 * @param another	the other vector.
+	 * @return	the dot-product of the two vectors.
 	 */
 	public double dot(Vector another) {
 		return x() * another.x() + y() * another.y();
@@ -142,8 +142,8 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 
 	/**
 	 * <h1>{@code a × b}</h1>
-	 * @param another	The other vector.
-	 * @return	The cross-product of the two vectors.
+	 * @param another	the other vector.
+	 * @return	the cross-product of the two vectors.
 	 */
 	public double cross(Vector another) {
 		return x() * another.y() - y() * another.x();
@@ -154,8 +154,8 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	}
 
 	/**
-	 * @param another	The other vector.
-	 * @return	The Manhattan distance between the two vectors. That is, the sum of the absolute differences of their
+	 * @param another	the other vector.
+	 * @return	the Manhattan distance between the two vectors. That is, the sum of the absolute differences of their
 	 * 			{@code x} and {@code y} components.
 	 */
 	public double manhattanDistanceTo(Vector another) {
@@ -164,15 +164,15 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 
 	/**
 	 * @param another	The other vector.
-	 * @return	The minimum of the two vectors' magnitudes.
+	 * @return	the minimum of the two vectors' magnitudes.
 	 */
 	public double magnitudeMin(Vector another) {
 		return Math.min(magnitude(), another.magnitude());
 	}
 
 	/**
-	 * @param another	The other vector.
-	 * @return	The maximum of the two vectors' magnitudes.
+	 * @param another	the other vector.
+	 * @return	the maximum of the two vectors' magnitudes.
 	 */
 	public double magnitudeMax(Vector another) {
 		return Math.max(magnitude(), another.magnitude());
@@ -182,9 +182,9 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 
 	/**
 	 * Scales the vector by the given scalars.
-	 * @param xScalar	The scalar by which to scale the {@code x} component.
-	 * @param yScalar	The scalar by which to scale the {@code y} component.
-	 * @return	A new vector scaled by the given scalars.
+	 * @param xScalar	the scalar by which to scale the {@code x} component.
+	 * @param yScalar	the scalar by which to scale the {@code y} component.
+	 * @return	a new vector scaled by the given scalars.
 	 */
 	public Vector scale(double xScalar, double yScalar) {
 		return x(x() * xScalar).y(y() * yScalar);
@@ -192,8 +192,8 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 
 	/**
 	 * Scales the vector by the given scalar.
-	 * @param scalar	The scalar by which to scale the {@code x} and {@code y} components.
-	 * @return	A new vector scaled by the given scalar.
+	 * @param scalar	the scalar by which to scale the {@code x} and {@code y} components.
+	 * @return	a new vector scaled by the given scalar.
 	 * @see #scale(double, double)
 	 */
 	public Vector scale(double scalar) {
@@ -263,8 +263,8 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	/**
 	 * Gets a vector with the minimum x and y values of the two vectors. Note well that the vector may not be the same as
 	 * either of the two vectors.
-	 * @param another	The other vector.
-	 * @return	A new vector with the minimum x and y values of the two vectors.
+	 * @param another	the other vector.
+	 * @return	a new vector with the minimum x and y values of the two vectors.
 	 */
 	public Vector min(Vector another) {
 		return fromCartesian(Math.min(x(), another.x()), Math.min(y(), another.y()));
@@ -273,8 +273,8 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	/**
 	 * Gets a vector with the maximum x and y values of the two vectors. Note well that the vector may not be the same as
 	 * either of the two vectors.
-	 * @param another	The other vector.
-	 * @return	A new vector with the maximum x and y values of the two vectors.
+	 * @param another	the other vector.
+	 * @return	a new vector with the maximum x and y values of the two vectors.
 	 */
 	public Vector max(Vector another) {
 		return fromCartesian(Math.max(x(), another.x()), Math.max(y(), another.y()));
@@ -286,8 +286,8 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 
 	/**
 	 * Gets the vector with the minimum magnitude. If the magnitudes are equal, this vector is returned.
-	 * @param another	The other vector.
-	 * @return	The vector with the minimum magnitude.
+	 * @param another	the other vector.
+	 * @return	the vector with the minimum magnitude.
 	 */
 	public Vector minByMagnitude(Vector another) {
 		return magnitude() <= another.magnitude() ? this : another;
@@ -295,8 +295,8 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 
 	/**
 	 * Gets the vector with the maximum magnitude. If the magnitudes are equal, this vector is returned.
-	 * @param another	The other vector.
-	 * @return	The vector with the maximum magnitude.
+	 * @param another	the other vector.
+	 * @return	the vector with the maximum magnitude.
 	 */
 	public Vector maxByMagnitude(Vector another) {
 		return magnitude() >= another.magnitude() ? this : another;
@@ -324,28 +324,28 @@ public record Vector(double angle, double magnitude) implements Convertible.Scal
 	// Interface Implementations
 
 	/**
-	 * @return	A new vector fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
+	 * @return	a new vector fitted to the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Vector fitToScreen() {
 		return FrameInfo.Convertor.scaledToScreen(this);
 	}
 
 	/**
-	 * @return	A new vector fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	a new vector fitted to the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Vector fitToOpenGL() {
 		return FrameInfo.Convertor.scaledToOpenGL(this);
 	}
 
 	/**
-	 * @return	A new vector fitted from the {@link FrameInfo.Convertor Screen Coordinate}.
+	 * @return	a new vector fitted from the {@link FrameInfo.Convertor Screen Coordinate}.
 	 */
 	public Vector fitFromScreen() {
 		return FrameInfo.Convertor.screenToScaled(this);
 	}
 
 	/**
-	 * @return	A new vector fitted from the {@link FrameInfo.Convertor OpenGL Coordinate}.
+	 * @return	a new vector fitted from the {@link FrameInfo.Convertor OpenGL Coordinate}.
 	 */
 	public Vector fitFromOpenGL() {
 		return FrameInfo.Convertor.openGLToScaled(this);
