@@ -54,6 +54,7 @@ tasks {
 	}
 
 	register("collectJars", Copy::class.java) {
+		dependsOn("deleteCollectedJars")
 		group = "build"
 
 		val destination = file("${layout.buildDirectory.get()}/libs/latest")

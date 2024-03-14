@@ -22,8 +22,8 @@ dependencies {
 	mappings(libs.yarn)
 	modImplementation(libs.bundles.fabric)
 
-	api(project(":Math"))
-	api(project(":Visual"))
+	implementation(project(":Math"))
+	implementation(project(":Visual"))
 }
 
 java {

@@ -22,7 +22,7 @@ dependencies {
 	mappings(libs.yarn)
 	modImplementation(libs.bundles.fabric)
 
-	api(project(":Math"))
+	implementation(project(":Math"))
 	api(libs.mixbox)
 }
 
