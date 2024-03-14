@@ -22,16 +22,13 @@ dependencies {
 	mappings(libs.yarn)
 	modImplementation(libs.bundles.fabric)
 
-	implementation(libs.mixbox)?.let {
-		include(it)
-	}
+	implementation(libs.mixbox)
+	implementation(libs.word.wrap)
+	implementation(libs.guava.mini)
 
-	implementation(libs.word.wrap)?.let {
-		include(it)
-	}
-	implementation(libs.guava.mini)?.let {
-		include(it)
-	}
+	include(libs.mixbox)
+	include(libs.word.wrap)
+	include(libs.guava.mini)
 }
 
 java {
