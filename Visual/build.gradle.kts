@@ -22,8 +22,8 @@ dependencies {
 	mappings(libs.yarn)
 	modImplementation(libs.bundles.fabric)
 
-	implementation(project(":Math"))
-	implementation(libs.mixbox)
+	api(project(":Math"))
+	api(libs.mixbox)
 }
 
 java {

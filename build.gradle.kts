@@ -22,9 +22,9 @@ dependencies {
 	mappings(libs.yarn)
 	modImplementation(libs.bundles.fabric)
 
-	implementation(libs.mixbox)
-	implementation(libs.word.wrap)
-	implementation(libs.guava.mini)
+	api(libs.mixbox)
+	api(libs.word.wrap)
+	api(libs.guava.mini)
 
 	include(libs.mixbox)
 	include(libs.word.wrap)
