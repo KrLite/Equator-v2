@@ -1,7 +1,7 @@
 [versions]
 maven-group = "net.krlite"
 archives-name = "equator"
-mod = "2.6.4-alpha.3"
+mod = "2.6.4"
 
 archives-animation-name = "equator-animation"
 archives-math-name = "equator-math"
