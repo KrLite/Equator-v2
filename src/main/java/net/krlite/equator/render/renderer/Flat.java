@@ -265,7 +265,7 @@ public class Flat extends Basic {
 			UNABLE(null, null),
 			COLOR(VertexFormats.POSITION_COLOR, GameRenderer::getPositionColorProgram),
 			TEXTURE(VertexFormats.POSITION_TEXTURE, GameRenderer::getPositionTexProgram),
-			COLOR_TEXTURE(VertexFormats.POSITION_COLOR_TEXTURE, GameRenderer::getPositionColorTexProgram);
+			TEXTURE_COLOR(VertexFormats.POSITION_TEXTURE_COLOR, GameRenderer::getPositionTexColorProgram);
 
 			private final @Nullable VertexFormat vertexFormat;
 			private final @Nullable Supplier<ShaderProgram> shaderProgram;
@@ -307,7 +307,7 @@ public class Flat extends Basic {
 
 		private State state() {
 			if (hasColor() && hasTexture())
-				return State.COLOR_TEXTURE;
+				return State.TEXTURE_COLOR;
 			else if (hasColor())
 				return State.COLOR;
 			else if (hasTexture())
@@ -321,15 +321,12 @@ public class Flat extends Basic {
 		private void renderVertex(BufferBuilder builder, Matrix4f matrix, Vector vertex, Vector uv, AccurateColor color, float z) {
 			switch (state()) {
 				case COLOR -> builder.vertex(matrix, (float) vertex.x(), (float) vertex.y(), z)
-									  .color(color.redAsFloat(), color.greenAsFloat(), color.blueAsFloat(), color.opacityAsFloat())
-									  .next();
+						.color(color.redAsFloat(), color.greenAsFloat(), color.blueAsFloat(), color.opacityAsFloat());
 				case TEXTURE -> builder.vertex(matrix, (float) vertex.x(), (float) vertex.y(), z)
-										.texture((float) uv.x(), (float) uv.y())
-										.next();
-				case COLOR_TEXTURE -> builder.vertex(matrix, (float) vertex.x(), (float) vertex.y(), z)
-											  .color(color.redAsFloat(), color.greenAsFloat(), color.blueAsFloat(), color.opacityAsFloat())
-											  .texture((float) uv.x(), (float) uv.y())
-											  .next();
+						.texture((float) uv.x(), (float) uv.y());
+				case TEXTURE_COLOR -> builder.vertex(matrix, (float) vertex.x(), (float) vertex.y(), z)
+						.texture((float) uv.x(), (float) uv.y())
+						.color(color.redAsFloat(), color.greenAsFloat(), color.blueAsFloat(), color.opacityAsFloat());
 			}
 		}
 
@@ -346,10 +343,8 @@ public class Flat extends Basic {
 				RenderSystem.setShaderTexture(0, Objects.requireNonNull(texture()).identifier());
 			}
 
-			BufferBuilder builder = Tessellator.getInstance().getBuffer();
 			Matrix4f matrix = matrixStack().peek().getPositionMatrix();
-
-			builder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, state().vertexFormat());
+			BufferBuilder builder = Tessellator.getInstance().begin(VertexFormat.DrawMode.TRIANGLE_STRIP, state().vertexFormat());
 
 			double xDelta, yDelta;
 
@@ -1352,8 +1347,7 @@ public class Flat extends Basic {
 
 		private void renderVertex(BufferBuilder builder, Matrix4f matrix, Vector vertex, AccurateColor color, float z) {
 			builder.vertex(matrix, (float) vertex.x(), (float) vertex.y(), z)
-					.color(color.redAsFloat(), color.greenAsFloat(), color.blueAsFloat(), color.opacityAsFloat())
-					.next();
+					.color(color.redAsFloat(), color.greenAsFloat(), color.blueAsFloat(), color.opacityAsFloat());
 		}
 
 		private void renderInnerVertex(BufferBuilder builder, Matrix4f matrix, double offset, AccurateColor color, float z) {
@@ -1402,15 +1396,15 @@ public class Flat extends Basic {
 			RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 			RenderSystem.disableCull(); // Prevents triangles from being culled
 
-			BufferBuilder builder = Tessellator.getInstance().getBuffer();
+			BufferBuilder builder;
 			Matrix4f matrix = matrixStack().peek().getPositionMatrix();
 
 			if (outline() == VertexProvider.NONE) { // Full circle
-				builder.begin(VertexFormat.DrawMode.TRIANGLE_FAN, VertexFormats.POSITION_COLOR);
+				builder = Tessellator.getInstance().begin(VertexFormat.DrawMode.TRIANGLE_FAN, VertexFormats.POSITION_COLOR);
 
 				renderVertex(builder, matrix, box().center(), colorCenter(), z());
 			} else { // Ring
-				builder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
+				builder = Tessellator.getInstance().begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
 			}
 
 			for (

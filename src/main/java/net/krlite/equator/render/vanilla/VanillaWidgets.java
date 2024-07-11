@@ -10,6 +10,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class VanillaWidgets {
+	/*
 	public static class Button {
 		public enum State implements Cyclic.Enum<State> {
 			UNAVAILABLE,
@@ -34,6 +35,8 @@ public class VanillaWidgets {
 					.render();
 		}
 	}
+
+	 */
 
 	public static class Tooltip {
 		public static void render(DrawContext context, Box box) {

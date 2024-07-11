@@ -10,10 +10,6 @@ import org.lwjgl.glfw.GLFW;
  * Provides access to the screen and window properties.
  */
 public class FrameInfo {
-	public static float tickDelta() {
-		return MinecraftClient.getInstance().getTickDelta();
-	}
-
 	public static Box scaled() {
 		return new Box(Vector.fromCartesian(MinecraftClient.getInstance().getWindow().getScaledWidth(), MinecraftClient.getInstance().getWindow().getScaledHeight()));
 	}

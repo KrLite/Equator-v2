@@ -19,11 +19,11 @@ public class Texture {
 	}
 
 	public static Texture fromNamespacePath(String namespace, String... paths) {
-		return new Texture(new Identifier(namespace, combinePaths(paths)));
+		return new Texture(Identifier.of(namespace, combinePaths(paths)));
 	}
 
 	public static Texture fromPath(String... paths) {
-		return new Texture(new Identifier(combinePaths(paths)));
+		return new Texture(Identifier.of(combinePaths(paths)));
 	}
 
 	protected Texture(Identifier identifier, Box uvBox, boolean flippedX, boolean flippedY) {
