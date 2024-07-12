@@ -29,7 +29,7 @@
   "depends": {
     "fabricloader": "*",
     "fabric-api": "*",
-    "minecraft": "~1.21.x"
+    "minecraft": "1.21.x"
   },
   "suggests": {
     "immediatelyfast": "*"
